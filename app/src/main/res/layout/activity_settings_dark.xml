@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:padding="2dp">
+    
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/settings_arrow"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:layout_marginTop="14dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="186dp"
+        android:textColor="@color/white" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/arrow"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_width="37dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="320dp"
+            android:background="@android:color/transparent"
+            app:icon="@drawable/icon_arrow"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconTint="@color/white" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/dark_mode"
+            android:textSize="19sp"
+            android:layout_marginTop="71dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/white"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/switcher"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_width="58dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="63dp"
+            android:background="@android:color/transparent"
+            app:icon="@drawable/icon_switch_dm"
+            app:iconGravity="textStart"
+            app:iconTint="#3772E7" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/share"
+            android:textSize="19sp"
+            android:layout_marginTop="21dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/white"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/share"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_width="46dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="14dp"
+            android:background="@android:color/transparent"
+            app:icon="@drawable/icon_share_lm"
+            app:iconGravity="textStart"
+            app:iconTint="@color/white" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/support"
+            android:textSize="19sp"
+            android:layout_marginTop="21dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/white"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/support"
+            android:foreground="?attr/selectableItemBackground"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="14dp"
+            android:background="@android:color/transparent"
+            app:icon="@drawable/icon_support_lm"
+            app:iconTint="@color/white" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/acception"
+            android:textSize="19sp"
+            android:layout_marginTop="21dp"
+            android:layout_marginLeft="16dp"
+            android:textColor="@color/white"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/acception"
+            android:layout_width="52dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="14dp"
+            android:background="@android:color/transparent"
+            app:icon="@drawable/icon_acception_lm"
+            app:iconTint="@color/white" />
+    </FrameLayout>
+
+    </LinearLayout>
