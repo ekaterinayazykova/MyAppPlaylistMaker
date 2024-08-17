@@ -2,4 +2,10 @@
 <resources>
     <dimen name="main_text_size">22sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
+    <dimen name="size_16">16dp</dimen>
+    <dimen name="size_12">12dp</dimen>
+    <dimen name="size_21">21dp</dimen>
+    <dimen name="size_0">0dp</dimen>
+    <dimen name="size_8">8dp</dimen>
+    <dimen name="size_14">14dp</dimen>
 </resources>
