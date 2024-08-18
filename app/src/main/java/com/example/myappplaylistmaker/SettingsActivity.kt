@@ -2,6 +2,7 @@ package com.example.myappplaylistmaker
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 
@@ -11,7 +12,7 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         setContentView(R.layout.activity_settings)
-        findViewById<Button>(R.id.arrow).setOnClickListener {
+        findViewById<ImageView>(R.id.arrow).setOnClickListener {
             finish()
         }
     }

@@ -31,17 +31,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun openSearch() {
+    private fun openSearch() {
         val searchActivity = Intent(this, SearchActivity:: class.java)
         startActivity(searchActivity)
     }
 
-    fun openLibrary() {
+    private fun openLibrary() {
         val libraryActivity = Intent(this, LibraryActivity:: class.java)
         startActivity(libraryActivity)
     }
 
-    fun openSettings() {
+    private fun openSettings() {
         val settingsIntent = Intent(this, SettingsActivity::class.java)
         startActivity(settingsIntent)
     }
