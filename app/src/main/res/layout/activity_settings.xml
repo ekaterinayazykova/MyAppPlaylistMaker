@@ -20,14 +20,8 @@
             android:src="@drawable/icon_arrow"/>
 
         <TextView
-            android:layout_width="@dimen/size_0"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/size_12"
-            android:text="@string/settings_arrow"
             style="@style/Titles"
-            android:textColor="?attr/colorSecondaryVariant" />
+            android:text="@string/settings_arrow" />
 
         </LinearLayout>
 
