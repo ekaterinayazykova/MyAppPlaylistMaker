@@ -17,7 +17,13 @@ import com.google.android.material.button.MaterialButton
 class SearchActivity : AppCompatActivity() {
     private lateinit var editText: EditText
     private lateinit var requestFocusButton: Button
+    private lateinit var buttonClear: MaterialButton
     private var searchQuery: String = ""
+
+    companion object {
+        private const val SEARCH_QUERY_KEY = "search_query"
+        private const val IS_CLEAR_BUTTON_VISIBLE_KEY = "isClearButtonVisible"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +34,11 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
-        val buttonClear = findViewById<MaterialButton>(R.id.clearButton)
+        buttonClear = findViewById(R.id.clearButton)
         buttonClear.visibility = View.GONE
         buttonClear.setOnClickListener {
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(editText.windowToken, 0)
             editText.text.clear()
             buttonClear.visibility = View.GONE
         }
@@ -63,19 +71,25 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("search_query", searchQuery)
+        outState.putString(SEARCH_QUERY_KEY, searchQuery)
+        outState.putBoolean(IS_CLEAR_BUTTON_VISIBLE_KEY, buttonClear.visibility == View.VISIBLE)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         restoreState(savedInstanceState)
+        val isVisible = savedInstanceState.getBoolean(IS_CLEAR_BUTTON_VISIBLE_KEY, false)
+        buttonClear.visibility = if (isVisible) View.VISIBLE else View.GONE
+        editText.requestFocus()
+        showKeyboard(editText)
     }
 
     private fun restoreState(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
-            searchQuery = savedInstanceState.getString("search_query", "")
+            searchQuery = savedInstanceState.getString(SEARCH_QUERY_KEY, "")
+            editText.setText(searchQuery)
+            editText.setSelection(searchQuery.length)
         }
-        editText.setText(searchQuery)
     }
 
     private fun showKeyboard(view: View) {

@@ -20,6 +20,11 @@
             android:src="@drawable/icon_arrow"/>
 
         <TextView
+            android:layout_width="@dimen/size_0"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/size_12"
             style="@style/Titles"
             android:text="@string/settings_arrow" />
 
@@ -27,6 +32,8 @@
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switchTheme"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_60"
         android:layout_marginTop="@dimen/size_24"
         android:layout_gravity="center_vertical"
         style="@style/ActivitySettingsButton"
@@ -37,6 +44,8 @@
 
     <Button
         android:id="@+id/share"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_60"
         style="@style/ActivitySettingsButton"
         tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck"
         android:text="@string/share"
@@ -44,6 +53,8 @@
 
     <Button
         android:id="@+id/support"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_60"
         style="@style/ActivitySettingsButton"
         tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck"
         android:text="@string/support"
@@ -51,6 +62,8 @@
 
     <Button
         android:id="@+id/acception"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_60"
         style="@style/ActivitySettingsButton"
         tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck"
         android:text="@string/acception"
