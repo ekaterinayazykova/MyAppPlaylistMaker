@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
-    android:background="@color/white"
+    android:background="?attr/colorPrimaryVariant"
     android:orientation="vertical" >
     
     <LinearLayout
@@ -16,113 +16,57 @@
 
         <ImageView
             android:id="@+id/arrow"
-            android:layout_width="@dimen/size_48"
-            android:layout_height="@dimen/size_48"
-            android:padding="@dimen/size_12"
-            android:background="@android:color/transparent"
-            android:foreground="?attr/selectableItemBackground"
-            android:src="@drawable/icon_arrow" />
-    
+            style="@style/TitlesButton"
+            android:src="@drawable/icon_arrow"/>
+
         <TextView
             android:layout_width="@dimen/size_0"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/size_12"
-            android:text="@string/settings_arrow"
-            android:textSize="@dimen/main_text_size"
-            android:fontFamily="@font/ys_display_medium"
-            android:textFontWeight="500"
-            android:textColor="@color/setting_title" />
+            style="@style/Titles"
+            android:text="@string/settings_arrow" />
 
         </LinearLayout>
 
-    <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switchMaterial"
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switchTheme"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/size_61"
+        android:layout_height="@dimen/size_60"
         android:layout_marginTop="@dimen/size_24"
-        android:paddingStart="@dimen/size_16"
-        android:paddingEnd="@dimen/size_12"
         android:layout_gravity="center_vertical"
-        android:background="@android:color/transparent"
-        android:fontFamily="@font/ys_display_regular"
-        android:foreground="?attr/selectableItemBackground"
-        android:inputType="textCapWords"
-        android:letterSpacing="0"
+        style="@style/ActivitySettingsButton"
+        tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck"
         android:text="@string/dark_mode"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        android:textFontWeight="400"
-        android:textSize="@dimen/settings_text_size"
-        app:iconGravity="end"
-        app:thumbTint="@color/switch_thumb_light"
-        app:trackTint="@color/switch_track_light"
-        tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck" />
+        app:thumbTint="?attr/thumbColor"
+        app:trackTint="?attr/trackColor" />
 
     <Button
         android:id="@+id/share"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/size_61"
-        android:background="@android:color/transparent"
-        android:fontFamily="@font/ys_display_regular"
-        android:foreground="?attr/selectableItemBackground"
-        android:inputType="textCapWords"
-        android:letterSpacing="0"
-        android:paddingStart="@dimen/size_16"
-        android:paddingEnd="@dimen/size_12"
+        android:layout_height="@dimen/size_60"
+        style="@style/ActivitySettingsButton"
+        tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck"
         android:text="@string/share"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        android:textFontWeight="400"
-        android:textSize="@dimen/settings_text_size"
-        app:icon="@drawable/icon_share"
-        app:iconGravity="end"
-        app:iconTint="@color/icon_light"
-        tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck" />
+        app:icon="@drawable/icon_share" />
 
     <Button
-            android:id="@+id/support"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_61"
-            android:text="@string/support"
-            android:textSize="@dimen/settings_text_size"
-            android:fontFamily="@font/ys_display_regular"
-            android:textFontWeight="400"
-            android:letterSpacing="0"
-            android:paddingStart="@dimen/size_16"
-            android:paddingEnd="@dimen/size_12"
-            app:icon="@drawable/icon_support"
-            android:background="@android:color/transparent"
-            android:foreground="?attr/selectableItemBackground"
-            android:inputType="textCapWords"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            app:iconGravity="end"
-            app:iconTint="@color/icon_light"
-            tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck" />
+        android:id="@+id/support"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_60"
+        style="@style/ActivitySettingsButton"
+        tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck"
+        android:text="@string/support"
+        app:icon="@drawable/icon_support"/>
 
     <Button
-            android:id="@+id/acception"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_61"
-            android:text="@string/acception"
-            android:textSize="@dimen/settings_text_size"
-            android:fontFamily="@font/ys_display_regular"
-            android:textFontWeight="400"
-            android:letterSpacing="0"
-            android:layout_marginBottom="@dimen/size_21"
-            android:paddingStart="@dimen/size_16"
-            android:paddingEnd="@dimen/size_12"
-            android:layout_gravity="end"
-            app:icon="@drawable/icon_acception"
-            android:background="@android:color/transparent"
-            android:foreground="?attr/selectableItemBackground"
-            android:inputType="textCapWords"
-            android:textAlignment="textStart"
-            android:textColor="@color/black"
-            app:iconGravity="end"
-            app:iconTint="@color/icon_light"
-            tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck" />
+        android:id="@+id/acception"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_60"
+        style="@style/ActivitySettingsButton"
+        tools:ignore="RtlCompat,TextViewEdits,TouchTargetSizeCheck"
+        android:text="@string/acception"
+        app:icon="@drawable/icon_acception" />
 
     </LinearLayout>

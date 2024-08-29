@@ -1,6 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MyAppPlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.MyAppPlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="colorPrimary">@color/black</item>
+         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="itemTextColor">@color/white</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="colorSecondaryVariant">@color/black</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorButtonNormal">@color/white</item>
+        <item name="itemIconTint">@color/black</item>
+        <item name="trackColor">@color/switch_track_dark</item>
+        <item name="thumbColor">@color/switch_thumb_dark</item>
+        <item name="editTextColor">@color/white</item>
+        <item name="hintTextColor">@color/setting_title</item>
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
