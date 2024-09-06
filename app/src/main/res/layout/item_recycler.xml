@@ -32,10 +32,7 @@
             android:id="@+id/track_name"
             style="@style/SongTitle"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:maxLines="1"
-            android:ellipsize="end"/>
+            android:layout_height="wrap_content" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -48,10 +45,7 @@
                 style="@style/SongDescription"
                 android:layout_width="@dimen/size_0"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:ellipsize="end" />
+                android:layout_weight="1" />
 
             <ImageView
                 android:id="@+id/separator"

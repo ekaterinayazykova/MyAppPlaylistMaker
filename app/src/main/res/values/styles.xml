@@ -52,6 +52,9 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/settings_text_size</item>
         <item name="android:textColor">?attr/itemTextColor</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="SongDescription" >
@@ -59,6 +62,10 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/song_description_size</item>
         <item name="android:textColor">?attr/colorButtonNormal</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
-</resources>
+   </resources>
+
