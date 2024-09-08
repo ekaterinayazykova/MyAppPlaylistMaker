@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/size_8"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:clickable="true"
+    android:showDividers="middle"
+    android:orientation="horizontal"
+    android:background="@android:color/transparent" >
+
+    <ImageView
+        android:id="@+id/track_cover"
+        android:layout_width="@dimen/size_44"
+        android:layout_height="@dimen/size_44"
+        android:contentDescription="@string/track_cover" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/size_8"
+        android:layout_marginTop="@dimen/size_6"
+        android:layout_marginEnd="@dimen/size_8"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        tools:ignore="RtlSymmetry">
+
+        <TextView
+            android:id="@+id/track_name"
+            style="@style/SongTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            tools:ignore="RtlSymmetry">
+
+            <TextView
+                android:id="@+id/artist_name"
+                style="@style/SongDescription"
+                android:layout_width="@dimen/size_0"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/separator"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:importantForAccessibility="no"
+                android:src="@drawable/icon_dot"
+                app:tint="?attr/colorButtonNormal" />
+
+            <TextView
+                android:id="@+id/track_duration"
+                style="@style/SongDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+        <ImageView
+            android:id="@+id/acception"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_10"
+            android:contentDescription="@string/acception"
+            android:src="@drawable/icon_acception"
+            app:tint="?attr/colorButtonNormal" />
+
+</LinearLayout>

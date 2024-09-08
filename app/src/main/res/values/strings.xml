@@ -13,4 +13,5 @@
     <string name="subjectWriteSupport" translatable="false">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="textWriteSupport" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="acception_link" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="track_cover" translatable="false">Обложка трека</string>
 </resources>
