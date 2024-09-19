@@ -16,6 +16,7 @@
         <item name="thumbColor">@color/switch_thumb_light</item>
         <item name="editTextColor">@color/switch_track_light</item>
         <item name="hintTextColor">@color/switch_thumb_light</item>
+        <item name="helperTextTextColor">@color/white</item>
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>

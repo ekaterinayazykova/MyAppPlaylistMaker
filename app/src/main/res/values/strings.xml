@@ -14,4 +14,10 @@
     <string name="textWriteSupport" translatable="false">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="acception_link" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="track_cover" translatable="false">Обложка трека</string>
+    <string name="no_song" translatable="false">Ничего не нашлось</string>
+    <string name="no_internet_first_line" translatable="false">Проблемы со связью</string>
+    <string name="no_internet_second_line" translatable="false"> </string>
+    <string name="no_internet_third_line" translatable="false">Загрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="check_internet" translatable="false"></string>
+    <string name="refresh" translatable="false">Обновить</string>
 </resources>
