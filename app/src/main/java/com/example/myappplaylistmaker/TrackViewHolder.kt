@@ -28,13 +28,15 @@ class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-        trackTime.text = track.trackTime
+        artistName.requestLayout()
+        trackTime.text = track.getTrackDuration()
 
-        if (NetworkClass.isNetworkAvailable(itemView.context)) {
+        if (!track.artworkUrl100.isNullOrEmpty() && NetworkClass.isNetworkAvailable(itemView.context)) {
             Glide.with(itemView)
                 .load(track.artworkUrl100)
                 .fitCenter()
                 .placeholder(R.drawable.icon_placeholder)
+                .error(R.drawable.icon_placeholder)
                 .centerCrop()
                 .transform(RoundedCorners(Utils.dpToPx(2f, itemView.context)))
                 .into(trackCover)

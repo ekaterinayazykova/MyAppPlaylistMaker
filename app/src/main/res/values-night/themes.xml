@@ -3,7 +3,7 @@
     <style name="Base.Theme.MyAppPlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <item name="colorPrimary">@color/black</item>
-         <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/white</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="itemTextColor">@color/white</item>
@@ -16,6 +16,7 @@
         <item name="thumbColor">@color/switch_thumb_dark</item>
         <item name="editTextColor">@color/white</item>
         <item name="hintTextColor">@color/setting_title</item>
+        <item name="helperTextTextColor">@color/setting_title</item>
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
