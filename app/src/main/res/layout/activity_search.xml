@@ -164,14 +164,12 @@
                 android:text="@string/no_internet_third_line" />
             
             <Button
-                android:id="@+id/refresh_button"
+                android:id="@+id/update_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="134dp"
-                android:layout_marginEnd="134dp"
                 android:layout_marginTop="@dimen/size_24"
-                style="@style/ButtonRefresh"
-                android:text="@string/refresh"
+                style="@style/ButtonUpdate"
+                android:text="@string/update"
                 android:textAllCaps="false" />
 
          </LinearLayout>

@@ -19,5 +19,5 @@
     <string name="no_internet_second_line" translatable="false"> </string>
     <string name="no_internet_third_line" translatable="false">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="check_internet" translatable="false"></string>
-    <string name="refresh" translatable="false">Обновить</string>
+    <string name="update" translatable="false">Обновить</string>
 </resources>
