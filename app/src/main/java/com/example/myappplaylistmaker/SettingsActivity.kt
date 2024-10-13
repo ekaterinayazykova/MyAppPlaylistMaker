@@ -1,7 +1,9 @@
 package com.example.myappplaylistmaker
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.res.Resources.Theme
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -12,11 +14,20 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
 
 class SettingsActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContentView(R.layout.activity_settings)
+
+        val switchNightMode = findViewById<SwitchCompat>(R.id.switchTheme)
+        switchNightMode.isChecked = ThemeManager.getNightModeState(this)
+
+        switchNightMode.setOnCheckedChangeListener { _, isChecked ->
+            ThemeManager.setNightModeState(this, isChecked)
+        }
+
         findViewById<ImageView>(R.id.arrow).setOnClickListener {
             finish()
         }
@@ -35,16 +46,8 @@ class SettingsActivity : AppCompatActivity() {
         buttonAcception.setOnClickListener {
             acceptTermsOfUse()
         }
-        val switchNightMode = findViewById<SwitchCompat>(R.id.switchTheme)
-            switchNightMode.isChecked = (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES)
 
-            switchNightMode.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                }
-            }
+
 
     }
 
