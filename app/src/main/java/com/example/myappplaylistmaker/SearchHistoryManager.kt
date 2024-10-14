@@ -40,5 +40,4 @@ class SearchHistoryManager(context: Context) {
     fun clearHistory() {
         sharedPreferences.edit().remove(historyKey).apply()
     }
-
 }

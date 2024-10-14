@@ -39,10 +39,6 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var yourSearch: TextView
     private lateinit var cleanHistoryButton: Button
 
-    companion object {
-        private const val SEARCH_QUERY_KEY = "search_query"
-        private const val IS_CLEAR_BUTTON_VISIBLE_KEY = "isClearButtonVisible"
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -66,12 +62,13 @@ class SearchActivity : AppCompatActivity() {
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
             searchHistoryManager.saveToHistory(track)
+            if (searchQuery.isEmpty())
+                unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
         }
 
         searchHistoryManager = SearchHistoryManager(this)
 
         val historyTracks = searchHistoryManager.getSearchHistory()
-        Log.d("SearchActivity", "tracks count: " + historyTracks.size)
 
         if (historyTracks.isNotEmpty()) {
             unifiedTrackAdapter.updateTracks(historyTracks)
@@ -107,23 +104,18 @@ class SearchActivity : AppCompatActivity() {
                     View.VISIBLE
                 }
 
-                if (searchQuery.isNotEmpty()) {
-                    performSearch(searchQuery) { trackFound ->
-                        if (trackFound) {
-                            noSongPlaceholder.visibility = View.GONE
-                            yourSearch.visibility = View.GONE
-                            cleanHistoryButton.visibility = View.GONE
-                        } else {
-                            noSongPlaceholder.visibility = View.VISIBLE
-                        }
-                    }
+                if (searchQuery.isEmpty()) {
+                    yourSearch.visibility = View.VISIBLE
+                    unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
+                    recyclerView.visibility = View.VISIBLE
+                    cleanHistoryButton.visibility = View.VISIBLE
                 } else {
-
-                    unifiedTrackAdapter.updateTracks(emptyList())
+                    yourSearch.visibility = View.GONE
                     recyclerView.visibility = View.GONE
-                    noSongPlaceholder.visibility = View.GONE
+                    cleanHistoryButton.visibility = View.GONE
                 }
             }
+
             override fun afterTextChanged(s: Editable?) {}
         })
 
@@ -132,7 +124,10 @@ class SearchActivity : AppCompatActivity() {
             hideKeyboard(window.decorView.rootView)
             editText.text.clear()
             buttonClear.visibility = View.GONE
-
+            yourSearch.visibility = View.VISIBLE
+            unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
+            recyclerView.visibility = View.VISIBLE
+            cleanHistoryButton.visibility = View.VISIBLE
             editText.requestFocus()
         }
 
@@ -197,15 +192,11 @@ class SearchActivity : AppCompatActivity() {
                 noInternetPlaceholder.visibility = View.GONE
 
                 if (response.isSuccessful) {
-//                    Log.d("SearchActivity", response.raw().body?.string().toString())
+
                     val trackResponse = response.body()
 
                     val tracks = trackResponse?.results ?: emptyList()
 
-//                    if (tracks.isNotEmpty()) {
-//                        val filteredTracks = tracks.filter {
-//                            it.artistName?.contains(searchQuery, ignoreCase = true) == true
-//                        }
 
                     if (tracks.isNotEmpty()) {
                         unifiedTrackAdapter.updateTracks(tracks)
@@ -217,15 +208,7 @@ class SearchActivity : AppCompatActivity() {
                     } else {
                         recyclerView.visibility = View.GONE
                         noSongPlaceholder.visibility = View.VISIBLE
-//                        }
-//                    } else {
-//                        recyclerView.visibility = View.GONE
-//                        noSongPlaceholder.visibility = View.VISIBLE
-//                    }
-//                } else {
-//                    recyclerView.visibility = View.GONE
-//                    noSongPlaceholder.visibility = View.VISIBLE
-//                }
+
                     }
                 }
             }
@@ -270,4 +253,10 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         restoreState(savedInstanceState)
     }
+
+    companion object {
+        private const val SEARCH_QUERY_KEY = "search_query"
+        private const val IS_CLEAR_BUTTON_VISIBLE_KEY = "isClearButtonVisible"
+    }
+
 }

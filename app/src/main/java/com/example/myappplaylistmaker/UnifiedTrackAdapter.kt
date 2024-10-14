@@ -29,7 +29,7 @@ class UnifiedTrackAdapter(
             return String.format("%02d:%02d", minutes, seconds)
         }
 
-        fun bind(model: Track) {
+        fun bind(model: Track, isTrackAddedToHistory: Boolean = false) {
             trackName.text = model.trackName
             artistName.text = model.artistName
             trackTime.text = getTrackDuration(model.trackTimeMillis)
@@ -48,9 +48,8 @@ class UnifiedTrackAdapter(
             }
 
             itemView.setOnClickListener {
-                onTrackClick(model)
+                onTrackClick.invoke(model)
             }
-
         }
     }
 
