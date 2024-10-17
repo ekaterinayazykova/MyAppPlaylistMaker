@@ -84,5 +84,13 @@
         <item name="backgroundTint">?attr/colorAccent</item>
     </style>
 
-   </resources>
+    <style name="Placeholder_last_search" >
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">@dimen/placeholder_text_size</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+
+</resources>
 

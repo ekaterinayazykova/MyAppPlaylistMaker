@@ -20,4 +20,8 @@
     <string name="no_internet_third_line" translatable="false">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="check_internet" translatable="false"></string>
     <string name="update" translatable="false">Обновить</string>
+    <string name="last_search" translatable="false">Вы искали</string>
+    <string name="clean_history" translatable="false">Очистить историю</string>
+    <string name="iTunesLink" translatable="false">https://itunes.apple.com/</string>
+
 </resources>

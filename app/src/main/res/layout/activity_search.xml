@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/colorPrimaryVariant">
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -87,6 +96,16 @@
 
 </FrameLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/yourSearch"
+        android:visibility="visible"
+        android:layout_height="@dimen/size_52"
+        android:layout_marginTop="@dimen/size_24"
+        android:gravity="center"
+        style="@style/Placeholder_last_search"
+        android:text="@string/last_search" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:visibility="visible"
         android:id="@+id/track_list"
@@ -95,6 +114,17 @@
         android:paddingHorizontal="@dimen/size_12"
         android:paddingVertical="@dimen/size_8"
         android:layout_marginTop="@dimen/size_24" />
+
+    <Button
+        android:id="@+id/clean_history_button"
+        android:visibility="visible"
+        style="@style/ButtonUpdate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/size_24"
+        android:text="@string/clean_history"
+        android:textAllCaps="false" />
 
     <LinearLayout
         android:id="@+id/no_song_placeholder"
@@ -162,7 +192,7 @@
                 android:gravity="center"
                 style="@style/Placeholder"
                 android:text="@string/no_internet_third_line" />
-            
+
             <Button
                 android:id="@+id/update_button"
                 android:layout_width="wrap_content"
@@ -174,6 +204,8 @@
 
          </LinearLayout>
 
-    </LinearLayout>    
+    </LinearLayout>
 
 </LinearLayout>
+
+</ScrollView>
