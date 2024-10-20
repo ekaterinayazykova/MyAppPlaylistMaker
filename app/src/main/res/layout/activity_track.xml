@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fitsSystemWindows="true"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?attr/colorPrimaryVariant">
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimaryVariant"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="?attr/colorPrimaryVariant"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
         <ImageView
             android:id="@+id/arrow"
+            android:contentDescription="@string/button_back"
             style="@style/TitlesButton"
             android:src="@drawable/icon_arrow"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="@dimen/size_4"
-            android:layout_marginLeft="@dimen/size_4"
+            android:layout_marginStart="@dimen/size_4"
             />
 
         <Space
@@ -255,12 +251,5 @@
 
             />
 
-        <Space
-            android:id="@+id/space_2"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_20"
-            app:layout_constraintTop_toBottomOf="@id/track_country" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
