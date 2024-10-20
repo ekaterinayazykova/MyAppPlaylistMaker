@@ -19,6 +19,9 @@
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>
         <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
 
      </style>
 
@@ -91,6 +94,49 @@
         <item name="android:textColor">?attr/colorAccent</item>
     </style>
 
+    <style name="Artist_title_trackScreen" >
+    <item name="android:fontFamily">@font/ys_display_medium</item>
+    <item name="android:textFontWeight">400</item>
+    <item name="android:textSize">@dimen/track_screen_song_name</item>
+    <item name="android:textColor">?attr/colorAccent</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:maxLines">1</item>
+    <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Song_title_trackScreen" >
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/main_text_size</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="Track_duration" >
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">@dimen/track_screen_song_name</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+    <style name="Track_description" >
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/track_description_font</item>
+        <item name="android:textColor">@color/switch_thumb_light</item>
+    </style>
+
+    <style name="Track_description_info" >
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/track_description_font</item>
+        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 
 </resources>
 

@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -61,6 +62,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
+            openTrack(track)
             searchHistoryManager.saveToHistory(track)
             if (searchQuery.isEmpty())
                 unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
@@ -128,6 +130,7 @@ class SearchActivity : AppCompatActivity() {
             unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
             recyclerView.visibility = View.VISIBLE
             cleanHistoryButton.visibility = View.VISIBLE
+            noInternetPlaceholder.visibility =View.GONE
             editText.requestFocus()
         }
 
@@ -189,6 +192,7 @@ class SearchActivity : AppCompatActivity() {
         call.enqueue(object : Callback<TrackResponse> {
 
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                Log.d("SearchActivity", "Response code: ${response.code()}")
                 noInternetPlaceholder.visibility = View.GONE
 
                 if (response.isSuccessful) {
@@ -214,6 +218,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                Log.e("SearchActivity", "Network call failed: ${t.message}")
                 noInternetPlaceholder.visibility = View.VISIBLE
                 recyclerView.visibility = View.GONE
                 hideKeyboard(window.decorView.rootView)
@@ -257,6 +262,12 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val SEARCH_QUERY_KEY = "search_query"
         private const val IS_CLEAR_BUTTON_VISIBLE_KEY = "isClearButtonVisible"
+    }
+
+    private fun openTrack (track: Track) {
+        val trackIntent = Intent(this, TrackActivity:: class.java)
+        trackIntent.putExtra("track",track)
+        startActivity(trackIntent)
     }
 
 }
