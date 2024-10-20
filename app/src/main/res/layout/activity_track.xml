@@ -22,7 +22,7 @@
         <Space
             android:id="@+id/space"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_height="@dimen/size_4"
             app:layout_constraintTop_toBottomOf="@id/arrow" />
 
         <androidx.constraintlayout.widget.Barrier
@@ -36,13 +36,14 @@
         <ImageView
             android:id="@+id/track_cover"
             android:contentDescription="@string/track_cover"
-            android:layout_width="@dimen/size_250"
-            android:layout_height="@dimen/size_250"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toBottomOf="@id/space"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/track_name"
             android:layout_marginTop="@dimen/size_26"
             android:layout_marginStart="@dimen/size_24"
             android:layout_marginEnd="@dimen/size_24"
@@ -138,6 +139,7 @@
             android:layout_marginStart="@dimen/size_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrier_2"
+            app:layout_constraintBottom_toTopOf="@id/track_album"
             style="@style/Track_description"
             android:text="Длительность"
             />
@@ -150,6 +152,7 @@
             android:layout_marginStart="@dimen/size_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_duration_time"
+            app:layout_constraintBottom_toTopOf="@id/track_year"
             style="@style/Track_description"
             android:text="Альбом"
             />
@@ -162,6 +165,7 @@
             android:layout_marginStart="@dimen/size_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_album"
+            app:layout_constraintBottom_toTopOf="@id/track_genre"
             style="@style/Track_description"
             android:text="Год"
             />
@@ -174,6 +178,7 @@
             android:layout_marginStart="@dimen/size_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_year"
+            app:layout_constraintBottom_toTopOf="@id/track_country"
             style="@style/Track_description"
             android:text="Жанр"
             />
@@ -186,6 +191,7 @@
             android:layout_marginStart="@dimen/size_16"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_genre"
+            app:layout_constraintBottom_toTopOf="@id/space_2"
             style="@style/Track_description"
             android:text="Страна"
             />
@@ -198,6 +204,8 @@
             android:layout_marginEnd="@dimen/size_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrier_2"
+            app:layout_constraintBottom_toTopOf="@id/track_album_info"
+            app:layout_constraintBaseline_toBaselineOf="@id/track_duration_time"
             style="@style/Track_description_info"
 
             />
@@ -212,6 +220,8 @@
             android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_duration_time_info"
+            app:layout_constraintBottom_toTopOf="@id/track_year_info"
+            app:layout_constraintBaseline_toBaselineOf="@id/track_album"
             style="@style/Track_description_info"
             />
 
@@ -223,6 +233,8 @@
             android:layout_marginEnd="@dimen/size_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_album_info"
+            app:layout_constraintBottom_toTopOf="@id/track_genre_info"
+            app:layout_constraintBaseline_toBaselineOf="@id/track_year"
             style="@style/Track_description_info"
 
             />
@@ -235,6 +247,8 @@
             android:layout_marginEnd="@dimen/size_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_year_info"
+            app:layout_constraintBottom_toTopOf="@id/track_country_info"
+            app:layout_constraintBaseline_toBaselineOf="@id/track_genre"
             style="@style/Track_description_info"
 
             />
@@ -247,8 +261,18 @@
             android:layout_marginEnd="@dimen/size_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_genre_info"
+            app:layout_constraintBottom_toTopOf="@id/space_2"
+            app:layout_constraintBaseline_toBaselineOf="@id/track_country"
             style="@style/Track_description_info"
 
+            />
+
+        <Space
+            android:id="@+id/space_2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_20"
+            app:layout_constraintTop_toBottomOf="@id/track_country"
+            app:layout_constraintBottom_toBottomOf="parent"
             />
 
 
