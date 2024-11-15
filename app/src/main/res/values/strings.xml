@@ -23,5 +23,6 @@
     <string name="last_search" translatable="false">Вы искали</string>
     <string name="clean_history" translatable="false">Очистить историю</string>
     <string name="iTunesLink" translatable="false">https://itunes.apple.com/</string>
+    <string name="button_back" translatable="false">button_back</string>
 
 </resources>
