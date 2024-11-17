@@ -2,6 +2,8 @@ package com.example.myappplaylistmaker
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -12,6 +14,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -39,7 +42,9 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistoryManager: SearchHistoryManager
     private lateinit var yourSearch: TextView
     private lateinit var cleanHistoryButton: Button
+    private lateinit var progressBar: ProgressBar
 
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -56,6 +61,7 @@ class SearchActivity : AppCompatActivity() {
         noInternetPlaceholder = findViewById(R.id.no_internet_placeholder)
         yourSearch = findViewById(R.id.yourSearch)
         cleanHistoryButton = findViewById(R.id.clean_history_button)
+        progressBar = findViewById(R.id.progressBar)
 
         findViewById<ImageView>(R.id.arrow).setOnClickListener {
             finish()
@@ -78,11 +84,14 @@ class SearchActivity : AppCompatActivity() {
             recyclerView.visibility = View.VISIBLE
             noSongPlaceholder.visibility = View.GONE
             cleanHistoryButton.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
         } else {
             noSongPlaceholder.visibility = View.GONE
             recyclerView.visibility = View.GONE
             yourSearch.visibility = View.GONE
             cleanHistoryButton.visibility = View.GONE
+            progressBar.visibility = View.GONE
+
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -112,6 +121,7 @@ class SearchActivity : AppCompatActivity() {
                     recyclerView.visibility = View.VISIBLE
                     cleanHistoryButton.visibility = View.VISIBLE
                 } else {
+                    searchDebounce()
                     yourSearch.visibility = View.GONE
                     recyclerView.visibility = View.GONE
                     cleanHistoryButton.visibility = View.GONE
@@ -178,6 +188,19 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private val searchRunnable = Runnable {
+        performSearch(searchQuery) { success ->
+        if (!success) {
+            Log.d("UserSearch", "EnteryChar: $searchQuery")
+            }
+        }
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     private fun performSearch(query: String, callback: (Boolean) -> Unit) {
 
         val retrofit = Retrofit.Builder()
@@ -189,13 +212,20 @@ class SearchActivity : AppCompatActivity() {
 
         val call = api.search(query)
 
+        progressBar.visibility = View.VISIBLE
+        Log.d("SearchActivity", "I see progress bar" )
+
         call.enqueue(object : Callback<TrackResponse> {
 
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
                 Log.d("SearchActivity", "Response code: ${response.code()}")
                 noInternetPlaceholder.visibility = View.GONE
+                progressBar.visibility = View.GONE
+                Log.d("SearchActivity", "Hiding progress bar, response successful: ${response.isSuccessful}")
+
 
                 if (response.isSuccessful) {
+
 
                     val trackResponse = response.body()
 
@@ -212,7 +242,6 @@ class SearchActivity : AppCompatActivity() {
                     } else {
                         recyclerView.visibility = View.GONE
                         noSongPlaceholder.visibility = View.VISIBLE
-
                     }
                 }
             }
@@ -220,6 +249,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
                 Log.e("SearchActivity", "Network call failed: ${t.message}")
                 noInternetPlaceholder.visibility = View.VISIBLE
+                progressBar.visibility = View.GONE
                 recyclerView.visibility = View.GONE
                 hideKeyboard(window.decorView.rootView)
                 noSongPlaceholder.visibility = View.GONE
@@ -262,6 +292,7 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         private const val SEARCH_QUERY_KEY = "search_query"
         private const val IS_CLEAR_BUTTON_VISIBLE_KEY = "isClearButtonVisible"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     private fun openTrack (track: Track) {

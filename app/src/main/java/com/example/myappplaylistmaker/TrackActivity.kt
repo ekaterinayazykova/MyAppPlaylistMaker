@@ -1,6 +1,12 @@
 package com.example.myappplaylistmaker
 
+import android.app.usage.NetworkStats.Bucket.STATE_DEFAULT
+import android.content.Intent
+import android.content.IntentFilter
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,6 +30,18 @@ class TrackActivity : AppCompatActivity() {
     private lateinit var collectionNameTextView: TextView
     private lateinit var releaseDateTextView: TextView
     private lateinit var countryTextView: TextView
+    private lateinit var genreNameTextView: TextView
+    private lateinit var addToPlaylistButton: ImageView
+    private lateinit var playButton: ImageView
+    private lateinit var addToFavoritesButton: ImageView
+    private lateinit var currentTrackTime: TextView
+
+    private var mediaPlayer = MediaPlayer()
+    private var playerState = STATE_DEFAULT
+    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var screenReceiver: ScreenReceiver
+
+    private var songBridge: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +55,11 @@ class TrackActivity : AppCompatActivity() {
         collectionNameTextView = findViewById(R.id.track_album_info)
         releaseDateTextView = findViewById(R.id.track_year_info)
         countryTextView = findViewById(R.id.track_country_info)
-
+        genreNameTextView = findViewById(R.id.track_genre)
+        addToPlaylistButton = findViewById(R.id.button_add)
+        playButton = findViewById(R.id.button_play)
+        addToFavoritesButton = findViewById(R.id.button_like)
+        currentTrackTime = findViewById(R.id.track_duration)
 
 
         findViewById<ImageView>(R.id.arrow).setOnClickListener {
@@ -46,6 +68,24 @@ class TrackActivity : AppCompatActivity() {
 
         val track = intent.getParcelableExtra<Track>("track")
         track?.let { fetchTrackData(it) }
+
+        screenReceiver = ScreenReceiver()
+        screenReceiver.playbackCallback = {
+            pausePlayer()
+        }
+
+        val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
+        registerReceiver(screenReceiver, filter)
+
+        val track = intent.getSerializableExtra(TRACK_DATA) as? Track
+
+        track?.let {
+            fetchTrackData(it)
+            preparePlayer()
+        }
+
+
+
     }
 
     private fun fetchTrackData(track: Track) {
@@ -87,6 +127,16 @@ class TrackActivity : AppCompatActivity() {
         val minutes = (trackTimeMillis / 1000) / 60
         val seconds = (trackTimeMillis / 1000) % 60
         return String.format("%02d:%02d", minutes, seconds)
+    }
+
+    companion object {
+        const val FORMAT_TIME_TS = "%02d:%02d"
+        const val PATTERN_DATE_FORMAT = "yyyy"
+        const val TRACK_DATA = "TRACK_DATA"
+        const val STATE_DEFAULT = 0
+        const val STATE_PREPARED = 1
+        const val STATE_PLAYING = 2
+        const val STATE_PAUSED = 3
     }
 
     }
