@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker
 
+import android.annotation.SuppressLint
 import android.app.usage.NetworkStats.Bucket.STATE_DEFAULT
 import android.content.Intent
 import android.content.IntentFilter
@@ -7,6 +8,7 @@ import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -35,13 +37,14 @@ class TrackActivity : AppCompatActivity() {
     private lateinit var playButton: ImageView
     private lateinit var addToFavoritesButton: ImageView
     private lateinit var currentTrackTime: TextView
+    private lateinit var backButton: ImageView
 
     private var mediaPlayer = MediaPlayer()
     private var playerState = STATE_DEFAULT
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var screenReceiver: ScreenReceiver
 
-    private var songBridge: String = ""
+    private var songUrl: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,14 +63,22 @@ class TrackActivity : AppCompatActivity() {
         playButton = findViewById(R.id.button_play)
         addToFavoritesButton = findViewById(R.id.button_like)
         currentTrackTime = findViewById(R.id.track_duration)
+        backButton = findViewById(R.id.arrow)
 
 
-        findViewById<ImageView>(R.id.arrow).setOnClickListener {
-            finish()
-        }
+//        findViewById<ImageView>(R.id.arrow).setOnClickListener {
+//            finish()
+//        }
 
         val track = intent.getParcelableExtra<Track>("track")
-        track?.let { fetchTrackData(it) }
+        Log.d("TrackActivity", "Track received: $track")
+        track?.let {
+            Log.d("TrackActivity", "Track Name: ${it.trackName}, Artist: ${it.artistName}, Preview URL: ${it.previewUrl}")
+            fetchTrackData(it)
+            preparePlayer()
+        } ?: run {
+            Log.e("TrackActivity", "Track is null!")
+        }
 
         screenReceiver = ScreenReceiver()
         screenReceiver.playbackCallback = {
@@ -77,15 +88,40 @@ class TrackActivity : AppCompatActivity() {
         val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
         registerReceiver(screenReceiver, filter)
 
-        val track = intent.getSerializableExtra(TRACK_DATA) as? Track
-
-        track?.let {
-            fetchTrackData(it)
-            preparePlayer()
+        backButton.setOnClickListener{
+            mediaPlayer.pause()
+            mediaPlayer.release()
+            handler.removeCallbacksAndMessages(null)
+            onBackPressed()
         }
 
+        playButton.setOnClickListener {
+            playbackControl()
+            startCountdown()
+        }
+    }
 
+    private fun startCountdown() {
+        handler.post(object : Runnable {
+            @SuppressLint("DefaultLocale")
+            override fun run() {
+                if (mediaPlayer.isPlaying) {
+                    val currentPositionMillis = mediaPlayer.currentPosition
+                    val minutes = (currentPositionMillis / 1000) / 60
+                    val seconds = (currentPositionMillis / 1000) % 60
+                    val formattedTime = String.format("%02d:%02d", minutes, seconds)
+                    currentTrackTime.text = formattedTime
+                    handler.postDelayed(this, 1000)
 
+                    screenReceiver.playbackCallback = {
+                        pausePlayer()
+                    }
+                } else {
+                    handler.removeCallbacks(this)
+                    playButton.setBackgroundResource(R.drawable.button_play)
+                }
+            }
+        })
     }
 
     private fun fetchTrackData(track: Track) {
@@ -93,6 +129,11 @@ class TrackActivity : AppCompatActivity() {
         artistNameTextView.text = track.artistName
         trackTimeTextView.text = formatTrackTime(track.trackTimeMillis)
         countryTextView.text = track.country
+        collectionNameTextView.text = track.collectionName
+        releaseDateTextView.text = track.releaseDate
+        songUrl = track.previewUrl
+
+        Log.d("Track", "Preview URL: $songUrl")
 
         if (!track.collectionName.isNullOrEmpty()) {
             collectionNameTextView.text = track.collectionName
@@ -127,6 +168,57 @@ class TrackActivity : AppCompatActivity() {
         val minutes = (trackTimeMillis / 1000) / 60
         val seconds = (trackTimeMillis / 1000) % 60
         return String.format("%02d:%02d", minutes, seconds)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
+    private fun preparePlayer() {
+        if (!songUrl.isNullOrEmpty()) {
+            mediaPlayer.setDataSource(songUrl)
+            mediaPlayer.prepareAsync()
+            mediaPlayer.setOnPreparedListener {
+                playerState = STATE_PREPARED
+            }
+            mediaPlayer.setOnCompletionListener {
+                playerState = STATE_PREPARED
+            }
+        }
+    }
+
+    private fun startPlayer() {
+        if (playerState == STATE_PREPARED) {
+            mediaPlayer.start()
+            playButton.setBackgroundResource(R.drawable.button_pause)
+            playerState = STATE_PLAYING
+        }
+    }
+
+    private fun pausePlayer() {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.pause()
+            playButton.setBackgroundResource(R.drawable.button_play)
+            playerState = STATE_PAUSED
+        }
+    }
+
+    private fun playbackControl() {
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(screenReceiver)
     }
 
     companion object {
