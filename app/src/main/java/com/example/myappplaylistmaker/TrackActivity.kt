@@ -11,6 +11,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -38,11 +39,15 @@ class TrackActivity : AppCompatActivity() {
     private lateinit var addToFavoritesButton: ImageView
     private lateinit var currentTrackTime: TextView
     private lateinit var backButton: ImageView
+    private lateinit var progressBar: ProgressBar
 
-    private var mediaPlayer = MediaPlayer()
+
     private var playerState = STATE_DEFAULT
     private val handler = Handler(Looper.getMainLooper())
-    private lateinit var screenReceiver: ScreenReceiver
+    private val screenReceiver: ScreenReceiver by lazy { ScreenReceiver() }
+    private val mediaPlayer: MediaPlayer by lazy { MediaPlayer() }
+    private var currentPositionMillis = 0
+    private var playerIsPrepared: Boolean = false
 
     private var songUrl: String = ""
 
@@ -61,43 +66,38 @@ class TrackActivity : AppCompatActivity() {
         genreNameTextView = findViewById(R.id.track_genre)
         addToPlaylistButton = findViewById(R.id.button_add)
         playButton = findViewById(R.id.button_play)
+        progressBar = findViewById(R.id.button_play_progress_bar)
         addToFavoritesButton = findViewById(R.id.button_like)
         currentTrackTime = findViewById(R.id.track_duration)
         backButton = findViewById(R.id.arrow)
 
-
-//        findViewById<ImageView>(R.id.arrow).setOnClickListener {
-//            finish()
-//        }
-
         val track = intent.getParcelableExtra<Track>("track")
-        Log.d("TrackActivity", "Track received: $track")
         track?.let {
-            Log.d("TrackActivity", "Track Name: ${it.trackName}, Artist: ${it.artistName}, Preview URL: ${it.previewUrl}")
             fetchTrackData(it)
             preparePlayer()
-        } ?: run {
-            Log.e("TrackActivity", "Track is null!")
         }
 
-        screenReceiver = ScreenReceiver()
         screenReceiver.playbackCallback = {
-            pausePlayer()
+            playerState = STATE_PLAYING
+            playbackControl()
         }
 
         val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
         registerReceiver(screenReceiver, filter)
 
-        backButton.setOnClickListener{
-            mediaPlayer.pause()
-            mediaPlayer.release()
-            handler.removeCallbacksAndMessages(null)
+        backButton.setOnClickListener {
             onBackPressed()
         }
 
         playButton.setOnClickListener {
-            playbackControl()
-            startCountdown()
+            onPlayPauseButtonClick()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (playerState == STATE_PLAYING && playerIsPrepared) {
+            pausePlayer()
         }
     }
 
@@ -106,19 +106,17 @@ class TrackActivity : AppCompatActivity() {
             @SuppressLint("DefaultLocale")
             override fun run() {
                 if (mediaPlayer.isPlaying) {
-                    val currentPositionMillis = mediaPlayer.currentPosition
+                    currentPositionMillis = mediaPlayer.currentPosition
                     val minutes = (currentPositionMillis / 1000) / 60
                     val seconds = (currentPositionMillis / 1000) % 60
                     val formattedTime = String.format("%02d:%02d", minutes, seconds)
                     currentTrackTime.text = formattedTime
                     handler.postDelayed(this, 1000)
 
-                    screenReceiver.playbackCallback = {
-                        pausePlayer()
-                    }
                 } else {
+                    mediaPlayer.pause()
+                    playButton.setImageResource(R.drawable.button_play)
                     handler.removeCallbacks(this)
-                    playButton.setBackgroundResource(R.drawable.button_play)
                 }
             }
         })
@@ -133,8 +131,6 @@ class TrackActivity : AppCompatActivity() {
         releaseDateTextView.text = track.releaseDate
         songUrl = track.previewUrl
 
-        Log.d("Track", "Preview URL: $songUrl")
-
         if (!track.collectionName.isNullOrEmpty()) {
             collectionNameTextView.text = track.collectionName
             collectionNameTextView.visibility = View.VISIBLE
@@ -144,7 +140,7 @@ class TrackActivity : AppCompatActivity() {
 
         val releaseData = track.releaseDate
         if (releaseData.length >= 4) {
-            val year = releaseData.substring(0,4)
+            val year = releaseData.substring(0, 4)
             releaseDateTextView.text = year
         }
 
@@ -172,46 +168,78 @@ class TrackActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
+        playerIsPrepared = false
+        mediaPlayer.release()
+        handler.removeCallbacksAndMessages(null)
         finish()
     }
 
     private fun preparePlayer() {
-        if (!songUrl.isNullOrEmpty()) {
+        if (!songUrl.isNullOrEmpty() && !playerIsPrepared) {
+            mediaPlayer.reset()
             mediaPlayer.setDataSource(songUrl)
             mediaPlayer.prepareAsync()
             mediaPlayer.setOnPreparedListener {
                 playerState = STATE_PREPARED
+                playerIsPrepared = true
+                progressBar.visibility = View.GONE
+                playButton.visibility = View.VISIBLE
+                currentTrackTime.visibility = View.VISIBLE
             }
             mediaPlayer.setOnCompletionListener {
+                currentPositionMillis = 0
+                currentTrackTime.text = String.format("%02d:%02d", 0, 0)
                 playerState = STATE_PREPARED
             }
         }
     }
 
     private fun startPlayer() {
-        if (playerState == STATE_PREPARED) {
-            mediaPlayer.start()
-            playButton.setBackgroundResource(R.drawable.button_pause)
-            playerState = STATE_PLAYING
-        }
+        mediaPlayer.start()
+        startCountdown()
+        playButton.setImageResource(R.drawable.button_pause)
+        playerState = STATE_PLAYING
     }
 
     private fun pausePlayer() {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.pause()
-            playButton.setBackgroundResource(R.drawable.button_play)
+            playButton.setImageResource(R.drawable.button_play)
             playerState = STATE_PAUSED
         }
     }
 
     private fun playbackControl() {
+        Log.e("PlayerState", "${playerState}")
         when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
+                playButton.isEnabled = true
             }
 
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
+                playButton.isEnabled = true
+            }
+        }
+    }
+
+    private fun onPlayPauseButtonClick() {
+        if (playerIsPrepared) {
+            playbackControl()
+        } else {
+            playButton.visibility = View.INVISIBLE
+            currentTrackTime.visibility = View.INVISIBLE
+            progressBar.visibility = View.VISIBLE
+
+            preparePlayer()
+            mediaPlayer.setOnPreparedListener {
+                playerState = STATE_PREPARED
+                playerIsPrepared = true
+                progressBar.visibility = View.GONE
+                playButton.visibility = View.VISIBLE
+                currentTrackTime.visibility = View.VISIBLE
+                playbackControl()
             }
         }
     }
@@ -222,13 +250,11 @@ class TrackActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val FORMAT_TIME_TS = "%02d:%02d"
-        const val PATTERN_DATE_FORMAT = "yyyy"
-        const val TRACK_DATA = "TRACK_DATA"
+
         const val STATE_DEFAULT = 0
         const val STATE_PREPARED = 1
         const val STATE_PLAYING = 2
         const val STATE_PAUSED = 3
     }
 
-    }
+}

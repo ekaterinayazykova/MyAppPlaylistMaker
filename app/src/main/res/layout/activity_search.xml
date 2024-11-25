@@ -103,9 +103,8 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminate="false"
+        android:indeterminate="true"
         app:indicatorColor="@color/switch_thumb_dark"
-        android:progress="75"
         android:background="@android:color/transparent" />
 
     <TextView
