@@ -10,7 +10,9 @@ data class Track (
         val trackTimeMillis: Long,
         val collectionName: String,
         val releaseDate: String,
-        val country: String
+        val country: String,
+        val previewUrl: String
+
     ) : Parcelable {
         constructor(parcel: Parcel) : this(
             parcel.readString() ?: "",
@@ -19,6 +21,7 @@ data class Track (
             parcel.readLong(),
             parcel.readString() ?: "",
             parcel.readString().toString(),
+            parcel.readString() ?: "",
             parcel.readString() ?: ""
         )
 
@@ -30,6 +33,7 @@ data class Track (
         parcel.writeString(collectionName)
         parcel.writeString(releaseDate)
         parcel.writeString(country)
+        parcel.writeString(previewUrl)
     }
 
     override fun describeContents(): Int {
