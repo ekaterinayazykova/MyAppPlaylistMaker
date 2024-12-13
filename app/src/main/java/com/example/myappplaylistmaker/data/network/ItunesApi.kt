@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker
+package com.example.myappplaylistmaker.data.network
 
 import retrofit2.Call
 import retrofit2.http.GET

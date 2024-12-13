@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker
+package com.example.myappplaylistmaker.domain.entity
 
 import android.os.Parcel
 import android.os.Parcelable
