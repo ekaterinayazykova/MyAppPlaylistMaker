@@ -16,6 +16,7 @@ import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 import com.example.myappplaylistmaker.domain.interactor.SearchHistoryManagerInteractor
 import com.example.myappplaylistmaker.domain.repository.SearchHistoryManagerRepository
 import com.example.myappplaylistmaker.domain.repository.TrackRepository
+import com.example.myappplaylistmaker.domain.impl.SearchTrackUseCaseImpl
 import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
 
 object Creator {
@@ -25,12 +26,13 @@ object Creator {
         return MediaPlayerInteractorImpl(mediaPlayerRepository)
     }
 
-    private fun getTrackRepository(): TrackRepository {
-        return TrackRepositoryImpl(provideNetworkClient())
+    private fun getTrackRepository(context: Context): TrackRepository {
+        return TrackRepositoryImpl(context, provideNetworkClient())
     }
 
-    fun provideTrackUseCase(): SearchTrackUseCase {
-        return SearchTrackUseCase(getTrackRepository())
+    fun provideTrackUseCase(context: Context): SearchTrackUseCase {
+        val repository = getTrackRepository(context)
+        return SearchTrackUseCaseImpl(context, repository)
     }
 
     private fun provideNetworkClient(): NetworkClient {

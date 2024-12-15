@@ -24,5 +24,7 @@
     <string name="clean_history" translatable="false">Очистить историю</string>
     <string name="iTunesLink" translatable="false">https://itunes.apple.com/</string>
     <string name="button_back" translatable="false">button_back</string>
-
+    <string name="network_error" translatable="false">Произошла сетевая ошибка</string>
+    <string name="error_occured" translatable="false">Произошла ошибка:</string>
+    <string name="goes_wrong" translatable="false">Что-то пошло не так</string>
 </resources>

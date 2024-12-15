@@ -1,6 +1,9 @@
 package com.example.myappplaylistmaker.data.impl
 
+import android.content.Context
+import android.provider.Settings.Secure.getString
 import android.util.Log
+import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.data.converter.TrackConverter
 import com.example.myappplaylistmaker.data.network.NetworkClient
 import com.example.myappplaylistmaker.data.network.TrackResponse
@@ -8,10 +11,9 @@ import com.example.myappplaylistmaker.domain.entity.Resource
 import com.example.myappplaylistmaker.domain.repository.TrackRepository
 import com.example.myappplaylistmaker.domain.entity.Track
 
-class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepository {
+class TrackRepositoryImpl(private val context: Context, private val networkClient: NetworkClient) : TrackRepository {
 
     override fun searchTracks(artistOrSongName: String): Resource<List<Track>> {
-        Log.d("TrackRepository", "Отправка запроса: $artistOrSongName")
         return try {
         val response = networkClient.doRequest(artistOrSongName)
 
@@ -19,11 +21,10 @@ class TrackRepositoryImpl(private val networkClient: NetworkClient) : TrackRepos
             val tracks = (response as TrackResponse).results.map { TrackConverter.map(it) }
             return Resource.Success(tracks)
         } else {
-            return Resource.Error("Произошла сетевая ошибка")
+            return Resource.Error(context.getString(R.string.network_error))
         }
     } catch (e: Exception) {
-            Log.e("TrackRepository", "Ошибка при выполнении запроса", e)
-            Resource.Error("Произошла ошибка: ${e.message}")
+            Resource.Error("${context.getString(R.string.error_occured)} ${e.message}")
         }
     }
 }

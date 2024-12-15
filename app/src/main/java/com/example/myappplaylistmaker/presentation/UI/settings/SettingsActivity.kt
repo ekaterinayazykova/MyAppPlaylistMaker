@@ -56,9 +56,6 @@ class SettingsActivity : AppCompatActivity() {
         buttonAcception.setOnClickListener {
             acceptTermsOfUse()
         }
-
-
-
     }
 
     private fun shareApp() {

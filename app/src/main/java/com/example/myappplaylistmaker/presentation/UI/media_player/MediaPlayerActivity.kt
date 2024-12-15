@@ -15,9 +15,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.core.Creator
-import com.example.myappplaylistmaker.data.NetworkClass
+import com.example.myappplaylistmaker.presentation.utils.NetworkClass
 import com.example.myappplaylistmaker.domain.entity.PlayerState
-//import com.example.myappplaylistmaker.data.ScreenReceiver
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 import com.example.myappplaylistmaker.presentation.utils.Utils
@@ -43,8 +42,6 @@ class MediaPlayerActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var songUrl: String = ""
     private var playerState = PlayerState.DEFAULT
-
-    //    private val screenReceiver: ScreenReceiver by lazy { ScreenReceiver() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,14 +70,6 @@ class MediaPlayerActivity : AppCompatActivity() {
             fetchTrackData(it)
             preparePlayer(track)
         }
-
-//        screenReceiver.playbackCallback = {
-//            playerState = STATE_PLAYING
-//            playbackControl()
-//        }
-
-//        val filter = IntentFilter(Intent.ACTION_SCREEN_OFF)
-//        registerReceiver(screenReceiver, filter)
 
         backButton.setOnClickListener {
             mediaPlayerInteractor.stop()
@@ -138,9 +127,11 @@ class MediaPlayerActivity : AppCompatActivity() {
         }
 
         val releaseData = track.releaseDate
-        if (releaseData.length >= 4) {
-            val year = releaseData.substring(0, 4)
-            releaseDateTextView.text = year
+        if (releaseData != null) {
+            if (releaseData.length >= 4) {
+                val year = releaseData.substring(0, 4)
+                releaseDateTextView.text = year
+            }
         }
 
         var artworkUrl = track.artworkUrl100
@@ -178,21 +169,6 @@ class MediaPlayerActivity : AppCompatActivity() {
         }
     }
 
-//            mediaPlayer.setOnPreparedListener {
-//                playerState = STATE_PREPARED
-//                playerIsPrepared = true
-//                progressBar.visibility = View.GONE
-//                playButton.visibility = View.VISIBLE
-//                currentTrackTime.visibility = View.VISIBLE
-//            }
-//            mediaPlayer.setOnCompletionListener {
-//                currentPositionMillis = 0
-//                currentTrackTime.text = String.format("%02d:%02d", 0, 0)
-//                playerState = STATE_PREPARED
-//            }
-//        }
-//    }
-
         private fun startPlayer() {
             mediaPlayerInteractor.play()
             startCountdown()
@@ -209,7 +185,7 @@ class MediaPlayerActivity : AppCompatActivity() {
         }
 
         private fun playbackControl() {
-//            Log.e("PlayerState", "${playerState}")
+            Log.e("PlayerState", "${playerState}")
             when (playerState) {
                 PlayerState.PLAYING -> pausePlayer()
                 PlayerState.PREPARED, PlayerState.PAUSED -> startPlayer()
@@ -218,31 +194,4 @@ class MediaPlayerActivity : AppCompatActivity() {
                 }
             }
         }
-
-//        private fun onPlayPauseButtonClick() {
-//            if (playerIsPrepared) {
-//                playbackControl()
-//            } else {
-//                playButton.visibility = View.INVISIBLE
-//                currentTrackTime.visibility = View.INVISIBLE
-//                progressBar.visibility = View.VISIBLE
-//
-//                preparePlayer()
-//                mediaPlayerInteractor.setOnPreparedListener {
-//                    playerState = PlayerState.PREPARED
-//                    playerIsPrepared = true
-//                    progressBar.visibility = View.GONE
-//                    playButton.visibility = View.VISIBLE
-//                    currentTrackTime.visibility = View.VISIBLE
-//                    playbackControl()
-//                }
-//            }
-//        }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-////        unregisterReceiver(screenReceiver)
-//    }
-
-
     }

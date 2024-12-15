@@ -4,13 +4,13 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Track (
-        val trackName: String,
-        val artistName: String,
+        val trackName: String? = null,
+        val artistName: String? = null,
         val artworkUrl100: String,
-        val trackTimeMillis: Long,
-        val collectionName: String,
-        val releaseDate: String,
-        val country: String,
+        val trackTimeMillis: Long =0L,
+        val collectionName: String? = null,
+        val releaseDate: String? = null,
+        val country: String? = null,
         val previewUrl: String
 
     ) : Parcelable {

@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myappplaylistmaker.core.Creator
 import com.example.myappplaylistmaker.R
-import com.example.myappplaylistmaker.data.impl.SearchHistoryManagerImpl
 import com.example.myappplaylistmaker.domain.consumer.Consumer
 import com.example.myappplaylistmaker.domain.consumer.ConsumerData
 import com.example.myappplaylistmaker.domain.entity.Track
@@ -49,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
 
-    private val getTrackListUseCase = Creator.provideTrackUseCase()
+    private val getTrackListUseCase = Creator.provideTrackUseCase(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()

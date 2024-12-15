@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.myappplaylistmaker.data.NetworkClass
+import com.example.myappplaylistmaker.presentation.utils.NetworkClass
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.utils.Utils
