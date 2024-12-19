@@ -1,7 +1,5 @@
-package com.example.myappplaylistmaker
+package com.example.myappplaylistmaker.presentation.UI.search
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.myappplaylistmaker.presentation.utils.NetworkClass
+import com.example.myappplaylistmaker.R
+import com.example.myappplaylistmaker.domain.entity.Track
+import com.example.myappplaylistmaker.presentation.utils.Utils
 
 class UnifiedTrackAdapter(
     private var tracks: List<Track> = emptyList(),

@@ -1,9 +1,6 @@
-package com.example.myappplaylistmaker
+package com.example.myappplaylistmaker.presentation.UI.settings
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.res.Resources.Theme
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
@@ -12,20 +9,33 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SwitchCompat
+import com.example.myappplaylistmaker.core.Creator
+import com.example.myappplaylistmaker.R
+import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
 
 class SettingsActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+    private lateinit var themeManagerInteractor: ThemeManagerInteractor
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+
+        themeManagerInteractor = Creator.createThemeManagerInteractor(this)
+        val isNightMode = themeManagerInteractor.getThemeModeState()
+        AppCompatDelegate.setDefaultNightMode(
+            if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
+
+        enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
         val switchNightMode = findViewById<SwitchCompat>(R.id.switchTheme)
-        switchNightMode.isChecked = ThemeManager.getNightModeState(this)
+        switchNightMode.isChecked = isNightMode
 
         switchNightMode.setOnCheckedChangeListener { _, isChecked ->
-            ThemeManager.setNightModeState(this, isChecked)
+            themeManagerInteractor.setNightModeState(isChecked)
+            recreate()
         }
 
         findViewById<ImageView>(R.id.arrow).setOnClickListener {
@@ -46,9 +56,6 @@ class SettingsActivity : AppCompatActivity() {
         buttonAcception.setOnClickListener {
             acceptTermsOfUse()
         }
-
-
-
     }
 
     private fun shareApp() {

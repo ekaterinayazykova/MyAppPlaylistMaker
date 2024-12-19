@@ -1,27 +1,31 @@
-package com.example.myappplaylistmaker
+package com.example.myappplaylistmaker.presentation.UI.main
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.isVisible
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.example.myappplaylistmaker.core.Creator
+import com.example.myappplaylistmaker.R
+import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
+import com.example.myappplaylistmaker.presentation.UI.search.SearchActivity
+import com.example.myappplaylistmaker.presentation.UI.settings.SettingsActivity
+import com.example.myappplaylistmaker.presentation.UI.library.LibraryActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var themeManagerInteractor: ThemeManagerInteractor
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        ThemeManager.setNightModeState(this, ThemeManager.getNightModeState(this))
+        themeManagerInteractor = Creator.createThemeManagerInteractor(this)
+        val isNightMode = themeManagerInteractor.getThemeModeState()
+        AppCompatDelegate.setDefaultNightMode(
+            if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
 
         super.onCreate(savedInstanceState)
             enableEdgeToEdge()
