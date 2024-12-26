@@ -1,4 +1,7 @@
 package com.example.myappplaylistmaker.domain.use_case
 
-class SettingsOptionsUseCase {
+interface SettingsOptionsUseCase {
+    fun shareApp()
+    fun writeSupport()
+    fun acceptTermsOfUse()
 }

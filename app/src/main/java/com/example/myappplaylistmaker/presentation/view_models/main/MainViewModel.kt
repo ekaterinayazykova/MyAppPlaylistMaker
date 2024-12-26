@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.presentation.view_models
+package com.example.myappplaylistmaker.presentation.view_models.main
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,19 +7,19 @@ import androidx.lifecycle.ViewModel
 
 class MainViewModel : ViewModel() {
 
-    private val option = MutableLiveData<MenuOption?>()
-    val chooseOption: LiveData<MenuOption?> get() = option
+    private val mainOption = MutableLiveData<MenuOption?>()
+    val chooseOption: LiveData<MenuOption?> get() = mainOption
 
     fun openSearch() {
-        option.value = MenuOption.SEARCH
+        mainOption.value = MenuOption.SEARCH
     }
 
     fun openLibrary() {
-        option.value = MenuOption.LIBRARY
+        mainOption.value = MenuOption.LIBRARY
     }
 
     fun openSettings() {
-        option.value = MenuOption.SETTINGS
+        mainOption.value = MenuOption.SETTINGS
     }
 
     override fun onCleared() {

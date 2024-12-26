@@ -1,4 +1,20 @@
 package com.example.myappplaylistmaker.presentation.view_models.settings
 
-class SettingsViewModelFactory {
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
+import com.example.myappplaylistmaker.domain.use_case.SettingsOptionsUseCase
+
+class SettingsViewModelFactory (
+    private val themeManagerInteractor: ThemeManagerInteractor,
+    private val settingsOptionsUseCase: SettingsOptionsUseCase
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return SettingsViewModel(themeManagerInteractor, settingsOptionsUseCase) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel Class")
+
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.presentation.UI.search
+package com.example.myappplaylistmaker.presentation.ui.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -27,7 +27,7 @@ import com.example.myappplaylistmaker.domain.consumer.Consumer
 import com.example.myappplaylistmaker.domain.consumer.ConsumerData
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.SearchHistoryManagerInteractor
-import com.example.myappplaylistmaker.presentation.UI.media_player.MediaPlayerActivity
+import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
 import com.google.android.material.button.MaterialButton
 class SearchActivity : AppCompatActivity() {
 
@@ -231,7 +231,6 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_QUERY_KEY, searchQuery)
@@ -272,5 +271,4 @@ class SearchActivity : AppCompatActivity() {
         trackIntent.putExtra("track", track)
         startActivity(trackIntent)
     }
-
 }

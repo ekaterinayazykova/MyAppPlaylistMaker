@@ -1,4 +1,7 @@
 package com.example.myappplaylistmaker.domain.repository
 
-class SettingsOptionsRepository {
+interface SettingsOptionsRepository {
+    fun shareApp()
+    fun writeSupport()
+    fun acceptTermsOfUse()
 }

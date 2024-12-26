@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.myappplaylistmaker.data.impl.MediaPlayerRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.SearchHistoryManagerImpl
+import com.example.myappplaylistmaker.data.impl.SettingsOptionsRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.ThemeManagerRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.TrackRepositoryImpl
 import com.example.myappplaylistmaker.data.network.NetworkClient
@@ -17,7 +18,10 @@ import com.example.myappplaylistmaker.domain.interactor.SearchHistoryManagerInte
 import com.example.myappplaylistmaker.domain.repository.SearchHistoryManagerRepository
 import com.example.myappplaylistmaker.domain.repository.TrackRepository
 import com.example.myappplaylistmaker.domain.impl.SearchTrackUseCaseImpl
+import com.example.myappplaylistmaker.domain.impl.SettingsOptionsUseCaseImpl
+import com.example.myappplaylistmaker.domain.repository.SettingsOptionsRepository
 import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
+import com.example.myappplaylistmaker.domain.use_case.SettingsOptionsUseCase
 
 object Creator {
 
@@ -35,7 +39,7 @@ object Creator {
         return SearchTrackUseCaseImpl(context, repository)
     }
 
-    private fun provideNetworkClient(): NetworkClient {
+    fun provideNetworkClient(): NetworkClient {
         return RetrofitNetworkClient()
     }
 
@@ -51,5 +55,18 @@ object Creator {
         val repository = createSearchHistoryManagerRepository(sharedPreferences)
         return SearchHistoryManagerInteractorImpl(repository)
     }
+
+    fun createSettingsOptionsUseCase(context: Context) : SettingsOptionsUseCase {
+        val repository = createSettingsRepository(context)
+        return SettingsOptionsUseCaseImpl(repository)
+    }
+
+    fun createSettingsRepository(context: Context) : SettingsOptionsRepository {
+        return SettingsOptionsRepositoryImpl(context)
+    }
+
+//    private fun createSettingsOptionsRepository(): SettingsOptionsRepository {
+//        return createSettingsOptionsUseCase()
+//    }
 
 }

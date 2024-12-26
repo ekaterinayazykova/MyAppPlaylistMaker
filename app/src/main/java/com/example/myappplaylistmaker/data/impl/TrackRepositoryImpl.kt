@@ -1,10 +1,9 @@
 package com.example.myappplaylistmaker.data.impl
 
 import android.content.Context
-import android.provider.Settings.Secure.getString
-import android.util.Log
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.data.converter.TrackConverter
+import com.example.myappplaylistmaker.data.model.Response
 import com.example.myappplaylistmaker.data.network.NetworkClient
 import com.example.myappplaylistmaker.data.network.TrackResponse
 import com.example.myappplaylistmaker.domain.entity.Resource
@@ -15,15 +14,20 @@ class TrackRepositoryImpl(private val context: Context, private val networkClien
 
     override fun searchTracks(artistOrSongName: String): Resource<List<Track>> {
         return try {
-        val response = networkClient.doRequest(artistOrSongName)
-
-        if (response.resultCode == 200) {
-            val tracks = (response as TrackResponse).results.map { TrackConverter.map(it) }
-            return Resource.Success(tracks)
-        } else {
-            return Resource.Error(context.getString(R.string.network_error))
+        val response = networkClient.doRequest(context,artistOrSongName)
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error(context.getString(R.string.no_internet))
+            }
+            200 -> {
+                Resource.Success((response as TrackResponse).results.map { TrackConverter.map(it) })
+            }
+            else -> {
+            Resource.Error(context.getString(R.string.network_error))
         }
-    } catch (e: Exception) {
+    }
+        }
+        catch (e: Exception) {
             Resource.Error("${context.getString(R.string.error_occured)} ${e.message}")
         }
     }

@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.utils
+package com.example.myappplaylistmaker.domain.entity
 
 sealed interface Resource<T> {
     data class Success<T>(val data: T) : Resource<T>

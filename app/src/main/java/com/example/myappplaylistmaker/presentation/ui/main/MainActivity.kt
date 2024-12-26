@@ -1,22 +1,26 @@
-package com.example.myappplaylistmaker.presentation.UI.main
+package com.example.myappplaylistmaker.presentation.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ViewModelProvider
+import com.example.myappplaylistmaker.presentation.view_models.main.MainViewModel
 import com.example.myappplaylistmaker.core.Creator
-import com.example.myappplaylistmaker.R
+import com.example.myappplaylistmaker.databinding.ActivityMainBinding
 import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
-import com.example.myappplaylistmaker.presentation.UI.search.SearchActivity
-import com.example.myappplaylistmaker.presentation.UI.settings.SettingsActivity
-import com.example.myappplaylistmaker.presentation.UI.library.LibraryActivity
+import com.example.myappplaylistmaker.presentation.ui.search.SearchActivity
+import com.example.myappplaylistmaker.presentation.ui.settings.SettingsActivity
+import com.example.myappplaylistmaker.presentation.ui.library.LibraryActivity
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var themeManagerInteractor: ThemeManagerInteractor
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MainViewModel
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,36 +33,42 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
             enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val buttonSearch = findViewById<Button>(R.id.search)
-        buttonSearch.setOnClickListener {
-            openSearch()
-        }
-        val buttonMedia = findViewById<Button>(R.id.media)
-        buttonMedia.setOnClickListener {
-            openLibrary()
-        }
+        Log.e("AAA", "Activity created")
 
-        val buttonSettings = findViewById<Button>(R.id.settings)
-        buttonSettings.setOnClickListener{
-            openSettings()
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        binding.search.setOnClickListener {
+            viewModel.openSearch()
         }
 
+        binding.media.setOnClickListener {
+            viewModel.openLibrary()
+        }
+
+        binding.settings.setOnClickListener{
+            viewModel.openSettings()
+        }
+
+        viewModel.chooseOption.observe(this) { menuOption ->
+            menuOption?.let {
+                when (it) {
+                    MainViewModel.MenuOption.SEARCH -> {
+                        startActivity(Intent(this, SearchActivity::class.java))
+                    }
+                    MainViewModel.MenuOption.LIBRARY -> {
+                        startActivity(Intent(this, LibraryActivity::class.java))
+                    }
+                    MainViewModel.MenuOption.SETTINGS -> {
+                        startActivity(Intent(this, SettingsActivity::class.java))
+                    }
+                }
+            }
+        }
     }
 
-    private fun openSearch() {
-        val searchActivity = Intent(this, SearchActivity:: class.java)
-        startActivity(searchActivity)
-    }
 
-    private fun openLibrary() {
-        val libraryActivity = Intent(this, LibraryActivity:: class.java)
-        startActivity(libraryActivity)
-    }
 
-    private fun openSettings() {
-        val settingsIntent = Intent(this, SettingsActivity::class.java)
-        startActivity(settingsIntent)
-    }
 }
