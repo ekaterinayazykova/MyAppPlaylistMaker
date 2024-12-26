@@ -1,6 +1,4 @@
-package com.example.myappplaylistmaker.domain.entity
-
-import com.example.myappplaylistmaker.data.model.Response
+package com.example.myappplaylistmaker.utils
 
 sealed interface Resource<T> {
     data class Success<T>(val data: T) : Resource<T>
