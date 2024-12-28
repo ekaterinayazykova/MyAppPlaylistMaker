@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.core
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.example.myappplaylistmaker.data.impl.MediaPlayerRepositoryImpl
@@ -24,6 +25,12 @@ import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
 import com.example.myappplaylistmaker.domain.use_case.SettingsOptionsUseCase
 
 object Creator {
+
+    lateinit var context: Application
+
+    fun initApplication(application: Application) {
+        this.context = application
+    }
 
     fun createPlayer(): MediaPlayerInteractor {
         val mediaPlayerRepository = MediaPlayerRepositoryImpl()

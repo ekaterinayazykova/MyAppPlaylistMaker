@@ -4,177 +4,195 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myappplaylistmaker.core.Creator
-import com.example.myappplaylistmaker.R
-import com.example.myappplaylistmaker.domain.consumer.Consumer
-import com.example.myappplaylistmaker.domain.consumer.ConsumerData
+import com.example.myappplaylistmaker.databinding.ActivitySearchBinding
 import com.example.myappplaylistmaker.domain.entity.Track
-import com.example.myappplaylistmaker.domain.interactor.SearchHistoryManagerInteractor
 import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
-import com.google.android.material.button.MaterialButton
+import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
+import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModelFactory
+
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var editText: EditText
-    private lateinit var buttonClear: MaterialButton
-    private lateinit var buttonUpdate: MaterialButton
-    private lateinit var requestFocusButton: Button
+    private lateinit var binding: ActivitySearchBinding
+    private lateinit var searchViewModel: SearchViewModel
+
     private lateinit var recyclerView: RecyclerView
-    private lateinit var noSongPlaceholder: LinearLayout
-    private lateinit var noInternetPlaceholder: LinearLayout
     private lateinit var unifiedTrackAdapter: UnifiedTrackAdapter
     private var searchQuery: String = ""
     private var lastQuery: String? = null
-    private lateinit var yourSearch: TextView
-    private lateinit var cleanHistoryButton: Button
-    private lateinit var progressBar: ProgressBar
-    private lateinit var searchHistoryManager: SearchHistoryManagerInteractor
 
     private val handler = Handler(Looper.getMainLooper())
-
-    private val getTrackListUseCase = Creator.provideTrackUseCase(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         hideKeyboard(window.decorView.rootView)
+        recyclerView = binding.trackList
 
-        editText = findViewById(R.id.edit_text)
-        requestFocusButton = findViewById(R.id.requestFocusButton)
-        buttonClear = findViewById(R.id.clearButton)
-        buttonUpdate = findViewById(R.id.update_button)
-        recyclerView = findViewById(R.id.track_list)
-        noSongPlaceholder = findViewById(R.id.no_song_placeholder)
-        noInternetPlaceholder = findViewById(R.id.no_internet_placeholder)
-        yourSearch = findViewById(R.id.yourSearch)
-        cleanHistoryButton = findViewById(R.id.clean_history_button)
-        progressBar = findViewById(R.id.progressBar)
+        searchViewModel = ViewModelProvider(this, SearchViewModelFactory(this))
+            .get(SearchViewModel::class.java)
 
-        findViewById<ImageView>(R.id.arrow).setOnClickListener {
+        binding.arrow.setOnClickListener {
             finish()
         }
 
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-        searchHistoryManager = Creator.createSearchHistoryManagerInteractor(sharedPreferences)
-        val historyTracks = searchHistoryManager.getSearchHistory()
-
+        editText()
+        observeState()
+        cleanHistory()
+        searchViewModel.getDataFromPref()
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
             openTrack(track)
-            searchHistoryManager.saveToHistory(track)
-            if (searchQuery.isEmpty())
-                unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
-        }
+            searchViewModel.saveToHistory(track)
 
-
-        if (searchHistoryManager.getSearchHistory().isNotEmpty()) {
-            unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
-            yourSearch.visibility = View.VISIBLE
-            recyclerView.visibility = View.VISIBLE
-            noSongPlaceholder.visibility = View.GONE
-            cleanHistoryButton.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
-        } else {
-            noSongPlaceholder.visibility = View.GONE
-            recyclerView.visibility = View.GONE
-            yourSearch.visibility = View.GONE
-            cleanHistoryButton.visibility = View.GONE
-            progressBar.visibility = View.GONE
-
-        }
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = unifiedTrackAdapter
-
-        cleanHistoryButton.setOnClickListener {
-            searchHistoryManager.clearHistory()
-            yourSearch.visibility = View.GONE
-            cleanHistoryButton.visibility = View.GONE
-            recyclerView.visibility = View.GONE
-        }
-
-        editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchQuery = s.toString()
-
-                buttonClear.visibility = if (s.isNullOrEmpty()) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
-
-                if (searchQuery.isEmpty()) {
-                    yourSearch.visibility = View.VISIBLE
-                    unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
-                    recyclerView.visibility = View.VISIBLE
-                    cleanHistoryButton.visibility = View.VISIBLE
-                } else {
-                    searchDebounce()
-                    yourSearch.visibility = View.GONE
-                    recyclerView.visibility = View.GONE
-                    cleanHistoryButton.visibility = View.GONE
-                }
+            if (searchQuery.isEmpty()) {
+                searchViewModel.getDataFromPref()
             }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        buttonClear.visibility = View.GONE
-        buttonClear.setOnClickListener {
-            hideKeyboard(window.decorView.rootView)
-            editText.text.clear()
-            buttonClear.visibility = View.GONE
-            yourSearch.visibility = View.VISIBLE
-            unifiedTrackAdapter.updateTracks(searchHistoryManager.getSearchHistory())
-            recyclerView.visibility = View.VISIBLE
-            cleanHistoryButton.visibility = View.VISIBLE
-            noSongPlaceholder.visibility = View.GONE
-            noInternetPlaceholder.visibility = View.GONE
-            editText.requestFocus()
         }
 
-        editText.setOnEditorActionListener { _, actionId, _ ->
+        searchViewModel._historyTrack.observe(this) { listOfTracks ->
+            if (listOfTracks?.isNotEmpty() == true) {
+                unifiedTrackAdapter.updateTracks(listOfTracks)
+                SearchViewModel.State.LoadedHistory
+            } else {
+                SearchViewModel.State.EmptyHistory
+            }
+        }
+
+        binding.trackList.layoutManager = LinearLayoutManager(this)
+        binding.trackList.adapter = unifiedTrackAdapter
+
+        binding.clearButton.visibility = View.GONE
+        binding.clearButton.setOnClickListener {
+            hideKeyboard(window.decorView.rootView)
+            binding.editText.text.clear()
+            unifiedTrackAdapter.updateTracks(searchViewModel.getDataFromPref())
+            binding.editText.requestFocus()
+            SearchViewModel.State.ClearEditText
+        }
+
+        binding.editText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 Log.d("SearchActivity", "Search query: $searchQuery")
-                performSearch(searchQuery)
+                searchViewModel.getDataFromServer(searchQuery)
                 true
             } else {
                 false
             }
         }
 
-        requestFocusButton.setOnClickListener {
-            editText.requestFocus()
-            showKeyboard(editText)
+        binding.requestFocusButton.setOnClickListener {
+            binding.editText.requestFocus()
+            showKeyboard(binding.editText)
         }
-        editText.requestFocus()
-        editText.postDelayed({ showKeyboard(editText) }, 100)
+
+        binding.editText.requestFocus()
+        binding.editText.postDelayed({ showKeyboard(binding.editText) }, 100)
         if (savedInstanceState != null) {
             restoreState(savedInstanceState)
         }
 
-        buttonUpdate.setOnClickListener {
+        binding.updateButton.setOnClickListener {
             lastQuery?.let { query ->
-                noInternetPlaceholder.visibility = View.GONE
                 performSearch(query)
+            }
+        }
+    }
+
+    private fun observeState() {
+        searchViewModel._searchState.observe(this) { state ->
+            when (state) {
+                is SearchViewModel.State.EmptyHistory -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.noSongPlaceholder.visibility = View.GONE
+                    binding.trackList.visibility = View.GONE
+                    binding.yourSearch.visibility = View.GONE
+                    binding.cleanHistoryButton.visibility = View.GONE
+                }
+
+                is SearchViewModel.State.LoadedHistory -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.yourSearch.visibility = View.VISIBLE
+                    binding.trackList.visibility = View.VISIBLE
+                    binding.noSongPlaceholder.visibility = View.GONE
+                    binding.cleanHistoryButton.visibility = View.VISIBLE
+                    binding.noInternetPlaceholder.visibility = View.GONE
+                }
+
+                is SearchViewModel.State.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.trackList.visibility = View.GONE
+                    binding.yourSearch.visibility = View.GONE
+                    binding.noSongPlaceholder.visibility = View.GONE
+                    binding.noInternetPlaceholder.visibility = View.GONE
+                    binding.cleanHistoryButton.visibility = View.GONE
+                }
+
+                is SearchViewModel.State.Error -> {
+                    binding.noInternetPlaceholder.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
+                    binding.trackList.visibility = View.GONE
+                    hideKeyboard(window.decorView.rootView)
+                    binding.noSongPlaceholder.visibility = View.GONE
+                    binding.yourSearch.visibility = View.GONE
+                    binding.cleanHistoryButton.visibility = View.GONE
+                }
+
+                is SearchViewModel.State.EmptyMainSearch -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.trackList.visibility = View.GONE
+                    binding.noSongPlaceholder.visibility = View.VISIBLE
+                    binding.yourSearch.visibility = View.GONE
+                    binding.cleanHistoryButton.visibility = View.GONE
+                }
+
+                is SearchViewModel.State.SuccessSearch -> {
+                    val tracks = state.listTracks
+
+                    unifiedTrackAdapter.updateTracks(tracks)
+                    binding.progressBar.visibility = View.GONE
+                    binding.yourSearch.visibility = View.GONE
+                    binding.trackList.visibility = View.VISIBLE
+                    hideKeyboard(window.decorView.rootView)
+                    binding.noSongPlaceholder.visibility = View.GONE
+                    binding.cleanHistoryButton.visibility = View.GONE
+                }
+
+                is SearchViewModel.State.ClearSearch -> {
+                    binding.yourSearch.visibility = View.VISIBLE
+                    binding.trackList.visibility = View.VISIBLE
+                    binding.cleanHistoryButton.visibility = View.VISIBLE
+                }
+
+                is SearchViewModel.State.ClearSearchNoQuery -> {
+                    binding.yourSearch.visibility = View.GONE
+                    binding.trackList.visibility = View.GONE
+                    binding.cleanHistoryButton.visibility = View.GONE
+                }
+
+                is SearchViewModel.State.ClearEditText -> {
+                    binding.clearButton.visibility = View.GONE
+                    binding.yourSearch.visibility = View.VISIBLE
+                    binding.trackList.visibility = View.VISIBLE
+                    binding.cleanHistoryButton.visibility = View.VISIBLE
+                    binding.noSongPlaceholder.visibility = View.GONE
+                    binding.noInternetPlaceholder.visibility = View.GONE
+                }
+
             }
         }
     }
@@ -189,59 +207,57 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun performSearch(query: String) {
-        progressBar.visibility = View.VISIBLE
-
-
-        getTrackListUseCase.execute(query, object : Consumer<List<Track>> {
-            override fun consume(data: ConsumerData<List<Track>>) {
-                runOnUiThread {
-                    when (data) {
-                        is ConsumerData.Data -> {
-                            noInternetPlaceholder.visibility = View.GONE
-                            progressBar.visibility = View.GONE
-
-                            val tracks = data.value
-
-                            if (tracks.isNotEmpty()) {
-                                unifiedTrackAdapter.updateTracks(tracks)
-                                recyclerView.visibility = View.VISIBLE
-                                hideKeyboard(window.decorView.rootView)
-                                noSongPlaceholder.visibility = View.GONE
-                                yourSearch.visibility = View.GONE
-                                cleanHistoryButton.visibility = View.GONE
-                            } else {
-                                recyclerView.visibility = View.GONE
-                                noSongPlaceholder.visibility = View.VISIBLE
-                            }
-                        }
-
-                        is ConsumerData.Error -> {
-                            noInternetPlaceholder.visibility = View.VISIBLE
-                            progressBar.visibility = View.GONE
-                            recyclerView.visibility = View.GONE
-                            hideKeyboard(window.decorView.rootView)
-                            noSongPlaceholder.visibility = View.GONE
-                            yourSearch.visibility = View.GONE
-                            cleanHistoryButton.visibility = View.GONE
-                            lastQuery = query
-                        }
-                    }
-                }
-            }
-        })
+        searchViewModel.getDataFromServer(query)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_QUERY_KEY, searchQuery)
-        outState.putBoolean(IS_CLEAR_BUTTON_VISIBLE_KEY, buttonClear.visibility == View.VISIBLE)
+        outState.putBoolean(
+            IS_CLEAR_BUTTON_VISIBLE_KEY,
+            binding.clearButton.visibility == View.VISIBLE
+        )
+    }
+
+    private fun editText() {
+        binding.editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchQuery = s.toString()
+
+                binding.clearButton.visibility = if (s.isNullOrEmpty()) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+
+                if (searchQuery.isEmpty()) {
+                    SearchViewModel.State.ClearSearchNoQuery
+                } else {
+                    lastQuery = searchQuery
+                    searchDebounce()
+                    SearchViewModel.State.ClearSearch
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+    }
+
+    private fun cleanHistory() {
+        binding.cleanHistoryButton.setOnClickListener {
+            Log.d("SearchActivity", "method is called")
+            searchViewModel.clearedList()
+            SearchViewModel.State.ClearSearchNoQuery
+        }
     }
 
     private fun restoreState(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
             searchQuery = savedInstanceState.getString(SEARCH_QUERY_KEY, "")
-            editText.setText(searchQuery)
-            editText.setSelection(searchQuery.length)
+            binding.editText.setText(searchQuery)
+            binding.editText.setSelection(searchQuery.length)
         }
     }
 

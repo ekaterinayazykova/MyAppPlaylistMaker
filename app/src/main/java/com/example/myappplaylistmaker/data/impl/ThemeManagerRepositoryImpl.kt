@@ -12,18 +12,20 @@ class ThemeManagerRepositoryImpl(context: Context) : ThemeManagerRepository {
     private val sharedPreferences =
         context.getSharedPreferences(THEME_PREFS, Context.MODE_PRIVATE)
 
-
     override fun getThemeModeState(): Boolean {
-        return sharedPreferences.getBoolean(THEME_KEY, false)
+        val state = sharedPreferences.getBoolean(THEME_KEY, false)
+        Log.d("ThemeManager", "Retrieved theme mode state: $state")
+        return state
     }
 
     override fun setNightModeState(setNightMode: Boolean) {
-        Log.e("SettingsActivity", "button clicked repository = $setNightMode")
+        Log.e("ThemeManager", "button clicked repository = $setNightMode")
         AppCompatDelegate.setDefaultNightMode(
             if (setNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         )
         sharedPreferences.edit()
             .putBoolean(THEME_KEY, setNightMode)
             .apply()
+        Log.d("ThemeManager", "Setting theme mode state: $setNightMode")
     }
 }

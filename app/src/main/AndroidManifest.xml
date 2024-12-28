@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".core.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,7 +23,8 @@
             android:name=".presentation.ui.search.SearchActivity"
             android:exported="false"
             android:windowSoftInputMode="stateVisible|adjustResize"
-            android:configChanges="uiMode|orientation|screenSize"/>
+
+            />
         <activity
             android:name=".presentation.ui.settings.SettingsActivity"
             android:exported="false" />

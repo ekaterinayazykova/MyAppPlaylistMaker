@@ -5,9 +5,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
+import com.example.myappplaylistmaker.core.App
 import com.example.myappplaylistmaker.presentation.view_models.main.MainViewModel
 import com.example.myappplaylistmaker.core.Creator
 import com.example.myappplaylistmaker.databinding.ActivityMainBinding
@@ -20,25 +22,24 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var themeManagerInteractor: ThemeManagerInteractor
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: MainViewModel
+    private val viewModel: MainViewModel by viewModels()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        themeManagerInteractor = Creator.createThemeManagerInteractor(this)
+        super.onCreate(savedInstanceState)
+        themeManagerInteractor = (application as App).themeManagerInteractor
         val isNightMode = themeManagerInteractor.getThemeModeState()
         AppCompatDelegate.setDefaultNightMode(
             if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         )
-
-        super.onCreate(savedInstanceState)
-            enableEdgeToEdge()
+        enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         Log.e("AAA", "Activity created")
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+//        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         binding.search.setOnClickListener {
             viewModel.openSearch()
@@ -68,7 +69,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
 }

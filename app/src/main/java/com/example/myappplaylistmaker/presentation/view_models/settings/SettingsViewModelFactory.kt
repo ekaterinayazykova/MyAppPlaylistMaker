@@ -15,6 +15,5 @@ class SettingsViewModelFactory (
             return SettingsViewModel(themeManagerInteractor, settingsOptionsUseCase) as T
         }
         throw IllegalArgumentException("Unknown ViewModel Class")
-
     }
 }
