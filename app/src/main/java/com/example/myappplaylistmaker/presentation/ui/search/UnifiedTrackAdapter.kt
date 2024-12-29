@@ -1,5 +1,6 @@
-package com.example.myappplaylistmaker.presentation.UI.search
+package com.example.myappplaylistmaker.presentation.ui.search
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,6 +73,7 @@ class UnifiedTrackAdapter(
 
     fun updateTracks(newTracks: List<Track>) {
         tracks = newTracks
+        Log.d("VM", "Адаптер обновлен с треками: $tracks")
         notifyDataSetChanged()
     }
 }

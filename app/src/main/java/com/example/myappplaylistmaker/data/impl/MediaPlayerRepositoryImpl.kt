@@ -7,11 +7,14 @@ class MediaPlayerRepositoryImpl : MediaPlayerRepository {
 
     private var mediaPlayer : MediaPlayer? = null
 
-    override fun praparePlayer(songUrl: String) {
+    override fun praparePlayer(songUrl: String, playerPrepared: () -> Unit) {
         release()
         mediaPlayer = MediaPlayer().apply {
             setDataSource(songUrl)
             prepareAsync()
+            setOnPreparedListener {
+                playerPrepared.invoke()
+            }
         }
     }
 
