@@ -43,6 +43,7 @@ class SettingsActivity : AppCompatActivity() {
         switchTheme.setOnCheckedChangeListener { _, isChecked ->
             settingsViewModel.setNightModeState(isChecked)
         }
+
     }
 
     private fun bindingButtons() {

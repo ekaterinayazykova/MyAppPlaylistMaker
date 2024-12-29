@@ -24,62 +24,58 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     private var playerState = PlayerState.DEFAULT
     private var handler: Handler? = null
 
-    fun play() {
-        playerOption.value = Option.PLAY
+    fun updatePlayerOption(state: Option) {
+        playerOption.value = state
     }
 
-    fun prepare(track: Track) {
-        playerOption.value = Option.PREPARE
-    }
-
-    fun pause() {
-        playerOption.value = Option.PAUSE
-    }
-
-    fun playback() {
-        playerOption.value = Option.PLAYBACK
+    fun stop() {
+        mediaPlayerInteractor.stop()
     }
 
     fun preparePlayer(track: Track) {
-        var songUrl: String = track.previewUrl
-        if (songUrl.isNotEmpty()) {
-            mediaPlayerInteractor.execute(track)
+        val songUrl: String = track.previewUrl ?: ""
+        if (songUrl.isNotEmpty() && playerState != PlayerState.PREPARED) {
+            updatePlayerOption(Option.LOADING)
+            mediaPlayerInteractor.execute(track) {
+                playerState = PlayerState.PREPARED
+                updatePlayerOption(Option.PREPARE)
+            }
+        } else {
             playerState = PlayerState.PREPARED
         }
     }
 
-    fun startPlayer() {
+    private fun startPlayer() {
         mediaPlayerInteractor.play()
         startCountdown()
         playerState = PlayerState.PLAYING
+        updatePlayerOption(Option.PLAYING)
     }
     fun isPlaying(): Boolean {
         return playerState == PlayerState.PLAYING
     }
 
     fun pausePlayer() {
-        if (mediaPlayerInteractor.isPlaying()) {
+        if (isPlaying()) {
             mediaPlayerInteractor.pause()
             playerState = PlayerState.PAUSED
+            updatePlayerOption(Option.PAUSE)
         }
     }
 
     fun playbackControl() {
-        Log.e("PlayerState", "${playerState}")
         when (playerState) {
             PlayerState.PLAYING -> pausePlayer()
             PlayerState.PREPARED, PlayerState.PAUSED -> startPlayer()
-            PlayerState.DEFAULT -> {
-                Log.e("PlaybackControl", "PlayerErrorState")
-            }
+            PlayerState.DEFAULT -> updatePlayerOption(Option.PREPARE)
         }
     }
-    fun startCountdown() {
+    private fun startCountdown() {
         handler = Handler(Looper.getMainLooper())
         handler?.post(object : Runnable {
             @SuppressLint("DefaultLocale")
             override fun run() {
-                if (mediaPlayerInteractor.isPlaying()) {
+                if (isPlaying()) {
                     val currentPositionMillis = mediaPlayerInteractor.getCurrentPosition()
                     val minutes = (currentPositionMillis / 1000) / 60
                     val seconds = (currentPositionMillis / 1000) % 60
@@ -96,9 +92,10 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     }
 
     sealed class Option {
-        object PLAY : Option()
-        object PREPARE : Option()
-        object PAUSE : Option()
-        object PLAYBACK : Option()
+        data object LOADING : Option()
+        data object PREPARE : Option()
+        data object PLAYBACK : Option()
+        data object PLAYING : Option()
+        data object PAUSE : Option()
     }
 }

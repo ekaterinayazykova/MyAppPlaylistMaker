@@ -7,34 +7,23 @@ import com.example.myappplaylistmaker.domain.repository.MediaPlayerRepository
 
 class MediaPlayerInteractorImpl (private val mediaPlayerRepository: MediaPlayerRepository) : MediaPlayerInteractor {
 
-    private val playerControl = PlayerControl()
-
     override fun play() {
         mediaPlayerRepository.play()
-        playerControl.play()
     }
 
-    override fun execute(track: Track) {
-        mediaPlayerRepository.praparePlayer(track.previewUrl)
-        mediaPlayerRepository.play()
-        playerControl.play()
+    override fun execute(track: Track, playerPrepared: () -> Unit) {
+        mediaPlayerRepository.praparePlayer(track.previewUrl ?: "", playerPrepared)
     }
 
     override fun pause() {
         mediaPlayerRepository.pause()
-        playerControl.pause()
     }
 
     override fun stop() {
         mediaPlayerRepository.release()
-        playerControl.stop()
     }
 
     override fun getCurrentPosition(): Int {
         return mediaPlayerRepository.getCurrentPosition()
-    }
-
-    override fun isPlaying(): Boolean {
-        return playerControl.isPlaying()
     }
 }

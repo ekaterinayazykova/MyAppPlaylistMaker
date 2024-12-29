@@ -29,78 +29,60 @@ class MediaPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTrackBinding
     private val mediaPlayerViewModel: MediaPlayerViewModel by viewModels { MediaPlayerViewModelFactory(Creator.createPlayer()) }
-    private lateinit var mediaPlayerInteractor: MediaPlayerInteractor
-
-
-//    private val handler = Handler(Looper.getMainLooper())
-//    private var songUrl: String = ""
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         enableEdgeToEdge()
 
-        mediaPlayerInteractor = Creator.createPlayer()
-
         val track = intent.getParcelableExtra<Track>("track")
+
         track?.let {
             fetchTrackData(it)
-            mediaPlayerViewModel.prepare(track)
+            mediaPlayerViewModel.updatePlayerOption(MediaPlayerViewModel.Option.PREPARE)
         }
 
         binding.arrow.setOnClickListener {
-            mediaPlayerInteractor.stop()
+            mediaPlayerViewModel.stop()
             onBackPressed()
         }
 
         binding.buttonAdd.setOnClickListener{
-            TODO()
+//            TODO()
         }
         binding.buttonLike.setOnClickListener{
-            TODO()
+//            TODO()
         }
 
         binding.buttonPlay.setOnClickListener {
-//            PlayerState.PREPARED
-//            PlayerState.PAUSED
-//            binding.buttonPlayProgressBar.visibility = View.VISIBLE
-            binding.buttonPlay.isEnabled = false
-
-            mediaPlayerViewModel.playback()
-            mediaPlayerViewModel.startCountdown()
-
-            Handler(Looper.getMainLooper()).postDelayed({
-                updatePlayButton()
-//                binding.buttonPlayProgressBar.visibility = View.GONE
-                binding.buttonPlay.isEnabled = true
-            }, 300)
+            mediaPlayerViewModel.updatePlayerOption(MediaPlayerViewModel.Option.PLAYBACK)
         }
 
         mediaPlayerViewModel.durationTime.observe(this) { time ->
             binding.trackDuration.text = time
-//            updatePlayButton()
         }
 
         mediaPlayerViewModel.choosePlayerOption.observe(this) { option ->
+            Log.e("TAG", "option: $option")
             option?.let {
                 when (it) {
-                    MediaPlayerViewModel.Option.PLAY -> {
-                        mediaPlayerViewModel.startPlayer()
-                        updatePlayButton()
-                    }
                     MediaPlayerViewModel.Option.PREPARE -> {
+                        updatePlayButton()
+                        binding.buttonPlay.visibility = View.VISIBLE
+                        binding.buttonPlayProgressBar.visibility = View.INVISIBLE
                         track?.let { mediaPlayerViewModel.preparePlayer(it) }
                     }
-                    MediaPlayerViewModel.Option.PAUSE -> {
-                        mediaPlayerViewModel.pausePlayer()
-                        updatePlayButton()
-                    }
                     MediaPlayerViewModel.Option.PLAYBACK -> {
+                        updatePlayButton()
                         mediaPlayerViewModel.playbackControl()
                     }
+                    MediaPlayerViewModel.Option.LOADING -> {
+                        binding.buttonPlay.visibility = View.INVISIBLE
+                        binding.buttonPlayProgressBar.visibility = View.VISIBLE
+                    }
+                    MediaPlayerViewModel.Option.PLAYING,
+                    MediaPlayerViewModel.Option.PAUSE -> updatePlayButton()
                 }
             }
         }
@@ -109,24 +91,22 @@ class MediaPlayerActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        mediaPlayerViewModel.pause()
+        mediaPlayerViewModel.pausePlayer()
     }
 
     private fun fetchTrackData(track: Track) {
-        var songUrl = track.previewUrl
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
         binding.trackCountryInfo.text = track.country
         binding.trackAlbumInfo.text = track.collectionName
         binding.trackYearInfo.text = track.releaseDate
         binding.trackGenreInfo.text = track.genre
-        binding.trackDurationTimeInfo.text = formatTrackTime(track.trackTimeMillis)
+        binding.trackDurationTimeInfo.text = formatTrackTime(track.trackTimeMillis ?: 0)
 
         updateAlbumInfoVisibility(track.collectionName)
         updateReleaseYear(track.releaseDate)
         loadArtwork(track.artworkUrl100)
     }
-
     private fun loadArtwork(artworkUrl: String?) {
         artworkUrl?.let {
             val modifiedArtworkUrl = it.replaceAfterLast('/', "512x512bb.jpg")
@@ -164,13 +144,10 @@ class MediaPlayerActivity : AppCompatActivity() {
     }
 
     private fun updatePlayButton() {
-
         if (mediaPlayerViewModel.isPlaying()) {
             binding.buttonPlay.setImageResource(R.drawable.button_pause)
-//            binding.buttonPlayProgressBar.visibility = View.GONE
         } else {
             binding.buttonPlay.setImageResource(R.drawable.button_play)
-//            binding.buttonPlayProgressBar.visibility = View.GONE
         }
     }
 

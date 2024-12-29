@@ -4,9 +4,8 @@ import com.example.myappplaylistmaker.domain.entity.Track
 
 interface MediaPlayerInteractor {
     fun play()
-    fun execute(track: Track)
+    fun execute(track: Track, playerPrepared: () -> Unit)
     fun pause()
     fun stop()
     fun getCurrentPosition(): Int
-    fun isPlaying(): Boolean
 }
