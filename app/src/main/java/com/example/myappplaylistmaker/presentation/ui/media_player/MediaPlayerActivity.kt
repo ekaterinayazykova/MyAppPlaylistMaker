@@ -40,36 +40,38 @@ class MediaPlayerActivity : AppCompatActivity() {
             fetchTrackData(it)
         }
 
-        mediaPlayerViewModel.durationTime.observe(this) { time ->
-            binding.trackDuration.text = time
-//            updatePlayButton()
-        }
+//        mediaPlayerViewModel.durationTime.observe(this) { time ->
+//            binding.trackDuration.text = time
+////            updatePlayButton()
+//        }
 
         mediaPlayerViewModel.state.observe(this) { state ->
             when (state) {
-                    MediaPlayerViewModel.State.LOADING -> {
+                is MediaPlayerViewModel.State.LOADING -> {
                     binding.buttonPlay.visibility = View.INVISIBLE
                     binding.buttonPlayProgressBar.visibility = View.VISIBLE
                 }
-                MediaPlayerViewModel.State.PREPARED -> {
+                is MediaPlayerViewModel.State.PREPARED -> {
                     binding.buttonPlay.visibility = View.VISIBLE
                     binding.buttonPlayProgressBar.visibility = View.GONE
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
                 }
 
-                MediaPlayerViewModel.State.PLAYING -> {
+                is MediaPlayerViewModel.State.PLAYING -> {
                     binding.buttonPlay.visibility = View.VISIBLE
                     binding.buttonPlayProgressBar.visibility = View.GONE
                     binding.buttonPlay.setImageResource(R.drawable.button_pause)
+                    binding.trackDuration.text = state.currentTime
                 }
 
-                MediaPlayerViewModel.State.PAUSED -> {
+                is MediaPlayerViewModel.State.PAUSED -> {
                     binding.buttonPlay.visibility = View.VISIBLE
                     binding.buttonPlayProgressBar.visibility = View.GONE
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
+                    binding.trackDuration.text = state.currentTime
                 }
 
-                MediaPlayerViewModel.State.STOPPED -> {
+                is MediaPlayerViewModel.State.STOPPED -> {
                     binding.buttonPlay.visibility = View.VISIBLE
                     binding.buttonPlayProgressBar.visibility = View.GONE
                     binding.buttonPlay.setImageResource(R.drawable.button_play)

@@ -13,11 +13,11 @@ import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 
 class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
-    private val _trackInfo = MutableLiveData<Track>()
-    val trackInfo: LiveData<Track> get() = _trackInfo
+//    private val _trackInfo = MutableLiveData<Track>()
+//    val trackInfo: LiveData<Track> get() = _trackInfo
 
-    private val _durationTime = MutableLiveData<String>()
-    val durationTime: LiveData<String> get() = _durationTime
+//    private val _durationTime = MutableLiveData<String>()
+//    val durationTime: LiveData<String> get() = _durationTime
 
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> get() = _state
@@ -32,12 +32,13 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     private var handler: Handler? = null
 
     private fun onTrackComplete() {
+        handler?.removeCallbacksAndMessages(null)
         playerState = PlayerState.PREPARED
         _state.postValue(State.PREPARED)
     }
 
     fun setTrack(track: Track) {
-        _trackInfo.value = track
+//        _trackInfo.value = track
         preparePlayer(track)
     }
 
@@ -56,15 +57,28 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
 
     fun startPlayer() {
         mediaPlayerInteractor.play()
+        val currentPositionMillis = mediaPlayerInteractor.getCurrentPosition()
+        val minutes = (currentPositionMillis / 1000) / 60
+        val seconds = (currentPositionMillis / 1000) % 60
+        val formattedTime = String.format("%02d:%02d", minutes, seconds)
+
         startCountdown()
         playerState = PlayerState.PLAYING
-        _state.postValue(State.PLAYING)
+        _state.postValue(State.PLAYING(formattedTime))
     }
 
     fun pausePlayer() {
         mediaPlayerInteractor.pause()
-        playerState = PlayerState.PAUSED
-        _state.postValue(State.PAUSED)
+
+        if (playerState == PlayerState.PLAYING) {
+            val currentPositionMillis = mediaPlayerInteractor.getCurrentPosition()
+            val minutes = (currentPositionMillis / 1000) / 60
+            val seconds = (currentPositionMillis / 1000) % 60
+            val formattedTime = String.format("%02d:%02d", minutes, seconds)
+
+            playerState = PlayerState.PAUSED
+            _state.postValue(State.PAUSED(formattedTime))
+        }
     }
 
     fun isPlaying(): Boolean {
@@ -102,11 +116,12 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
                     val minutes = (currentPositionMillis / 1000) / 60
                     val seconds = (currentPositionMillis / 1000) % 60
                     val formattedTime = String.format("%02d:%02d", minutes, seconds)
-                    _durationTime.postValue(formattedTime)
+                    if (playerState == PlayerState.PLAYING) {
+                        _state.postValue(State.PLAYING(formattedTime))
+                    }
                     handler?.postDelayed(this, 1000)
 
                 } else {
-//                    mediaPlayerInteractor.pause()
                     handler?.removeCallbacks(this)
                 }
             }
@@ -116,8 +131,8 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     sealed class State {
         data object LOADING: State()
         data object PREPARED: State()
-        data object PLAYING: State()
-        data object PAUSED: State()
+        data class PLAYING(val currentTime: String) : State()
+        data class PAUSED(val currentTime: String) : State()
         data object STOPPED: State()
     }
 }
