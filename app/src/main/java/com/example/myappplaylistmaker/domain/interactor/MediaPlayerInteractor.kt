@@ -8,4 +8,6 @@ interface MediaPlayerInteractor {
     fun pause()
     fun stop()
     fun getCurrentPosition(): Int
+    fun isPlaying(): Boolean
+    fun setOnCompletionListener(listener: () -> Unit)
 }

@@ -1,81 +1,103 @@
 package com.example.myappplaylistmaker.presentation.view_models.media_player
 
 import android.annotation.SuppressLint
-import android.graphics.Path.Op
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 
 class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
-    private val playerOption = MutableLiveData<Option?>()
-    val choosePlayerOption: LiveData<Option?> get() = playerOption
+    private val _trackInfo = MutableLiveData<Track>()
+    val trackInfo: LiveData<Track> get() = _trackInfo
 
     private val _durationTime = MutableLiveData<String>()
     val durationTime: LiveData<String> get() = _durationTime
 
+    private val _state = MutableLiveData<State>()
+    val state: LiveData<State> get() = _state
+
+    init {
+        mediaPlayerInteractor.setOnCompletionListener {
+            onTrackComplete()
+        }
+    }
+
     private var playerState = PlayerState.DEFAULT
     private var handler: Handler? = null
 
-    fun updatePlayerOption(state: Option) {
-        playerOption.value = state
+    private fun onTrackComplete() {
+        playerState = PlayerState.PREPARED
+        _state.postValue(State.PREPARED)
     }
 
-    fun stop() {
-        mediaPlayerInteractor.stop()
+    fun setTrack(track: Track) {
+        _trackInfo.value = track
+        preparePlayer(track)
     }
 
     fun preparePlayer(track: Track) {
         val songUrl: String = track.previewUrl ?: ""
         if (songUrl.isNotEmpty() && playerState != PlayerState.PREPARED) {
-            updatePlayerOption(Option.LOADING)
+            _state.postValue(State.LOADING)
             mediaPlayerInteractor.execute(track) {
                 playerState = PlayerState.PREPARED
-                updatePlayerOption(Option.PREPARE)
+                _state.postValue(State.PREPARED)
             }
         } else {
             playerState = PlayerState.PREPARED
         }
     }
 
-    private fun startPlayer() {
+    fun startPlayer() {
         mediaPlayerInteractor.play()
         startCountdown()
         playerState = PlayerState.PLAYING
-        updatePlayerOption(Option.PLAYING)
-    }
-    fun isPlaying(): Boolean {
-        return playerState == PlayerState.PLAYING
+        _state.postValue(State.PLAYING)
     }
 
     fun pausePlayer() {
-        if (isPlaying()) {
-            mediaPlayerInteractor.pause()
-            playerState = PlayerState.PAUSED
-            updatePlayerOption(Option.PAUSE)
-        }
+        mediaPlayerInteractor.pause()
+        playerState = PlayerState.PAUSED
+        _state.postValue(State.PAUSED)
+    }
+
+    fun isPlaying(): Boolean {
+        return playerState == PlayerState.PLAYING
     }
 
     fun playbackControl() {
         when (playerState) {
             PlayerState.PLAYING -> pausePlayer()
             PlayerState.PREPARED, PlayerState.PAUSED -> startPlayer()
-            PlayerState.DEFAULT -> updatePlayerOption(Option.PREPARE)
+            PlayerState.DEFAULT -> {
+                Log.e("ErrorState", "PlayerErrorState")
+            }
         }
     }
+
+    fun stopPlayer() {
+        mediaPlayerInteractor.stop()
+        playerState = PlayerState.DEFAULT
+        _state.postValue(State.STOPPED)
+    }
+
+    fun cleanup() {
+        handler?.removeCallbacksAndMessages(null)
+    }
+
+
     private fun startCountdown() {
         handler = Handler(Looper.getMainLooper())
         handler?.post(object : Runnable {
             @SuppressLint("DefaultLocale")
             override fun run() {
-                if (isPlaying()) {
+                if (mediaPlayerInteractor.isPlaying()) {
                     val currentPositionMillis = mediaPlayerInteractor.getCurrentPosition()
                     val minutes = (currentPositionMillis / 1000) / 60
                     val seconds = (currentPositionMillis / 1000) % 60
@@ -84,18 +106,19 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
                     handler?.postDelayed(this, 1000)
 
                 } else {
-                    mediaPlayerInteractor.pause()
+//                    mediaPlayerInteractor.pause()
                     handler?.removeCallbacks(this)
                 }
             }
         })
     }
 
-    sealed class Option {
-        data object LOADING : Option()
-        data object PREPARE : Option()
-        data object PLAYBACK : Option()
-        data object PLAYING : Option()
-        data object PAUSE : Option()
+    sealed class State {
+        data object LOADING: State()
+        data object PREPARED: State()
+        data object PLAYING: State()
+        data object PAUSED: State()
+        data object STOPPED: State()
     }
 }
+

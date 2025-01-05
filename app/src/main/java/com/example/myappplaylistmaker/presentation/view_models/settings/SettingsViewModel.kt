@@ -4,23 +4,23 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
-import com.example.myappplaylistmaker.domain.use_case.SettingsOptionsUseCase
+import com.example.myappplaylistmaker.domain.interactor.SettingsOptionsInteractor
 
 class SettingsViewModel (
     private val themeManagerInteractor: ThemeManagerInteractor,
-    private val settingsOptionsUseCase: SettingsOptionsUseCase
+    private val settingsOptionsUseCase: SettingsOptionsInteractor
 ) : ViewModel() {
 
-    private val themeState : MutableLiveData<Boolean> = MutableLiveData()
-    val _themeState: LiveData<Boolean> get() = themeState
+    private val _themeState : MutableLiveData<Boolean> = MutableLiveData()
+    val themeState: LiveData<Boolean> get() = this._themeState
 
     init {
-        themeState.value = themeManagerInteractor.getThemeModeState()
+        this._themeState.value = themeManagerInteractor.getThemeModeState()
     }
 
     fun setNightModeState(setNightMode: Boolean) {
         themeManagerInteractor.setNightModeState(setNightMode)
-        themeState.value = setNightMode
+        this._themeState.value = setNightMode
     }
 
     fun shareApp(){

@@ -1,13 +1,15 @@
 package com.example.myappplaylistmaker.data.impl
 
 import android.media.MediaPlayer
+import android.util.Log
 import com.example.myappplaylistmaker.domain.repository.MediaPlayerRepository
 
 class MediaPlayerRepositoryImpl : MediaPlayerRepository {
 
-    private var mediaPlayer : MediaPlayer? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private var onCompletionListener: (() -> Unit)? = null
 
-    override fun praparePlayer(songUrl: String, playerPrepared: () -> Unit) {
+    override fun preparePlayer(songUrl: String, playerPrepared: () -> Unit) {
         release()
         mediaPlayer = MediaPlayer().apply {
             setDataSource(songUrl)
@@ -15,7 +17,14 @@ class MediaPlayerRepositoryImpl : MediaPlayerRepository {
             setOnPreparedListener {
                 playerPrepared.invoke()
             }
+            setOnCompletionListener {
+                onCompletionListener?.invoke()
+            }
         }
+    }
+
+    override fun setOnCompletionListener(listener: () -> Unit) {
+        onCompletionListener = listener
     }
 
     override fun play() {

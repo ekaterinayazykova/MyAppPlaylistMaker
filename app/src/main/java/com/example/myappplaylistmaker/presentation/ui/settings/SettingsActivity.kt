@@ -21,7 +21,7 @@ class SettingsActivity : AppCompatActivity() {
     private val settingsViewModel: SettingsViewModel by viewModels {
         SettingsViewModelFactory(
             themeManagerInteractor,
-            Creator.createSettingsOptionsUseCase(this)
+            Creator.createSettingsOptionsInteractor(this)
         )
     }
 
@@ -37,7 +37,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun setupThemeSwitch() {
         val switchTheme: SwitchCompat = binding.switchTheme
-        settingsViewModel._themeState.observe(this) { setNightMode ->
+        settingsViewModel.themeState.observe(this) { setNightMode ->
             switchTheme.isChecked = setNightMode
         }
         switchTheme.setOnCheckedChangeListener { _, isChecked ->

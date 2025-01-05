@@ -1,14 +1,10 @@
 package com.example.myappplaylistmaker.presentation.ui.media_player
 
-import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -18,9 +14,7 @@ import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.core.Creator
 import com.example.myappplaylistmaker.databinding.ActivityTrackBinding
 import com.example.myappplaylistmaker.presentation.utils.NetworkClass
-import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Track
-import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 import com.example.myappplaylistmaker.presentation.utils.Utils
 import com.example.myappplaylistmaker.presentation.view_models.media_player.MediaPlayerViewModel
 import com.example.myappplaylistmaker.presentation.view_models.media_player.MediaPlayerViewModelFactory
@@ -29,69 +23,98 @@ class MediaPlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTrackBinding
     private val mediaPlayerViewModel: MediaPlayerViewModel by viewModels { MediaPlayerViewModelFactory(Creator.createPlayer()) }
+    private lateinit var screenReceiver: ScreenReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTrackBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
+        screenReceiver = ScreenReceiver()
 
-        val track = intent.getParcelableExtra<Track>("track")
 
+        val track = intent.getSerializableExtra(TRACK_DATA) as? Track
+        Log.d("MediaPlayerActivity", "Track data received: $track")
         track?.let {
+            mediaPlayerViewModel.setTrack(it)
             fetchTrackData(it)
-            mediaPlayerViewModel.updatePlayerOption(MediaPlayerViewModel.Option.PREPARE)
-        }
-
-        binding.arrow.setOnClickListener {
-            mediaPlayerViewModel.stop()
-            onBackPressed()
-        }
-
-        binding.buttonAdd.setOnClickListener{
-//            TODO()
-        }
-        binding.buttonLike.setOnClickListener{
-//            TODO()
-        }
-
-        binding.buttonPlay.setOnClickListener {
-            mediaPlayerViewModel.updatePlayerOption(MediaPlayerViewModel.Option.PLAYBACK)
         }
 
         mediaPlayerViewModel.durationTime.observe(this) { time ->
             binding.trackDuration.text = time
+//            updatePlayButton()
         }
 
-        mediaPlayerViewModel.choosePlayerOption.observe(this) { option ->
-            Log.e("TAG", "option: $option")
-            option?.let {
-                when (it) {
-                    MediaPlayerViewModel.Option.PREPARE -> {
-                        updatePlayButton()
-                        binding.buttonPlay.visibility = View.VISIBLE
-                        binding.buttonPlayProgressBar.visibility = View.INVISIBLE
-                        track?.let { mediaPlayerViewModel.preparePlayer(it) }
-                    }
-                    MediaPlayerViewModel.Option.PLAYBACK -> {
-                        updatePlayButton()
-                        mediaPlayerViewModel.playbackControl()
-                    }
-                    MediaPlayerViewModel.Option.LOADING -> {
-                        binding.buttonPlay.visibility = View.INVISIBLE
-                        binding.buttonPlayProgressBar.visibility = View.VISIBLE
-                    }
-                    MediaPlayerViewModel.Option.PLAYING,
-                    MediaPlayerViewModel.Option.PAUSE -> updatePlayButton()
+        mediaPlayerViewModel.state.observe(this) { state ->
+            when (state) {
+                    MediaPlayerViewModel.State.LOADING -> {
+                    binding.buttonPlay.visibility = View.INVISIBLE
+                    binding.buttonPlayProgressBar.visibility = View.VISIBLE
+                }
+                MediaPlayerViewModel.State.PREPARED -> {
+                    binding.buttonPlay.visibility = View.VISIBLE
+                    binding.buttonPlayProgressBar.visibility = View.GONE
+                    binding.buttonPlay.setImageResource(R.drawable.button_play)
+                }
+
+                MediaPlayerViewModel.State.PLAYING -> {
+                    binding.buttonPlay.visibility = View.VISIBLE
+                    binding.buttonPlayProgressBar.visibility = View.GONE
+                    binding.buttonPlay.setImageResource(R.drawable.button_pause)
+                }
+
+                MediaPlayerViewModel.State.PAUSED -> {
+                    binding.buttonPlay.visibility = View.VISIBLE
+                    binding.buttonPlayProgressBar.visibility = View.GONE
+                    binding.buttonPlay.setImageResource(R.drawable.button_play)
+                }
+
+                MediaPlayerViewModel.State.STOPPED -> {
+                    binding.buttonPlay.visibility = View.VISIBLE
+                    binding.buttonPlayProgressBar.visibility = View.GONE
+                    binding.buttonPlay.setImageResource(R.drawable.button_play)
                 }
             }
         }
 
+        binding.arrow.setOnClickListener {
+            mediaPlayerViewModel.stopPlayer()
+            onBackPressed()
+        }
+
+        binding.buttonAdd.setOnClickListener {
+//            TODO()
+        }
+        binding.buttonLike.setOnClickListener {
+//            TODO()
+        }
+
+        binding.buttonPlay.setOnClickListener {
+            mediaPlayerViewModel.playbackControl()
+            updatePlayButton()
+        }
+        updatePlayButton()
     }
 
     override fun onPause() {
         super.onPause()
         mediaPlayerViewModel.pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayerViewModel.cleanup()
+        mediaPlayerViewModel.stopPlayer()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        registerReceiver(screenReceiver, IntentFilter(Intent.ACTION_SCREEN_OFF))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(screenReceiver)
     }
 
     private fun fetchTrackData(track: Track) {
@@ -161,5 +184,9 @@ class MediaPlayerActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         finish()
+    }
+
+    companion object {
+        const val TRACK_DATA = "TRACK_DATA"
     }
 }

@@ -10,6 +10,8 @@ import com.example.myappplaylistmaker.data.impl.ThemeManagerRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.TrackRepositoryImpl
 import com.example.myappplaylistmaker.data.network.NetworkClient
 import com.example.myappplaylistmaker.data.network.RetrofitNetworkClient
+import com.example.myappplaylistmaker.data.utils.StringProvider
+import com.example.myappplaylistmaker.data.utils.StringProviderImpl
 import com.example.myappplaylistmaker.domain.impl.MediaPlayerInteractorImpl
 import com.example.myappplaylistmaker.domain.impl.SearchHistoryManagerInteractorImpl
 import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
@@ -19,10 +21,12 @@ import com.example.myappplaylistmaker.domain.interactor.SearchHistoryManagerInte
 import com.example.myappplaylistmaker.domain.repository.SearchHistoryManagerRepository
 import com.example.myappplaylistmaker.domain.repository.TrackRepository
 import com.example.myappplaylistmaker.domain.impl.SearchTrackUseCaseImpl
-import com.example.myappplaylistmaker.domain.impl.SettingsOptionsUseCaseImpl
+import com.example.myappplaylistmaker.domain.impl.SettingsOptionsInteractorImpl
 import com.example.myappplaylistmaker.domain.repository.SettingsOptionsRepository
 import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
-import com.example.myappplaylistmaker.domain.use_case.SettingsOptionsUseCase
+import com.example.myappplaylistmaker.domain.interactor.SettingsOptionsInteractor
+import com.example.myappplaylistmaker.presentation.utils.NetworkChecker
+import com.example.myappplaylistmaker.presentation.utils.NetworkCheckerImpl
 
 object Creator {
 
@@ -32,22 +36,31 @@ object Creator {
         this.context = application
     }
 
+    private fun provideNetworkChecker(): NetworkChecker {
+        return NetworkCheckerImpl(context)
+    }
+
+    private fun provideNetworkClient(): NetworkClient {
+        return RetrofitNetworkClient(provideNetworkChecker())
+    }
+
+    fun provideStringProvider(): StringProvider {
+        return StringProviderImpl(context)
+    }
+
+
     fun createPlayer(): MediaPlayerInteractor {
         val mediaPlayerRepository = MediaPlayerRepositoryImpl()
         return MediaPlayerInteractorImpl(mediaPlayerRepository)
     }
 
-    private fun getTrackRepository(context: Context): TrackRepository {
-        return TrackRepositoryImpl(context, provideNetworkClient())
+    private fun getTrackRepository(): TrackRepository {
+        return TrackRepositoryImpl( provideStringProvider(),provideNetworkClient())
     }
 
-    fun provideTrackUseCase(context: Context): SearchTrackUseCase {
-        val repository = getTrackRepository(context)
-        return SearchTrackUseCaseImpl(context, repository)
-    }
-
-    fun provideNetworkClient(): NetworkClient {
-        return RetrofitNetworkClient()
+    fun provideTrackUseCase(): SearchTrackUseCase {
+        val repository = getTrackRepository()
+        return SearchTrackUseCaseImpl(provideStringProvider(), repository)
     }
 
     fun createThemeManagerInteractor(context: Context) : ThemeManagerInteractor {
@@ -63,17 +76,12 @@ object Creator {
         return SearchHistoryManagerInteractorImpl(repository)
     }
 
-    fun createSettingsOptionsUseCase(context: Context) : SettingsOptionsUseCase {
+    fun createSettingsOptionsInteractor(context: Context) : SettingsOptionsInteractor {
         val repository = createSettingsRepository(context)
-        return SettingsOptionsUseCaseImpl(repository)
+        return SettingsOptionsInteractorImpl(repository)
     }
 
     fun createSettingsRepository(context: Context) : SettingsOptionsRepository {
         return SettingsOptionsRepositoryImpl(context)
     }
-
-//    private fun createSettingsOptionsRepository(): SettingsOptionsRepository {
-//        return createSettingsOptionsUseCase()
-//    }
-
 }

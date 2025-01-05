@@ -12,7 +12,6 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,8 +42,12 @@ class SearchActivity : AppCompatActivity() {
         hideKeyboard(window.decorView.rootView)
         recyclerView = binding.trackList
 
-        searchViewModel = ViewModelProvider(this, SearchViewModelFactory(this))
-            .get(SearchViewModel::class.java)
+        val stringProvider = Creator.provideStringProvider()
+        val searchTrackUseCase = Creator.provideTrackUseCase()
+        val searchHistoryManager = Creator.createSearchHistoryManagerInteractor(getSharedPreferences("search_history", MODE_PRIVATE))
+
+        val viewModelFactory = SearchViewModelFactory(searchHistoryManager, searchTrackUseCase, stringProvider)
+        searchViewModel = ViewModelProvider(this, viewModelFactory).get(SearchViewModel::class.java)
 
         binding.arrow.setOnClickListener {
             finish()
@@ -64,7 +67,7 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        searchViewModel._historyTrack.observe(this) { listOfTracks ->
+        searchViewModel.historyTrack.observe(this) { listOfTracks ->
             if (listOfTracks?.isNotEmpty() == true) {
                 unifiedTrackAdapter.updateTracks(listOfTracks)
                 SearchViewModel.State.LoadedHistory
@@ -114,7 +117,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeState() {
-        searchViewModel._searchState.observe(this) { state ->
+        searchViewModel.searchState.observe(this) { state ->
             when (state) {
                 is SearchViewModel.State.EmptyHistory -> {
                     binding.progressBar.visibility = View.GONE
@@ -284,7 +287,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun openTrack(track: Track) {
         val trackIntent = Intent(this, MediaPlayerActivity::class.java)
-        trackIntent.putExtra("track", track)
+        trackIntent.putExtra(MediaPlayerActivity.TRACK_DATA, track)
         startActivity(trackIntent)
+        Log.d("PreviousActivity", "Track data sent: $track")
     }
 }

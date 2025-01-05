@@ -1,9 +1,10 @@
 package com.example.myappplaylistmaker.domain.impl
 
 import com.example.myappplaylistmaker.domain.repository.SettingsOptionsRepository
-import com.example.myappplaylistmaker.domain.use_case.SettingsOptionsUseCase
+import com.example.myappplaylistmaker.domain.interactor.SettingsOptionsInteractor
 
-class SettingsOptionsUseCaseImpl(private val repository: SettingsOptionsRepository) : SettingsOptionsUseCase {
+class SettingsOptionsInteractorImpl(private val repository: SettingsOptionsRepository) :
+    SettingsOptionsInteractor {
 
     override fun shareApp() {
         repository.shareApp()

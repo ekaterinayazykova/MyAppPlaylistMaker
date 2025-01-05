@@ -1,4 +1,5 @@
 package com.example.myappplaylistmaker.data.utils
 
-class StringProvider {
+interface StringProvider {
+    fun getString(resId: Int): String
 }

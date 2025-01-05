@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import com.example.myappplaylistmaker.core.App
-import com.example.myappplaylistmaker.presentation.view_models.main.MainViewModel
 import com.example.myappplaylistmaker.core.Creator
 import com.example.myappplaylistmaker.databinding.ActivityMainBinding
 import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
@@ -22,10 +21,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var themeManagerInteractor: ThemeManagerInteractor
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MainViewModel by viewModels()
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
+
 
         super.onCreate(savedInstanceState)
         themeManagerInteractor = (application as App).themeManagerInteractor
@@ -36,37 +35,18 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        bindingButtons()
+    }
 
-        Log.e("AAA", "Activity created")
-
-//        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-
+    fun bindingButtons() {
         binding.search.setOnClickListener {
-            viewModel.openSearch()
+            startActivity(Intent(this, SearchActivity::class.java))
         }
-
         binding.media.setOnClickListener {
-            viewModel.openLibrary()
+            startActivity(Intent(this, LibraryActivity::class.java))
         }
-
-        binding.settings.setOnClickListener{
-            viewModel.openSettings()
-        }
-
-        viewModel.chooseOption.observe(this) { menuOption ->
-            menuOption?.let {
-                when (it) {
-                    MainViewModel.MenuOption.SEARCH -> {
-                        startActivity(Intent(this, SearchActivity::class.java))
-                    }
-                    MainViewModel.MenuOption.LIBRARY -> {
-                        startActivity(Intent(this, LibraryActivity::class.java))
-                    }
-                    MainViewModel.MenuOption.SETTINGS -> {
-                        startActivity(Intent(this, SettingsActivity::class.java))
-                    }
-                }
-            }
+        binding.settings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 }
