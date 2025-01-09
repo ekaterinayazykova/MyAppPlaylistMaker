@@ -52,6 +52,7 @@ dependencies {
     implementation ("androidx.constraintlayout:constraintlayout:2.0.0")
     implementation(libs.androidx.room.ktx)
     implementation("androidx.core:core:1.9.0")
+    implementation(libs.androidx.lifecycle.viewmodel.android)
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("com.google.code.gson:gson:2.8.9")
     testImplementation(libs.junit)

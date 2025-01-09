@@ -40,11 +40,6 @@ class MediaPlayerActivity : AppCompatActivity() {
             fetchTrackData(it)
         }
 
-//        mediaPlayerViewModel.durationTime.observe(this) { time ->
-//            binding.trackDuration.text = time
-////            updatePlayButton()
-//        }
-
         mediaPlayerViewModel.state.observe(this) { state ->
             when (state) {
                 is MediaPlayerViewModel.State.LOADING -> {

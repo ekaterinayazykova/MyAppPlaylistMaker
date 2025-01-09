@@ -13,12 +13,6 @@ import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 
 class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
-//    private val _trackInfo = MutableLiveData<Track>()
-//    val trackInfo: LiveData<Track> get() = _trackInfo
-
-//    private val _durationTime = MutableLiveData<String>()
-//    val durationTime: LiveData<String> get() = _durationTime
-
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> get() = _state
 
@@ -34,11 +28,11 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     private fun onTrackComplete() {
         handler?.removeCallbacksAndMessages(null)
         playerState = PlayerState.PREPARED
-        _state.postValue(State.PREPARED)
+        _state.postValue(State.PAUSED("00:00"))
+//        _state.postValue(State.PREPARED)
     }
 
     fun setTrack(track: Track) {
-//        _trackInfo.value = track
         preparePlayer(track)
     }
 
@@ -136,4 +130,3 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
         data object STOPPED: State()
     }
 }
-
