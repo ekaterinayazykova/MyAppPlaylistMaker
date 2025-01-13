@@ -1,11 +1,15 @@
 package com.example.myappplaylistmaker.data.network
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import com.example.myappplaylistmaker.data.model.Response
+import com.example.myappplaylistmaker.presentation.utils.NetworkChecker
+import com.example.myappplaylistmaker.presentation.utils.NetworkClass
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient : NetworkClient {
+class RetrofitNetworkClient (private val networkChecker: NetworkChecker) : NetworkClient {
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(ITUNES_URL)
@@ -18,11 +22,17 @@ class RetrofitNetworkClient : NetworkClient {
     override fun doRequest(artistOrSongName: String): Response {
 
         return try {
-        val response = api.search(artistOrSongName).execute()
-        val networkResponse = response.body() ?: Response()
-
-            networkResponse.apply { resultCode = response.code() }
+            if (!networkChecker.isNetworkAvailable()) {
+                Log.d("RetrofitNetworkClient", "No internet connection")
+                return Response().apply { resultCode = -1 }
+            } else {
+                val response = api.search(artistOrSongName).execute()
+                Log.d("RetrofitNetworkClient", "Response code: ${response.code()}, body: ${response.body()}")
+                val networkResponse = response.body() ?: Response()
+                networkResponse.apply { resultCode = response.code() }
+            }
         } catch (ex: Exception) {
+            Log.e("RetrofitNetworkClient", "Error during request: ${ex.message}")
             Response().apply { resultCode = 400 }
         }
     }

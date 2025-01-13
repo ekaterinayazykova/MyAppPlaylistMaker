@@ -27,4 +27,5 @@
     <string name="network_error" translatable="false">Произошла сетевая ошибка</string>
     <string name="error_occured" translatable="false">Произошла ошибка:</string>
     <string name="goes_wrong" translatable="false">Что-то пошло не так</string>
+    <string name="no_internet" translatable="false">Проверьте подключение к интернету</string>
 </resources>

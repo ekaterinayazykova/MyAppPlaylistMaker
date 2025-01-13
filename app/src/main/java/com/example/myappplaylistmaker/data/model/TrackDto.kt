@@ -1,5 +1,7 @@
 package com.example.myappplaylistmaker.data.model
 
+import java.io.Serializable
+
 data class TrackDto (
     val trackName: String,
     val artistName: String,
@@ -10,4 +12,6 @@ data class TrackDto (
     val country: String,
     val previewUrl: String
 
-)
+) : Serializable {
+    fun getAlbumCover() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
+}
