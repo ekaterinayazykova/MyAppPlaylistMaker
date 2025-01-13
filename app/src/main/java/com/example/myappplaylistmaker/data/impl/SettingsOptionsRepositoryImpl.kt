@@ -15,22 +15,30 @@ class SettingsOptionsRepositoryImpl (private val context: Context): SettingsOpti
             putExtra(Intent.EXTRA_TEXT, shareText)
             type = "text/plain"
         }
-        val chooser = Intent.createChooser(shareIntent, context.getString(R.string.share))
+        val chooser = Intent.createChooser(shareIntent, context.getString(R.string.share)).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         startActivity(context, chooser, null)
     }
 
     override fun writeSupport() {
-        val supportIntent = Intent(Intent.ACTION_SENDTO).apply {
+        val supportIntent = Intent().apply {
+            action = Intent.ACTION_SENDTO
             data = Uri.parse("mailto:")
             putExtra(Intent.EXTRA_EMAIL, arrayOf(context.getString(R.string.email)))
             putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.subjectWriteSupport))
             putExtra(Intent.EXTRA_TEXT, context.getString(R.string.textWriteSupport))
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(context, supportIntent, null)
     }
 
     override fun acceptTermsOfUse() {
-        val acceptionIntent = Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.acception_link)))
+        val acceptionIntent = Intent().apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.parse(context.getString(R.string.acception_link))
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         startActivity(context, acceptionIntent, null)
     }
 }

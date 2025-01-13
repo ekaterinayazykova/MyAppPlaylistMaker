@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.presentation.ui.media_player
+package com.example.myappplaylistmaker.app.presentation.ui.media_player
 
 import android.content.BroadcastReceiver
 import android.content.Context

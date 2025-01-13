@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.presentation.view_models.search
+package com.example.myappplaylistmaker.app.presentation.view_models.search
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

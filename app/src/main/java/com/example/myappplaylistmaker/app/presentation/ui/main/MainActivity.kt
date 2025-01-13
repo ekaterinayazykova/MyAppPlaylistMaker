@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.presentation.ui.main
+package com.example.myappplaylistmaker.app.presentation.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -10,12 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ViewModelProvider
 import com.example.myappplaylistmaker.core.App
-import com.example.myappplaylistmaker.core.Creator
 import com.example.myappplaylistmaker.databinding.ActivityMainBinding
 import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
-import com.example.myappplaylistmaker.presentation.ui.search.SearchActivity
-import com.example.myappplaylistmaker.presentation.ui.settings.SettingsActivity
-import com.example.myappplaylistmaker.presentation.ui.library.LibraryActivity
+import com.example.myappplaylistmaker.app.presentation.ui.search.SearchActivity
+import com.example.myappplaylistmaker.app.presentation.ui.settings.SettingsActivity
+import com.example.myappplaylistmaker.app.presentation.ui.library.LibraryActivity
 
 class MainActivity : AppCompatActivity() {
 
