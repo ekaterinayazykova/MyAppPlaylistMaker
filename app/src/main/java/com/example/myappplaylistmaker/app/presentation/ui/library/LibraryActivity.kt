@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.presentation.ui.library
+package com.example.myappplaylistmaker.app.presentation.ui.library
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

@@ -1,4 +1,4 @@
-package com.example.myappplaylistmaker.presentation.ui.search
+package com.example.myappplaylistmaker.app.presentation.ui.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,27 +12,28 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myappplaylistmaker.core.Creator
 import com.example.myappplaylistmaker.databinding.ActivitySearchBinding
 import com.example.myappplaylistmaker.domain.entity.Track
-import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
-import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
-import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModelFactory
+import com.example.myappplaylistmaker.app.presentation.ui.media_player.MediaPlayerActivity
+import com.example.myappplaylistmaker.app.presentation.view_models.search.SearchViewModel
+import com.example.myappplaylistmaker.data.utils.StringProvider
+import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var searchViewModel: SearchViewModel
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var unifiedTrackAdapter: UnifiedTrackAdapter
     private var searchQuery: String = ""
     private var lastQuery: String? = null
-
     private val handler = Handler(Looper.getMainLooper())
+    private val searchViewModel by viewModel<SearchViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -41,13 +42,6 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
         hideKeyboard(window.decorView.rootView)
         recyclerView = binding.trackList
-
-        val stringProvider = Creator.provideStringProvider()
-        val searchTrackUseCase = Creator.provideTrackUseCase()
-        val searchHistoryManager = Creator.createSearchHistoryManagerInteractor(getSharedPreferences("search_history", MODE_PRIVATE))
-
-        val viewModelFactory = SearchViewModelFactory(searchHistoryManager, searchTrackUseCase, stringProvider)
-        searchViewModel = ViewModelProvider(this, viewModelFactory).get(SearchViewModel::class.java)
 
         binding.arrow.setOnClickListener {
             finish()

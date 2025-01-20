@@ -4,39 +4,38 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.example.myappplaylistmaker.data.model.Response
-import com.example.myappplaylistmaker.presentation.utils.NetworkChecker
-import com.example.myappplaylistmaker.presentation.utils.NetworkClass
+import com.example.myappplaylistmaker.app.presentation.utils.NetworkChecker
+import com.example.myappplaylistmaker.app.presentation.utils.NetworkClass
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient (private val networkChecker: NetworkChecker) : NetworkClient {
+class RetrofitNetworkClient (
+    private val networkChecker: NetworkChecker,
+    private val itunesService: ItunesApi) : NetworkClient {
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(ITUNES_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val api = retrofit.create(ItunesApi::class.java)
+//    private val retrofit = Retrofit.Builder()
+//        .baseUrl(ITUNES_URL)
+//        .addConverterFactory(GsonConverterFactory.create())
+//        .build()
+//
+//    private val api = retrofit.create(ItunesApi::class.java)
 
     @SuppressLint("SuspiciousIndentation")
     override fun doRequest(artistOrSongName: String): Response {
 
         return try {
             if (!networkChecker.isNetworkAvailable()) {
-                Log.d("RetrofitNetworkClient", "No internet connection")
                 return Response().apply { resultCode = -1 }
             } else {
-                val response = api.search(artistOrSongName).execute()
-                Log.d("RetrofitNetworkClient", "Response code: ${response.code()}, body: ${response.body()}")
+                val response = itunesService.search(artistOrSongName).execute()
                 val networkResponse = response.body() ?: Response()
                 networkResponse.apply { resultCode = response.code() }
             }
         } catch (ex: Exception) {
-            Log.e("RetrofitNetworkClient", "Error during request: ${ex.message}")
             Response().apply { resultCode = 400 }
         }
     }
-    companion object {
-        private const val ITUNES_URL = "https://itunes.apple.com/"
-    }
+//    companion object {
+//        private const val ITUNES_URL = "https://itunes.apple.com/"
+//    }
 }
