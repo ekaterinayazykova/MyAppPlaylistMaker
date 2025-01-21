@@ -28,4 +28,11 @@
     <string name="error_occured" translatable="false">Произошла ошибка:</string>
     <string name="goes_wrong" translatable="false">Что-то пошло не так</string>
     <string name="no_internet" translatable="false">Проверьте подключение к интернету</string>
+    <string name="fav_tracks" translatable="false">Избранные треки</string>
+    <string name="playlists" translatable="false">Плейлисты</string>
+    <string name="empty_fav" translatable="false">Ваша медиатека пуста</string>
+    <string name="new_playlist" translatable="false">Новый плейлист</string>
+    <string name="no_playlist_fist_line" translatable="false">Вы не создали</string>
+    <string name="no_playlist_second_line" translatable="false">ни одного плейлиста</string>
+
 </resources>

@@ -38,4 +38,6 @@
     <dimen name="size_50">50dp</dimen>
     <dimen name="size_140">140dp</dimen>
     <dimen name="size_158">158dp</dimen>
+    <dimen name="size_104">104dp</dimen>
+    <dimen name="size_106">106dp</dimen>
     </resources>

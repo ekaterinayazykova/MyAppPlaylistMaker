@@ -1,7 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/fragment_library_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:background="?attr/colorPrimaryVariant">
+
+    <ImageView
+        android:id="@+id/arrow"
+        android:contentDescription="@string/button_back"
+        style="@style/TitlesButton"
+        android:src="@drawable/icon_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/size_4"
+        android:layout_marginStart="@dimen/size_4"
+        />
+
+    <TextView
+        android:layout_width="@dimen/size_0"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/size_12"
+        android:layout_marginTop="@dimen/size_14"
+        app:layout_constraintStart_toEndOf="@+id/arrow"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="@string/button_media"
+        style="@style/Titles"
+        android:textColor="?attr/colorAccent" />
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_4"
+        app:layout_constraintTop_toBottomOf="@id/arrow" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="space"
+        />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/barrier"
+        app:tabIndicatorColor="?attr/colorAccent"
+        app:tabTextColor="?attr/colorAccent"
+        android:background="?attr/colorPrimaryVariant"
+        android:clickable="true"
+        android:focusable="true"
+        android:enabled="true"/>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/size_104"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
