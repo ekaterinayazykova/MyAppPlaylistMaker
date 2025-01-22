@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.example.myappplaylistmaker.data.model.Response
-import com.example.myappplaylistmaker.app.presentation.utils.NetworkChecker
-import com.example.myappplaylistmaker.app.presentation.utils.NetworkClass
+import com.example.myappplaylistmaker.presentation.utils.NetworkChecker
+import com.example.myappplaylistmaker.presentation.utils.NetworkClass
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

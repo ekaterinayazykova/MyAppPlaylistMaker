@@ -40,10 +40,12 @@ android {
 }
 
 dependencies {
-
+    implementation ("androidx.core:core-splashscreen:1.0.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation ("com.google.android.material:material:1.9.0")
+    implementation ("androidx.viewpager2:viewpager2:1.1.0-beta01")
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation ("com.github.bumptech.glide:glide:4.16.0")
@@ -62,5 +64,4 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.3.0")
     implementation("com.google.dagger:dagger:2.45")
     kapt("com.google.dagger:dagger-compiler:2.45")
-
 }
