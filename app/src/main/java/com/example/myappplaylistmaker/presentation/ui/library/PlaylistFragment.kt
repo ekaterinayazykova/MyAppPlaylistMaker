@@ -6,21 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.myappplaylistmaker.databinding.FragmentPlaylistBinding
+import com.example.myappplaylistmaker.presentation.view_models.media_library.PlaylistViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class PlaylistFragment : Fragment() {
 
-    companion object {
-        private const val PLAYLIST_ID = "playlist_id"
-
-        fun newInstance(playlistId: String) = PlaylistFragment().apply {
-            arguments = Bundle().apply {
-                putString(PLAYLIST_ID, playlistId)
-            }
-        }
-    }
-
     private var _binding: FragmentPlaylistBinding? = null
     private val binding get() = _binding!!
+    private val playlistViewModel by viewModel<PlaylistViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

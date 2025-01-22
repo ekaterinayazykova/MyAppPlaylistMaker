@@ -6,21 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.myappplaylistmaker.databinding.FragmentFavtrackBinding
+import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavTracksFragment : Fragment() {
 
-    companion object {
-        private const val TRACK_ID = "track_id"
-
-        fun newInstance(trackId: String) = FavTracksFragment().apply {
-            arguments = Bundle().apply {
-                putString(TRACK_ID, trackId)
-            }
-        }
-    }
-
     private var _binding: FragmentFavtrackBinding? = null
     private val binding get() = _binding!!
+    private val favTracksViewModel by viewModel<FavTracksViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

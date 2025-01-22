@@ -5,13 +5,18 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.ActivityLibraryBinding
+import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
+import com.example.myappplaylistmaker.presentation.view_models.media_library.PlaylistViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MediaLibraryActivity : AppCompatActivity() {
 
     private var _binding: ActivityLibraryBinding? = null
     private val binding get() = _binding!!
+    private val playlistViewModel by viewModel<PlaylistViewModel>()
+    private val favTracksViewModel by viewModel<FavTracksViewModel>()
     private lateinit var tabLayoutMediator: TabLayoutMediator
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,8 +24,6 @@ class MediaLibraryActivity : AppCompatActivity() {
         _binding = ActivityLibraryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val favTrack = intent.getStringExtra("track") ?: ""
-        val playlist = intent.getStringExtra("playlist") ?: ""
 
         binding.arrow.setOnClickListener {
             finish()
@@ -28,10 +31,7 @@ class MediaLibraryActivity : AppCompatActivity() {
 
         binding.viewPager.adapter = ViewPagerAdapter(
             fragmentManager = supportFragmentManager,
-            lifecycle = lifecycle,
-            trackId = favTrack,
-            playlistId = playlist,
-        )
+            lifecycle = lifecycle)
 
         tabLayoutMediator = TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             when(position) {
