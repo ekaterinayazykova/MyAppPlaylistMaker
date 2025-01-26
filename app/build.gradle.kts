@@ -56,6 +56,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation("androidx.core:core:1.9.0")
     implementation(libs.androidx.lifecycle.viewmodel.android)
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.5.3")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.5.3")
+    implementation ("androidx.fragment:fragment-ktx:1.5.6")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("com.google.code.gson:gson:2.8.9")
     testImplementation(libs.junit)
@@ -63,5 +66,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("io.insert-koin:koin-android:3.3.0")
     implementation("com.google.dagger:dagger:2.45")
+    implementation ("com.google.android.material:material:1.8.0")
     kapt("com.google.dagger:dagger-compiler:2.45")
 }

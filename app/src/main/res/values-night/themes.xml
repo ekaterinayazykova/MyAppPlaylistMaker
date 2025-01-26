@@ -17,6 +17,7 @@
         <item name="editTextColor">@color/white</item>
         <item name="hintTextColor">@color/setting_title</item>
         <item name="helperTextTextColor">@color/setting_title</item>
+        <item name="colorOutline">@color/main</item>
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
@@ -25,7 +26,9 @@
 
     <style name="Theme.MyAppPlaylistMaker.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/background_dark</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icon_launcher</item>
+        <item name="windowSplashScreenAnimationDuration">700</item>
         <item name="postSplashScreenTheme">@style/Theme.MyAppPlaylistMaker</item>
+        <item name="android:layout_gravity">center</item>
     </style>
 </resources>

@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/fragment_library_view"
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/fragment_library_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
-    android:background="?attr/colorPrimaryVariant">
+    android:background="?attr/colorPrimaryVariant"
+    tools:context="com.example.myappplaylistmaker.presentation.ui.library.MediaLibraryFragment"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/arrow"
-        android:contentDescription="@string/button_back"
-        style="@style/TitlesButton"
-        android:src="@drawable/icon_arrow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/size_4"
-        android:layout_marginStart="@dimen/size_4"
-        />
+
 
     <TextView
+        android:id="@+id/media"
         android:layout_width="@dimen/size_0"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/size_12"
         android:layout_marginTop="@dimen/size_14"
-        app:layout_constraintStart_toEndOf="@+id/arrow"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:text="@string/button_media"
         style="@style/Titles"
@@ -36,7 +29,7 @@
         android:id="@+id/space"
         android:layout_width="match_parent"
         android:layout_height="@dimen/size_4"
-        app:layout_constraintTop_toBottomOf="@id/arrow" />
+        app:layout_constraintTop_toBottomOf="@id/media" />
 
     <androidx.constraintlayout.widget.Barrier
         android:id="@+id/barrier"

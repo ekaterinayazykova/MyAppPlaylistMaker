@@ -75,7 +75,7 @@ class MediaPlayerActivity : AppCompatActivity() {
 
         binding.arrow.setOnClickListener {
             mediaPlayerViewModel.stopPlayer()
-            onBackPressed()
+            finish()
         }
 
         binding.buttonAdd.setOnClickListener {
@@ -178,6 +178,7 @@ class MediaPlayerActivity : AppCompatActivity() {
 
     @Deprecated("This method use back button.")
     override fun onBackPressed() {
+        mediaPlayerViewModel.stopPlayer()
         super.onBackPressed()
         finish()
     }

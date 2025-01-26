@@ -7,7 +7,6 @@ import com.example.myappplaylistmaker.di.appModule
 import com.example.myappplaylistmaker.di.dataModule
 import com.example.myappplaylistmaker.di.domainModule
 import com.example.myappplaylistmaker.domain.interactor.ThemeManagerInteractor
-import com.example.myappplaylistmaker.presentation.ui.main.MainActivity
 import com.example.myappplaylistmaker.presentation.ui.main.SplashActivity
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
