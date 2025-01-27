@@ -7,6 +7,7 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,10 +84,12 @@ class SearchFragment: Fragment() {
             SearchViewModel.State.ClearEditText
         }
 
-        binding.editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                Log.d("SearchActivity", "Search query: $searchQuery")
+        binding.editText.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                handler.removeCallbacks(searchRunnable)
                 searchViewModel.getDataFromServer(searchQuery)
+                hideKeyboard(v)
                 true
             } else {
                 false
@@ -190,7 +193,6 @@ class SearchFragment: Fragment() {
                     binding.noSongPlaceholder.visibility = View.GONE
                     binding.noInternetPlaceholder.visibility = View.GONE
                 }
-
             }
         }
     }

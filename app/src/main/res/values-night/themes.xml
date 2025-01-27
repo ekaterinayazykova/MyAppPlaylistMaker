@@ -18,6 +18,7 @@
         <item name="hintTextColor">@color/setting_title</item>
         <item name="helperTextTextColor">@color/setting_title</item>
         <item name="colorOutline">@color/main</item>
+        <item name="android:windowLightStatusBar">false</item>
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>

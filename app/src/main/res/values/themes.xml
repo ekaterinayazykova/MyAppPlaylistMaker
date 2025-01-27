@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
 
     <style name="Base.Theme.MyAppPlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="colorPrimary">@color/main</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/white</item>
@@ -19,6 +19,8 @@
         <item name="hintTextColor">@color/switch_thumb_light</item>
         <item name="helperTextTextColor">@color/white</item>
         <item name="colorOutline">@color/main</item>
+        <item name="android:windowLightStatusBar">true</item>
+
 
 
     </style>

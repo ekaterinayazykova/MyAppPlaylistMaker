@@ -46,6 +46,7 @@
         app:layout_constraintTop_toBottomOf="@+id/barrier"
         app:tabIndicatorColor="?attr/colorAccent"
         app:tabTextColor="?attr/colorAccent"
+        app:tabTextAppearance="@style/CustomTabTextAppearance"
         android:background="?attr/colorPrimaryVariant"
         android:clickable="true"
         android:focusable="true"
@@ -57,5 +58,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/size_104"
         app:layout_constraintTop_toBottomOf="@id/tabLayout"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
