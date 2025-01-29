@@ -5,7 +5,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/colorPrimaryVariant">
+    android:background="?attr/colorPrimaryVariant"
+    tools:context="com.example.myappplaylistmaker.presentation.ui.search.SearchFragment">
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,10 +23,7 @@
         android:orientation="horizontal"
         android:padding="@dimen/size_4" >
 
-        <ImageView
-            android:id="@+id/arrow"
-            style="@style/TitlesButton"
-            android:src="@drawable/icon_arrow"/>
+
 
         <TextView
             android:layout_width="@dimen/size_0"

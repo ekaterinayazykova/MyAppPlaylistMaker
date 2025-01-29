@@ -14,7 +14,6 @@ class ViewPagerAdapter(fragmentManager: FragmentManager,
     }
 
     override fun createFragment(position: Int): Fragment {
-        Log.d("ViewPagerAdapter", "Creating fragment for position: $position")
         return when(position) {
             0 -> FavTracksFragment()
             1 -> PlaylistFragment()

@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
 
     <style name="Base.Theme.MyAppPlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:statusBarColor">?attr/colorPrimary</item>
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <item name="colorPrimary">@color/main</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/white</item>
@@ -18,15 +18,19 @@
         <item name="editTextColor">@color/switch_track_light</item>
         <item name="hintTextColor">@color/switch_thumb_light</item>
         <item name="helperTextTextColor">@color/white</item>
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorOutline">@color/main</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+
+
     </style>
 
     <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" />
 
     <style name="Theme.MyAppPlaylistMaker.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/icon_launcher</item>
         <item name="windowSplashScreenBackground">@color/white</item>
+        <item name="windowSplashScreenAnimationDuration">700</item>
         <item name="postSplashScreenTheme">@style/Theme.MyAppPlaylistMaker</item>
         <item name="android:layout_gravity">center</item>
     </style>
