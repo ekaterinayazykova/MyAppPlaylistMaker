@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -46,7 +45,7 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hideKeyboard(requireActivity().window.decorView.rootView)
+        toggleKeyboard((requireActivity().window.decorView.rootView), false)
         recyclerView = binding.trackList
 
         editText()
@@ -88,7 +87,7 @@ class SearchFragment : Fragment() {
 
         binding.clearButton.visibility = View.GONE
         binding.clearButton.setOnClickListener {
-            hideKeyboard(requireActivity().window.decorView.rootView)
+            toggleKeyboard((requireActivity().window.decorView.rootView), false)
             binding.editText.text.clear()
             unifiedTrackAdapter.updateTracks(searchViewModel.getDataFromPref())
             binding.editText.requestFocus()
@@ -101,7 +100,7 @@ class SearchFragment : Fragment() {
             ) {
                 isDebounceEnabled = false
                 searchViewModel.getDataFromServer(searchQuery)
-                hideKeyboard(v)
+                toggleKeyboard(v, false)
                 true
             } else {
                 false
@@ -110,20 +109,18 @@ class SearchFragment : Fragment() {
 
         binding.requestFocusButton.setOnClickListener {
             binding.editText.requestFocus()
-            showKeyboard(binding.editText)
+            toggleKeyboard(binding.editText, true)
         }
 
         binding.editText.requestFocus()
-        binding.editText.postDelayed({ showKeyboard(binding.editText) }, 100)
+        binding.editText.postDelayed({ toggleKeyboard((binding.editText), true) }, 100)
         if (savedInstanceState != null) {
             restoreState(savedInstanceState)
         }
 
         binding.updateButton.setOnClickListener {
-            Log.d("Search Fragment", "Update called")
             lastQuery?.let { query ->
                 performSearch(query)
-                Log.d("Search Fragment", "perform Search called")
             }
         }
     }
@@ -170,7 +167,6 @@ class SearchFragment : Fragment() {
 
     private fun cleanHistory() {
         binding.cleanHistoryButton.setOnClickListener {
-            Log.d("SearchActivity", "method is called")
             searchViewModel.clearedList()
             SearchViewModel.State.ClearSearchNoQuery
         }
@@ -184,21 +180,19 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun showKeyboard(view: View) {
+    private fun toggleKeyboard(view: View, show: Boolean) {
         val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-    }
-
-    private fun hideKeyboard(view: View) {
-        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        if (show) {
+            imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+        } else {
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
     private fun openTrack(track: Track) {
         val trackIntent = Intent(requireActivity(), MediaPlayerActivity::class.java)
         trackIntent.putExtra(MediaPlayerActivity.TRACK_DATA, track)
         startActivity(trackIntent)
-        Log.d("PreviousActivity", "Track data sent: $track")
     }
 
     private fun observeState() {
@@ -234,7 +228,7 @@ class SearchFragment : Fragment() {
                     binding.noInternetPlaceholder.visibility = View.VISIBLE
                     binding.progressBar.visibility = View.GONE
                     binding.trackList.visibility = View.GONE
-                    hideKeyboard(requireActivity().window.decorView.rootView)
+                    toggleKeyboard((requireActivity().window.decorView.rootView), false)
                     binding.noSongPlaceholder.visibility = View.GONE
                     binding.yourSearch.visibility = View.GONE
                     binding.cleanHistoryButton.visibility = View.GONE
@@ -255,7 +249,7 @@ class SearchFragment : Fragment() {
                     binding.progressBar.visibility = View.GONE
                     binding.yourSearch.visibility = View.GONE
                     binding.trackList.visibility = View.VISIBLE
-                    hideKeyboard(requireActivity().window.decorView.rootView)
+                    toggleKeyboard((requireActivity().window.decorView.rootView), false)
                     binding.noSongPlaceholder.visibility = View.GONE
                     binding.cleanHistoryButton.visibility = View.GONE
                 }

@@ -1,6 +1,5 @@
 package com.example.myappplaylistmaker.presentation.view_models.media_player
 
-import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -51,11 +50,13 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
         }
     }
 
-    fun startPlayer() {
-        mediaPlayerInteractor.play()
-        startTimer()
-        playerState = PlayerState.PLAYING
-        _state.postValue(State.PLAYING(getCurrentPlayerPosition()))
+    fun startPlayer()  {
+        if (playerState == PlayerState.PREPARED || playerState == PlayerState.PAUSED) {
+            mediaPlayerInteractor.play()
+            playerState = PlayerState.PLAYING
+            _state.postValue(State.PLAYING("00:00"))
+            startTimer()
+        }
     }
 
     fun pausePlayer() {
