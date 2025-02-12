@@ -3,18 +3,18 @@ package com.example.myappplaylistmaker.presentation.view_models.search
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.data.utils.StringProvider
-import com.example.myappplaylistmaker.domain.consumer.Consumer
-import com.example.myappplaylistmaker.domain.consumer.ConsumerData
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.SearchHistoryManagerInteractor
 import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
+import kotlinx.coroutines.launch
 
-class SearchViewModel (
+class SearchViewModel(
     private val searchHistoryManager: SearchHistoryManagerInteractor,
     private val searchTrackUseCase: SearchTrackUseCase,
     private val stringProvider: StringProvider
-) : ViewModel()  {
+) : ViewModel() {
 
     private var lastQuery: String? = null
 
@@ -38,26 +38,37 @@ class SearchViewModel (
     fun getDataFromServer(query: String) {
         if (query.isEmpty() or query.isBlank()) {
             return
-        }
-        this._searchState.postValue(State.Loading)
-        searchTrackUseCase.execute(query, object : Consumer<List<Track>> {
-            override fun consume(data: ConsumerData<List<Track>>) {
-                when (data) {
-                    is ConsumerData.Data -> {
-                        val tracks = data.value
-                        if (tracks.isNotEmpty()) {
-                            this@SearchViewModel._searchState.postValue(State.SuccessSearch(tracks))
-                        } else {
-                            this@SearchViewModel._searchState.postValue(State.EmptyMainSearch)
-                        }
+        } else {
+            this._searchState.postValue(State.Loading)
+
+            viewModelScope.launch {
+                searchTrackUseCase
+                    .searchTracks(query)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
                     }
-                    is ConsumerData.Error -> {
-                        this@SearchViewModel._searchState.postValue(State.Error)
-                        lastQuery = query
-                    }
-                }
             }
-        })
+        }
+    }
+
+    private fun processResult(foundNames: List<Track>?, errorMessage: String?) {
+        val tracks = mutableListOf<Track>()
+        if (foundNames != null) {
+            tracks.addAll(foundNames)
+        }
+        when {
+            errorMessage != null -> {
+                this@SearchViewModel._searchState.postValue(State.Error)
+            }
+
+            tracks.isEmpty() -> {
+                this@SearchViewModel._searchState.postValue(State.EmptyMainSearch)
+            }
+
+            else -> {
+                this@SearchViewModel._searchState.postValue(State.SuccessSearch(tracks))
+            }
+        }
     }
 
     fun clearedList() {
@@ -75,11 +86,9 @@ class SearchViewModel (
         data object Error : State()
         data object Loading : State()
         data object EmptyMainSearch : State()
-        data object ClearSearch: State()
-        data object ClearEditText: State()
-        data object ClearSearchNoQuery: State()
+        data object ClearSearch : State()
+        data object ClearEditText : State()
+        data object ClearSearchNoQuery : State()
         data class SuccessSearch(val listTracks: List<Track>) : State()
     }
 }
-
-

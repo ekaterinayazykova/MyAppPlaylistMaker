@@ -1,9 +1,8 @@
 package com.example.myappplaylistmaker.domain.use_case
 
-import com.example.myappplaylistmaker.domain.consumer.Consumer
 import com.example.myappplaylistmaker.domain.entity.Track
+import kotlinx.coroutines.flow.Flow
 
 interface SearchTrackUseCase {
-    fun execute(artistOrSongName: String, consumer: Consumer<List<Track>>)
-    fun shutDown()
+    fun searchTracks(artistOrSongName: String): Flow<Pair<List<Track>?, String?>>
 }

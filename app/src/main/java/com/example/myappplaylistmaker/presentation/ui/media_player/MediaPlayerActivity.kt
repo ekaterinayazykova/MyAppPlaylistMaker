@@ -61,12 +61,6 @@ class MediaPlayerActivity : AppCompatActivity() {
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
                     binding.trackDuration.text = state.currentTime
                 }
-
-                is MediaPlayerViewModel.State.STOPPED -> {
-                    binding.buttonPlay.visibility = View.VISIBLE
-                    binding.buttonPlayProgressBar.visibility = View.GONE
-                    binding.buttonPlay.setImageResource(R.drawable.button_play)
-                }
             }
         }
 
@@ -96,7 +90,6 @@ class MediaPlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayerViewModel.cleanup()
         mediaPlayerViewModel.stopPlayer()
     }
 

@@ -4,5 +4,5 @@ import android.content.Context
 import com.example.myappplaylistmaker.data.model.Response
 
 interface NetworkClient {
-    fun doRequest(artistOrSongName: String): Response
+    suspend fun doRequest(artistOrSongName: Any): Response
 }

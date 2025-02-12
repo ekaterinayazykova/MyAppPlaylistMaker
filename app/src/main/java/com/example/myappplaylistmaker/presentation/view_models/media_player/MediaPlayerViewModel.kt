@@ -1,20 +1,25 @@
 package com.example.myappplaylistmaker.presentation.view_models.media_player
 
-import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
 
+    private var timerJob: Job? = null
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> get() = _state
+    private var playerState = PlayerState.DEFAULT
 
     init {
         mediaPlayerInteractor.setOnCompletionListener {
@@ -22,14 +27,10 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
         }
     }
 
-    private var playerState = PlayerState.DEFAULT
-    private var handler: Handler? = null
-
     private fun onTrackComplete() {
-        handler?.removeCallbacksAndMessages(null)
+        timerJob?.cancel()
         playerState = PlayerState.PREPARED
         _state.postValue(State.PAUSED("00:00"))
-//        _state.postValue(State.PREPARED)
     }
 
     fun setTrack(track: Track) {
@@ -49,29 +50,22 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
         }
     }
 
-    fun startPlayer() {
-        mediaPlayerInteractor.play()
-        val currentPositionMillis = mediaPlayerInteractor.getCurrentPosition()
-        val minutes = (currentPositionMillis / 1000) / 60
-        val seconds = (currentPositionMillis / 1000) % 60
-        val formattedTime = String.format("%02d:%02d", minutes, seconds)
-
-        startCountdown()
-        playerState = PlayerState.PLAYING
-        _state.postValue(State.PLAYING(formattedTime))
+    fun startPlayer()  {
+        if (playerState == PlayerState.PREPARED || playerState == PlayerState.PAUSED) {
+            mediaPlayerInteractor.play()
+            playerState = PlayerState.PLAYING
+            _state.postValue(State.PLAYING("00:00"))
+            startTimer()
+        }
     }
 
     fun pausePlayer() {
         mediaPlayerInteractor.pause()
 
         if (playerState == PlayerState.PLAYING) {
-            val currentPositionMillis = mediaPlayerInteractor.getCurrentPosition()
-            val minutes = (currentPositionMillis / 1000) / 60
-            val seconds = (currentPositionMillis / 1000) % 60
-            val formattedTime = String.format("%02d:%02d", minutes, seconds)
-
+            timerJob?.cancel()
             playerState = PlayerState.PAUSED
-            _state.postValue(State.PAUSED(formattedTime))
+            _state.postValue(State.PAUSED(getCurrentPlayerPosition()))
         }
     }
 
@@ -92,41 +86,36 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     fun stopPlayer() {
         mediaPlayerInteractor.stop()
         playerState = PlayerState.DEFAULT
-        _state.postValue(State.STOPPED)
+        _state.postValue(State.PAUSED(getCurrentPlayerPosition()))
     }
 
     fun cleanup() {
-        handler?.removeCallbacksAndMessages(null)
+        timerJob?.cancel()
+        timerJob = null
     }
 
-
-    private fun startCountdown() {
-        handler = Handler(Looper.getMainLooper())
-        handler?.post(object : Runnable {
-            @SuppressLint("DefaultLocale")
-            override fun run() {
-                if (mediaPlayerInteractor.isPlaying()) {
-                    val currentPositionMillis = mediaPlayerInteractor.getCurrentPosition()
-                    val minutes = (currentPositionMillis / 1000) / 60
-                    val seconds = (currentPositionMillis / 1000) % 60
-                    val formattedTime = String.format("%02d:%02d", minutes, seconds)
-                    if (playerState == PlayerState.PLAYING) {
-                        _state.postValue(State.PLAYING(formattedTime))
-                    }
-                    handler?.postDelayed(this, 1000)
-
-                } else {
-                    handler?.removeCallbacks(this)
-                }
+    private fun startTimer() {
+        timerJob = viewModelScope.launch {
+            while (mediaPlayerInteractor.isPlaying()) {
+                delay(300L)
+                _state.postValue(State.PLAYING(getCurrentPlayerPosition()))
             }
-        })
+        }
     }
 
-    sealed class State {
-        data object LOADING: State()
-        data object PREPARED: State()
-        data class PLAYING(val currentTime: String) : State()
-        data class PAUSED(val currentTime: String) : State()
-        data object STOPPED: State()
+    private fun getCurrentPlayerPosition(): String {
+        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayerInteractor.getCurrentPosition()) ?: "00:00"
+    }
+
+    sealed class State (val progress: String) {
+        data object LOADING: State("00:00")
+        data object PREPARED: State("00:00")
+        data class PLAYING(val currentTime: String) : State(progress = currentTime)
+        data class PAUSED(val currentTime: String) : State(progress = currentTime)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cleanup()
     }
 }
