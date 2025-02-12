@@ -4,8 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.example.myappplaylistmaker.data.model.Response
+import com.example.myappplaylistmaker.data.model.TrackRequest
 import com.example.myappplaylistmaker.presentation.utils.NetworkChecker
 import com.example.myappplaylistmaker.presentation.utils.NetworkClass
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -21,21 +24,23 @@ class RetrofitNetworkClient (
 //    private val api = retrofit.create(ItunesApi::class.java)
 
     @SuppressLint("SuspiciousIndentation")
-    override fun doRequest(artistOrSongName: String): Response {
+    override suspend fun doRequest(artistOrSongName: Any): Response {
 
-        return try {
-            if (!networkChecker.isNetworkAvailable()) {
-                return Response().apply { resultCode = -1 }
-            } else {
-                val response = itunesService.search(artistOrSongName).execute()
-                val networkResponse = response.body() ?: Response()
-                networkResponse.apply { resultCode = response.code() }
+        if (!networkChecker.isNetworkAvailable()) {
+            return Response().apply { resultCode = -1 }
+        }
+        if (artistOrSongName !is TrackRequest) {
+            return Response().apply { resultCode = 400 }
+        }
+
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = itunesService.search(artistOrSongName.artistOrSongName)
+                response.apply { resultCode = 200 }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = 500 }
+
             }
-        } catch (ex: Exception) {
-            Response().apply { resultCode = 400 }
         }
     }
-//    companion object {
-//        private const val ITUNES_URL = "https://itunes.apple.com/"
-//    }
 }

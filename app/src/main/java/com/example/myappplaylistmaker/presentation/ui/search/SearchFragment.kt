@@ -2,8 +2,6 @@ package com.example.myappplaylistmaker.presentation.ui.search
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -15,30 +13,33 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity.INPUT_METHOD_SERVICE
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myappplaylistmaker.databinding.FragmentSearchBinding
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
+import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchFragment: Fragment() {
+class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
     private lateinit var unifiedTrackAdapter: UnifiedTrackAdapter
+    private lateinit var debouncedSearch: (String) -> Unit
     private var searchQuery: String = ""
     private var lastQuery: String? = null
-    private val handler = Handler(Looper.getMainLooper())
+    private var isDebounceEnabled = true
     private val searchViewModel by viewModel<SearchViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -48,11 +49,21 @@ class SearchFragment: Fragment() {
         hideKeyboard(requireActivity().window.decorView.rootView)
         recyclerView = binding.trackList
 
-
         editText()
         observeState()
         cleanHistory()
         searchViewModel.getDataFromPref()
+
+        debouncedSearch = debounce(
+            SEARCH_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            true
+        ) { searchQuery ->
+            if (isDebounceEnabled) {
+                performSearch(searchQuery)
+            }
+            isDebounceEnabled = true
+        }
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
             openTrack(track)
@@ -86,8 +97,9 @@ class SearchFragment: Fragment() {
 
         binding.editText.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE ||
-                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
-                handler.removeCallbacks(searchRunnable)
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
+                isDebounceEnabled = false
                 searchViewModel.getDataFromServer(searchQuery)
                 hideKeyboard(v)
                 true
@@ -108,10 +120,85 @@ class SearchFragment: Fragment() {
         }
 
         binding.updateButton.setOnClickListener {
+            Log.d("Search Fragment", "Update called")
             lastQuery?.let { query ->
                 performSearch(query)
+                Log.d("Search Fragment", "perform Search called")
             }
         }
+    }
+
+    private fun performSearch(query: String) {
+        searchViewModel.getDataFromServer(query)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SEARCH_QUERY_KEY, searchQuery)
+        outState.putBoolean(
+            IS_CLEAR_BUTTON_VISIBLE_KEY,
+            binding.clearButton.visibility == View.VISIBLE
+        )
+    }
+
+    private fun editText() {
+        binding.editText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchQuery = s.toString()
+                lastQuery = searchQuery
+
+                binding.clearButton.visibility = if (s.isNullOrEmpty()) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+
+                isDebounceEnabled = true
+
+                if (searchQuery.isEmpty()) {
+                    SearchViewModel.State.ClearSearchNoQuery
+                } else {
+                    debouncedSearch(searchQuery)
+                    SearchViewModel.State.ClearSearch
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+    }
+
+    private fun cleanHistory() {
+        binding.cleanHistoryButton.setOnClickListener {
+            Log.d("SearchActivity", "method is called")
+            searchViewModel.clearedList()
+            SearchViewModel.State.ClearSearchNoQuery
+        }
+    }
+
+    private fun restoreState(savedInstanceState: Bundle?) {
+        if (savedInstanceState != null) {
+            searchQuery = savedInstanceState.getString(SEARCH_QUERY_KEY, "")
+            binding.editText.setText(searchQuery)
+            binding.editText.setSelection(searchQuery.length)
+        }
+    }
+
+    private fun showKeyboard(view: View) {
+        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun openTrack(track: Track) {
+        val trackIntent = Intent(requireActivity(), MediaPlayerActivity::class.java)
+        trackIntent.putExtra(MediaPlayerActivity.TRACK_DATA, track)
+        startActivity(trackIntent)
+        Log.d("PreviousActivity", "Track data sent: $track")
     }
 
     private fun observeState() {
@@ -197,80 +284,6 @@ class SearchFragment: Fragment() {
         }
     }
 
-    private val searchRunnable = Runnable {
-        performSearch(searchQuery)
-    }
-
-    private fun searchDebounce() {
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    private fun performSearch(query: String) {
-        searchViewModel.getDataFromServer(query)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_QUERY_KEY, searchQuery)
-        outState.putBoolean(
-            IS_CLEAR_BUTTON_VISIBLE_KEY,
-            binding.clearButton.visibility == View.VISIBLE
-        )
-    }
-
-    private fun editText() {
-        binding.editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchQuery = s.toString()
-
-                binding.clearButton.visibility = if (s.isNullOrEmpty()) {
-                    View.GONE
-                } else {
-                    View.VISIBLE
-                }
-
-                if (searchQuery.isEmpty()) {
-                    SearchViewModel.State.ClearSearchNoQuery
-                } else {
-                    lastQuery = searchQuery
-                    searchDebounce()
-                    SearchViewModel.State.ClearSearch
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-    }
-
-    private fun cleanHistory() {
-        binding.cleanHistoryButton.setOnClickListener {
-            Log.d("SearchActivity", "method is called")
-            searchViewModel.clearedList()
-            SearchViewModel.State.ClearSearchNoQuery
-        }
-    }
-
-    private fun restoreState(savedInstanceState: Bundle?) {
-        if (savedInstanceState != null) {
-            searchQuery = savedInstanceState.getString(SEARCH_QUERY_KEY, "")
-            binding.editText.setText(searchQuery)
-            binding.editText.setSelection(searchQuery.length)
-        }
-    }
-
-    private fun showKeyboard(view: View) {
-        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-    }
-
-    private fun hideKeyboard(view: View) {
-        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.let {
@@ -279,16 +292,8 @@ class SearchFragment: Fragment() {
     }
 
     companion object {
-
         private const val SEARCH_QUERY_KEY = "search_query"
         private const val IS_CLEAR_BUTTON_VISIBLE_KEY = "isClearButtonVisible"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-    }
-
-    private fun openTrack(track: Track) {
-        val trackIntent = Intent(requireActivity(), MediaPlayerActivity::class.java)
-        trackIntent.putExtra(MediaPlayerActivity.TRACK_DATA, track)
-        startActivity(trackIntent)
-        Log.d("PreviousActivity", "Track data sent: $track")
     }
 }

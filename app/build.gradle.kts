@@ -75,4 +75,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit) // AndroidJUnit4
     androidTestImplementation(libs.androidx.test.core) // Основной фреймворк тестирования
     androidTestImplementation(libs.espresso.core)
+
+    // Корутины
+    implementation(libs.kotlinx.coroutines.android)
 }
