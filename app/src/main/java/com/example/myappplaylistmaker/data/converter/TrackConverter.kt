@@ -5,6 +5,7 @@ import com.example.myappplaylistmaker.domain.entity.Track
 
 object TrackConverter {
     fun map(trackDto: TrackDto) : Track {
+            val trackId = trackDto.trackId ?: ""
             val trackName = trackDto.trackName ?: ""
             val artistName = trackDto.artistName ?: ""
             val artworkUrl100 = trackDto.artworkUrl100 ?: ""
@@ -15,6 +16,7 @@ object TrackConverter {
             val previewUrl = trackDto.previewUrl ?: ""
 
         return Track(
+            trackId = trackId,
             trackName = trackName,
             artistName = artistName,
             artworkUrl100 = artworkUrl100,

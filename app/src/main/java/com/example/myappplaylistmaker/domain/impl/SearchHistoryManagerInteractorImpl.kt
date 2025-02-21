@@ -9,11 +9,19 @@ class SearchHistoryManagerInteractorImpl (private val repository: SearchHistoryM
         return repository.saveToHistory(track)
     }
 
-    override fun getSearchHistory(): List<Track> {
+    override fun getSearchHistorySync(): List<Track> {
+        return repository.getSearchHistorySync()
+    }
+
+    override suspend fun getSearchHistory(): List<Track> {
         return repository.getSearchHistory()
     }
 
     override fun clearHistory() {
         return repository.clearHistory()
+    }
+
+    override fun clearPrefs() {
+        return repository.clearPrefs()
     }
 }

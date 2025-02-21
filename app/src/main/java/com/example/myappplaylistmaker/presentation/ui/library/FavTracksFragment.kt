@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.myappplaylistmaker.databinding.FragmentFavtrackBinding
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
+import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavTracksFragment : Fragment() {
@@ -14,6 +15,7 @@ class FavTracksFragment : Fragment() {
     private var _binding: FragmentFavtrackBinding? = null
     private val binding get() = _binding!!
     private val favTracksViewModel by viewModel<FavTracksViewModel>()
+    private val searchViewModel by viewModel<SearchViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,6 +28,8 @@ class FavTracksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        searchViewModel.clearPrefs()
+
     }
 
     override fun onDestroyView() {

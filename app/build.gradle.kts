@@ -1,7 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application) // Использование alias для AGP
-    alias(libs.plugins.jetbrains.kotlin.android) // Использование alias для Kotlin
-    id("kotlin-kapt") // Оставляем как есть
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -39,6 +39,10 @@ android {
     }
 }
 
+configurations.all {
+    exclude(group = "com.intellij", module = "annotations")
+}
+
 dependencies {
     // AndroidX и Material
     implementation(libs.androidx.core.ktx)
@@ -46,6 +50,7 @@ dependencies {
     implementation(libs.androidx.material)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.viewpager2)
+    implementation(libs.jetbrains.annotations)
 
     // Интеграции
     implementation(libs.glide)
@@ -61,7 +66,11 @@ dependencies {
     implementation(libs.androidx.fragment)
 
     // Room
-    implementation(libs.androidx.room.ktx)
+    implementation(libs.room.runtime) {
+        exclude(group = "com.intellij", module = "annotations")
+    }
+    kapt(libs.room.compiler)
+    implementation(libs.room.ktx)
 
     // DI
     implementation(libs.koin)

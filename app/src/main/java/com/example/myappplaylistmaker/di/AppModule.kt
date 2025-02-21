@@ -17,7 +17,8 @@ val appModule = module {
     viewModel<SearchViewModel>{
         SearchViewModel(searchHistoryManager = get(),
                         searchTrackUseCase = get(),
-                        stringProvider = get())
+                        stringProvider = get(),
+                        savedStateHandle = get())
     }
 
     viewModel<SettingsViewModel>{
