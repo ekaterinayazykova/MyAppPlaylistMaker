@@ -1,6 +1,5 @@
 package com.example.myappplaylistmaker.presentation.view_models.search
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -24,8 +23,8 @@ class SearchViewModel(
         private const val SEARCH_RESULTS_KEY = "search_results"
     }
 
-    private val _historyTrack: MutableLiveData<List<Track>?> = MutableLiveData()
-    val historyTrack: LiveData<List<Track>?> get() = this._historyTrack
+//    private val _historyTrack: MutableLiveData<List<Track>?> = MutableLiveData()
+//    val historyTrack: LiveData<List<Track>?> get() = this._historyTrack
 
     private val _searchState = MutableLiveData<State>()
     val searchState: LiveData<State> get() = this._searchState
@@ -36,33 +35,28 @@ class SearchViewModel(
             savedStateHandle[LAST_QUERY_KEY] = value
         }
 
-    private var cachedResults: List<Track>?
-        get() = savedStateHandle.get(SEARCH_RESULTS_KEY)
-        set(value) {
-            savedStateHandle[SEARCH_RESULTS_KEY] = value
-        }
+//    private var cachedResults: List<Track>?
+//        get() = savedStateHandle.get(SEARCH_RESULTS_KEY)
+//        set(value) {
+//            savedStateHandle[SEARCH_RESULTS_KEY] = value
+//        }
 
     fun getDataFromPref() {
         viewModelScope.launch {
             val result = searchHistoryManager.getSearchHistory()
 
             if (result.isEmpty()) {
-                _searchState.value = State.EmptyHistory
+                setState(State.EmptyHistory)
             } else {
-                _searchState.value = State.LoadedHistory
+                setState(State.LoadedHistory(result))
             }
-            _historyTrack.value = result
         }
     }
 
     fun getDataFromServer(query: String) {
-        if (query.isBlank()) return
+        if (query.isEmpty() || query.isBlank()) return
 
-        if (query == lastQuery && cachedResults != null) {
-            _searchState.value = (State.SuccessSearch(cachedResults!!))
-            return
-        }
-
+        if (query == lastQuery) return
         lastQuery = query
         _searchState.postValue(State.Loading)
 
@@ -73,7 +67,6 @@ class SearchViewModel(
         }
     }
 
-
     private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
         when {
             errorMessage != null -> {
@@ -83,7 +76,7 @@ class SearchViewModel(
                 _searchState.postValue(State.EmptyMainSearch)
             }
             else -> {
-                cachedResults = foundTracks
+//                cachedResults = foundTracks
                 _searchState.postValue(State.SuccessSearch(foundTracks))
             }
         }
@@ -95,7 +88,7 @@ class SearchViewModel(
 
     fun clearedList() {
         searchHistoryManager.clearHistory()
-        this._searchState.value = State.ClearSearchNoQuery
+        this.setState(State.ClearSearchNoQuery)
     }
 
     fun saveToHistory(track: Track) {
@@ -108,7 +101,7 @@ class SearchViewModel(
 
     sealed class State {
         data object EmptyHistory : State()
-        data object LoadedHistory : State()
+        data class LoadedHistory(val listTracks: List<Track>) : State()
         data object Error : State()
         data object Loading : State()
         data object EmptyMainSearch : State()

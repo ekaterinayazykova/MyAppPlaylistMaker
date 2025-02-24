@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.data.impl
 
+import android.util.Log
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.data.converter.TrackConverter
 import com.example.myappplaylistmaker.data.db.AppDatabase
@@ -28,12 +29,14 @@ class TrackRepositoryImpl(
                 }
                 200 -> {
                     val resultTracks = (response as TrackResponse).results.map { TrackConverter.map(it) }
-
+                    Log.d("TrackRepository", "Result track IDs: ${resultTracks.map { it.trackId }}")
                     val favTrackId = appDatabase.trackDao().getTrackId()
-
+                    Log.d("TrackRepository", "Favorite track IDs from DB: $favTrackId")
                     val checkedTracks = resultTracks.map { track ->
                         track.copy(isFavorite = track.trackId in favTrackId)
                     }
+                    Log.d("TrackRepository", "Checked tracks (with isFavorite flags): ${checkedTracks.map { "${it.trackId}: ${it.isFavorite}" }}")
+
                     emit(Resource.Success(checkedTracks))
                 }
                 else -> {

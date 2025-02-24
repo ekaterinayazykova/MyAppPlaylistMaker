@@ -8,13 +8,12 @@ import kotlinx.coroutines.flow.map
 
 class HistoryInteractorImpl(private val historyRepository: FavTracksRepository): FavTracksInteractor {
     override suspend fun addTrackToFavs(track: Track) {
-        TODO("Not yet implemented")
+        historyRepository.addTrackToFavs(track)
     }
 
     override suspend fun removeTrackFromFavs(track: Track) {
-        TODO("Not yet implemented")
+        historyRepository.removeTrackFromFavs(track)
     }
-
 
     override fun getFavsTracks(): Flow<List<Track>> {
         return historyRepository.getFavsTracks()

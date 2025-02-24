@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Track
+import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -14,11 +15,18 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
+class MediaPlayerViewModel(
+    private val mediaPlayerInteractor: MediaPlayerInteractor,
+    private val favTracksInteractor: FavTracksInteractor) : ViewModel() {
 
     private var timerJob: Job? = null
+
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> get() = _state
+
+    private val _currentTrack = MutableLiveData<Track>()
+    val currentTrack: LiveData<Track> get() = _currentTrack
+
     private var playerState = PlayerState.DEFAULT
 
     init {
@@ -34,7 +42,21 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     }
 
     fun setTrack(track: Track) {
+        _currentTrack.value = track
         preparePlayer(track)
+    }
+
+    fun onFavoriteClicked() {
+        val track = _currentTrack.value ?: return
+        viewModelScope.launch {
+            if (!track.isFavorite) {
+                favTracksInteractor.addTrackToFavs(track)
+                _currentTrack.value = track.copy(isFavorite = true)
+            } else {
+                favTracksInteractor.removeTrackFromFavs(track)
+                _currentTrack.value = track.copy(isFavorite = false)
+            }
+        }
     }
 
     fun preparePlayer(track: Track) {

@@ -56,27 +56,11 @@ class SearchFragment : Fragment() {
         editText()
         observeState()
         cleanHistory()
+        debouncedFunc()
+        binding.editText.requestFocus()
 
         if (searchViewModel.searchState.value !is SearchViewModel.State.SuccessSearch) {
             searchViewModel.getDataFromPref()
-        }
-
-        debouncedSearch = debounce(
-            SEARCH_DEBOUNCE_DELAY,
-            viewLifecycleOwner.lifecycleScope,
-            true
-        ) { searchQuery ->
-            if (isDebounceEnabled) {
-                performSearch(searchQuery)
-            }
-            isDebounceEnabled = true
-        }
-
-        debouncedClick = debounce(
-            SEARCH_DEBOUNCE_DELAY,
-            viewLifecycleOwner.lifecycleScope,
-            true
-        ) { isDebounceEnabled = true
         }
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
@@ -92,14 +76,14 @@ class SearchFragment : Fragment() {
             }
         }
 
-        searchViewModel.historyTrack.observe(viewLifecycleOwner) { listOfTracks ->
-            if (listOfTracks?.isNotEmpty() == true) {
-                unifiedTrackAdapter.updateTracks(listOfTracks ?: emptyList())
-                searchViewModel.setState(SearchViewModel.State.LoadedHistory)
-            } else {
-                searchViewModel.setState(SearchViewModel.State.EmptyHistory)
-            }
-        }
+//        searchViewModel.historyTrack.observe(viewLifecycleOwner) { listOfTracks ->
+//            if (listOfTracks?.isNotEmpty() == true) {
+//                unifiedTrackAdapter.updateTracks(listOfTracks ?: emptyList())
+//                searchViewModel.setState(SearchViewModel.State.LoadedHistory)
+//            } else {
+//                searchViewModel.setState(SearchViewModel.State.EmptyHistory)
+//            }
+//        }
 
         binding.trackList.layoutManager = LinearLayoutManager(requireContext())
         binding.trackList.adapter = unifiedTrackAdapter
@@ -108,9 +92,9 @@ class SearchFragment : Fragment() {
         binding.clearButton.setOnClickListener {
             toggleKeyboard((requireActivity().window.decorView.rootView), false)
             binding.editText.text.clear()
+            searchViewModel.lastQuery = ""
             searchViewModel.getDataFromPref()
             binding.editText.requestFocus()
-            SearchViewModel.State.ClearEditText
         }
 
         binding.editText.setOnEditorActionListener { v, actionId, event ->
@@ -131,7 +115,7 @@ class SearchFragment : Fragment() {
             toggleKeyboard(binding.editText, true)
         }
 
-        binding.editText.requestFocus()
+
         binding.editText.postDelayed({ toggleKeyboard((binding.editText), true) }, 100)
         if (savedInstanceState != null) {
             restoreState(savedInstanceState)
@@ -181,8 +165,8 @@ class SearchFragment : Fragment() {
                 isDebounceEnabled = true
 
                 if (!isRestoringState) {
-                    if (searchQuery.isEmpty()) {
-                        SearchViewModel.State.ClearSearchNoQuery
+                    if (searchQuery.isEmpty() && searchQuery.isBlank()) {
+                        searchViewModel.setState(SearchViewModel.State.ClearSearchNoQuery)
                     } else {
                         debouncedSearch(searchQuery)
                         SearchViewModel.State.ClearSearch
@@ -220,6 +204,28 @@ class SearchFragment : Fragment() {
         }
     }
 
+    private fun debouncedFunc() {
+        debouncedSearch = debounce(
+            SEARCH_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            true
+        ) {
+            val currentQuery = binding.editText.text.toString()
+            if (currentQuery.isBlank()) return@debounce
+            if (isDebounceEnabled) {
+                performSearch(searchQuery)
+            }
+            isDebounceEnabled = true
+        }
+
+        debouncedClick = debounce(
+            SEARCH_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            true
+        ) { isDebounceEnabled = true
+        }
+    }
+
     private fun openTrack(track: Track) {
         val trackIntent = Intent(requireActivity(), MediaPlayerActivity::class.java)
         trackIntent.putExtra(MediaPlayerActivity.TRACK_DATA, track)
@@ -238,6 +244,9 @@ class SearchFragment : Fragment() {
                 }
 
                 is SearchViewModel.State.LoadedHistory -> {
+                    val tracks = state.listTracks
+
+                    unifiedTrackAdapter.updateTracks(tracks)
                     binding.progressBar.visibility = View.GONE
                     binding.yourSearch.visibility = View.VISIBLE
                     binding.trackList.visibility = View.VISIBLE
@@ -298,6 +307,7 @@ class SearchFragment : Fragment() {
                 }
 
                 is SearchViewModel.State.ClearEditText -> {
+
                     binding.clearButton.visibility = View.GONE
                     binding.yourSearch.visibility = View.VISIBLE
                     binding.trackList.visibility = View.VISIBLE
@@ -309,14 +319,14 @@ class SearchFragment : Fragment() {
         }
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        savedInstanceState?.let {
-            searchQuery = it.getString(SEARCH_QUERY_KEY, "")
-            binding.editText.setText(searchQuery)
-            binding.editText.setSelection(searchQuery.length)
-        }
-    }
+//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+//        super.onViewStateRestored(savedInstanceState)
+//        savedInstanceState?.let {
+//            searchQuery = it.getString(SEARCH_QUERY_KEY, "")
+//            binding.editText.setText(searchQuery)
+//            binding.editText.setSelection(searchQuery.length)
+//        }
+//    }
 
     companion object {
         private const val SEARCH_QUERY_KEY = "search_query"

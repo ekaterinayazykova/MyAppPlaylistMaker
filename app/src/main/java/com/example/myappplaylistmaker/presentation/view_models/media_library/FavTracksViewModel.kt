@@ -3,27 +3,36 @@ package com.example.myappplaylistmaker.presentation.view_models.media_library
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.domain.entity.Track
+import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel.State
+import kotlinx.coroutines.launch
 
-class FavTracksViewModel() : ViewModel() {
+class FavTracksViewModel(
+    private val favTracksInteractor: FavTracksInteractor) : ViewModel() {
 
-    private val _historyTrack: MutableLiveData<List<Track>?> = MutableLiveData()
-    val historyTrack: LiveData<List<Track>?> get() = this._historyTrack
+    private val _state = MutableLiveData<State>()
+    val state: LiveData<State> get() = this._state
 
-    private val _searchState = MutableLiveData<State>()
-    val searchState: LiveData<State> get() = this._searchState
+    fun getFavTracks() {
+        viewModelScope.launch {
+            favTracksInteractor.getFavsTracks().collect { favTracks ->
+                if (favTracks.isEmpty()) {
+                    setState(State.EmptyFavTracks)
+                } else {
+                    setState(State.LoadedFavTracks(favTracks))
+                }
+            }
+        }
+    }
 
-    fun getDataFromPref() {
-        // можно сделать получение как с треками из истории
-        // обзервить то что кладется в переменную history tracks,
-        // в зависимости от результата устанавливать статус
-        // сделать метод с обзервом статуса и менять представление на экране
+    fun setState(state: State) {
+        _state.value = state
     }
 
     sealed class State {
         data object EmptyFavTracks : State()
-        data object LoadedFavTracks : State()
-        data object Loading : State()
+        data class LoadedFavTracks(val favTracks: List<Track>) : State()
     }
 }

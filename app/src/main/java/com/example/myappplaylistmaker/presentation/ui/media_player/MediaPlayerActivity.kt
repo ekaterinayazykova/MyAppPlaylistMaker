@@ -28,12 +28,17 @@ class MediaPlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
         screenReceiver = ScreenReceiver()
 
-
         val track = intent.getSerializableExtra(TRACK_DATA) as? Track
         Log.d("MediaPlayerActivity", "Track data received: $track")
         track?.let {
             mediaPlayerViewModel.setTrack(it)
             fetchTrackData(it)
+        }
+
+        mediaPlayerViewModel.currentTrack.observe(this) { currentTrack ->
+            if (currentTrack.isFavorite) {
+                binding.buttonLike.setImageResource(R.drawable.button_fav)
+            } else binding.buttonLike.setImageResource(R.drawable.button_like)
         }
 
         mediaPlayerViewModel.state.observe(this) { state ->
@@ -73,7 +78,7 @@ class MediaPlayerActivity : AppCompatActivity() {
 //            TODO()
         }
         binding.buttonLike.setOnClickListener {
-//            TODO()
+            mediaPlayerViewModel.onFavoriteClicked()
         }
 
         binding.buttonPlay.setOnClickListener {
@@ -159,6 +164,7 @@ class MediaPlayerActivity : AppCompatActivity() {
             binding.buttonPlay.setImageResource(R.drawable.button_play)
         }
     }
+
 
     private fun formatTrackTime(trackTimeMillis: Long): String {
         val minutes = (trackTimeMillis / 1000) / 60
