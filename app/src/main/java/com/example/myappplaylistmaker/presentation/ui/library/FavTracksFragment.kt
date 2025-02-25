@@ -7,12 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myappplaylistmaker.databinding.FragmentFavtrackBinding
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
+import com.example.myappplaylistmaker.presentation.ui.search.SearchFragment
+import com.example.myappplaylistmaker.presentation.ui.search.SearchFragment.Companion
 import com.example.myappplaylistmaker.presentation.ui.search.UnifiedTrackAdapter
+import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
 import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -24,6 +28,7 @@ class FavTracksFragment : Fragment() {
     private val favTracksViewModel by viewModel<FavTracksViewModel>()
     private lateinit var unifiedTrackAdapter: UnifiedTrackAdapter
     private var isDebounceEnabled = true
+    private lateinit var debouncedClick: (Track) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +44,7 @@ class FavTracksFragment : Fragment() {
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
             openTrack(track)
+            debouncedClick()
         }
 
         binding.favTrackList.layoutManager = LinearLayoutManager(requireContext())
@@ -59,10 +65,6 @@ class FavTracksFragment : Fragment() {
         ContextCompat.startActivity(requireContext(), trackIntent, null)
     }
 
-    fun debouncedClick() {
-
-    }
-
     private fun observeState() {
         favTracksViewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
@@ -80,5 +82,18 @@ class FavTracksFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun debouncedClick() {
+        debouncedClick = debounce(
+            SEARCH_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            true
+        ) { isDebounceEnabled = true
+        }
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 }

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -21,8 +20,6 @@ import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
 import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
@@ -76,15 +73,6 @@ class SearchFragment : Fragment() {
             }
         }
 
-//        searchViewModel.historyTrack.observe(viewLifecycleOwner) { listOfTracks ->
-//            if (listOfTracks?.isNotEmpty() == true) {
-//                unifiedTrackAdapter.updateTracks(listOfTracks ?: emptyList())
-//                searchViewModel.setState(SearchViewModel.State.LoadedHistory)
-//            } else {
-//                searchViewModel.setState(SearchViewModel.State.EmptyHistory)
-//            }
-//        }
-
         binding.trackList.layoutManager = LinearLayoutManager(requireContext())
         binding.trackList.adapter = unifiedTrackAdapter
 
@@ -136,7 +124,6 @@ class SearchFragment : Fragment() {
         ) {
             return
         }
-
         searchViewModel.getDataFromServer(query)
     }
 
@@ -147,6 +134,15 @@ class SearchFragment : Fragment() {
             IS_CLEAR_BUTTON_VISIBLE_KEY,
             binding.clearButton.visibility == View.VISIBLE
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (searchQuery.isBlank() || searchQuery.isEmpty()) {
+            searchViewModel.getDataFromPref()
+        } else {
+            searchViewModel.getDataFromServer(searchQuery)
+        }
     }
 
     private fun editText() {
@@ -318,15 +314,6 @@ class SearchFragment : Fragment() {
             }
         }
     }
-
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        super.onViewStateRestored(savedInstanceState)
-//        savedInstanceState?.let {
-//            searchQuery = it.getString(SEARCH_QUERY_KEY, "")
-//            binding.editText.setText(searchQuery)
-//            binding.editText.setSelection(searchQuery.length)
-//        }
-//    }
 
     companion object {
         private const val SEARCH_QUERY_KEY = "search_query"

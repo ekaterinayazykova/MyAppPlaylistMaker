@@ -34,6 +34,7 @@ class TrackRepositoryImpl(
                     Log.d("TrackRepository", "Favorite track IDs from DB: $favTrackId")
                     val checkedTracks = resultTracks.map { track ->
                         track.copy(isFavorite = track.trackId in favTrackId)
+
                     }
                     Log.d("TrackRepository", "Checked tracks (with isFavorite flags): ${checkedTracks.map { "${it.trackId}: ${it.isFavorite}" }}")
 

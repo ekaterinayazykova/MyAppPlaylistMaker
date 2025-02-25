@@ -6,17 +6,21 @@ import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class HistoryInteractorImpl(private val historyRepository: FavTracksRepository): FavTracksInteractor {
+class FavTracksInteractorImpl(private val favTracksRepository: FavTracksRepository): FavTracksInteractor {
     override suspend fun addTrackToFavs(track: Track) {
-        historyRepository.addTrackToFavs(track)
+        favTracksRepository.addTrackToFavs(track)
     }
 
     override suspend fun removeTrackFromFavs(track: Track) {
-        historyRepository.removeTrackFromFavs(track)
+        favTracksRepository.removeTrackFromFavs(track)
+    }
+
+    override suspend fun getFavTrackIds(): List<String> {
+        return favTracksRepository.getFavTrackId()
     }
 
     override fun getFavsTracks(): Flow<List<Track>> {
-        return historyRepository.getFavsTracks()
+        return favTracksRepository.getFavsTracks()
             .map { tracks -> tracks.sortedByDescending { it.timestamp}}
     }
 }

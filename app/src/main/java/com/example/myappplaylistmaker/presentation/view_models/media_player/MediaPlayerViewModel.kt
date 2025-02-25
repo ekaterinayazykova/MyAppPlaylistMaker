@@ -9,9 +9,11 @@ import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -48,13 +50,25 @@ class MediaPlayerViewModel(
 
     fun onFavoriteClicked() {
         val track = _currentTrack.value ?: return
-        viewModelScope.launch {
-            if (!track.isFavorite) {
-                favTracksInteractor.addTrackToFavs(track)
-                _currentTrack.value = track.copy(isFavorite = true)
+        viewModelScope.launch(Dispatchers.IO) {
+            val updatedTrack = track.copy(isFavorite = !track.isFavorite)
+                if (updatedTrack.isFavorite) {
+                    favTracksInteractor.addTrackToFavs(updatedTrack)
             } else {
-                favTracksInteractor.removeTrackFromFavs(track)
-                _currentTrack.value = track.copy(isFavorite = false)
+                favTracksInteractor.removeTrackFromFavs(updatedTrack)
+            }
+            withContext(Dispatchers.Main) {
+                _currentTrack.value = updatedTrack
+            }
+        }
+    }
+
+    fun checkFavorite(track: Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val favTrackId = favTracksInteractor.getFavTrackIds()
+            val updatedTracks = track.copy(isFavorite = track.trackId in favTrackId)
+            withContext(Dispatchers.Main) {
+                _currentTrack.value = updatedTracks
             }
         }
     }

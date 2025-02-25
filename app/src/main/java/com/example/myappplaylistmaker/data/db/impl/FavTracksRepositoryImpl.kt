@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.data.db.impl
 
+import android.util.Log
 import com.example.myappplaylistmaker.data.converter.TrackDbConverter
 import com.example.myappplaylistmaker.data.db.AppDatabase
 import com.example.myappplaylistmaker.data.db.entity.TrackEntity
@@ -7,6 +8,7 @@ import com.example.myappplaylistmaker.domain.db.FavTracksRepository
 import com.example.myappplaylistmaker.domain.entity.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class FavTracksRepositoryImpl (
     private val appDatabase: AppDatabase,
@@ -15,6 +17,7 @@ class FavTracksRepositoryImpl (
     override suspend fun addTrackToFavs(track: Track) {
         val trackEntity = trackDbConverter.mapToEntity(track)
         appDatabase.trackDao().insertTrack(trackEntity)
+        Log.d("LikeCheck", "Inserting trackId=${track.trackId}")
     }
 
     override suspend fun removeTrackFromFavs(track: Track) {
@@ -22,12 +25,18 @@ class FavTracksRepositoryImpl (
         appDatabase.trackDao().deleteTrack(trackEntity)
     }
 
-    override fun getFavsTracks(): Flow<List<Track>> = flow {
-        val tracks = appDatabase.trackDao().getFavTracks()
-        emit(convertFromTrackEntity(tracks))
+    override fun getFavsTracks(): Flow<List<Track>> {
+        val flowEntities = appDatabase.trackDao().getFavTracks()
+        return convertFromTrackEntity(flowEntities)
     }
 
-    private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
-        return tracks.map { tracks -> trackDbConverter.mapToTrack(tracks)}
+    override suspend fun getFavTrackId(): List<String> {
+        return appDatabase.trackDao().getTrackId()
+    }
+
+    private fun convertFromTrackEntity(flowEntities: Flow<List<TrackEntity>>): Flow<List<Track>> {
+        return flowEntities.map { listOfEntities ->
+            listOfEntities.map { entity -> trackDbConverter.mapToTrack(entity) }
+        }
     }
 }

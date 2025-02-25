@@ -1,8 +1,6 @@
 package com.example.myappplaylistmaker.domain.entity
 
 import java.io.Serializable
-import java.sql.Timestamp
-import java.util.Date
 
 data class Track (
         val trackId: String,
@@ -15,7 +13,7 @@ data class Track (
         val genre: String? = null,
         val country: String? = null,
         val previewUrl: String,
-        val timestamp: Long? = null,
+        val timestamp: Long? = System.currentTimeMillis(),
         var isFavorite: Boolean = false
 
     ) : Serializable {

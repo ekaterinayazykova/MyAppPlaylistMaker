@@ -8,5 +8,6 @@ interface FavTracksRepository {
     suspend fun addTrackToFavs(track: Track)
     suspend fun removeTrackFromFavs(track: Track)
     fun getFavsTracks(): Flow<List<Track>>
+    suspend fun getFavTrackId(): List<String>
 
 }

@@ -40,12 +40,10 @@ class SearchHistoryManagerImpl(
         val jsonString = sharedPreferences.getString(historyKey, null) ?: return@withContext emptyList()
         val type = object : TypeToken<List<Track>>() {}.type
         val resultTracks = gson.fromJson<List<Track>>(jsonString, type)
-        Log.d("TAG", "$jsonString")
 
         val favTrakcsId = appDatabase.trackDao().getTrackId()
 
         resultTracks.map{ track ->
-            Log.d("TAG", "track = $track")
             track.copy(isFavorite = track.trackId in favTrakcsId)
         }
     }

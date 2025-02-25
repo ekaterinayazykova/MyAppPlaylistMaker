@@ -8,4 +8,5 @@ interface FavTracksInteractor {
     suspend fun addTrackToFavs(track: Track)
     suspend fun removeTrackFromFavs(track: Track)
     fun getFavsTracks(): Flow<List<Track>>
+    suspend fun getFavTrackIds(): List<String>
 }

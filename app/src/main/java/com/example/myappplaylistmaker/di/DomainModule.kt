@@ -8,7 +8,7 @@ import com.example.myappplaylistmaker.data.impl.SettingsOptionsRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.ThemeManagerRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.TrackRepositoryImpl
 import com.example.myappplaylistmaker.domain.db.FavTracksRepository
-import com.example.myappplaylistmaker.domain.impl.HistoryInteractorImpl
+import com.example.myappplaylistmaker.domain.impl.FavTracksInteractorImpl
 import com.example.myappplaylistmaker.domain.impl.MediaPlayerInteractorImpl
 import com.example.myappplaylistmaker.domain.impl.SearchHistoryManagerInteractorImpl
 import com.example.myappplaylistmaker.domain.impl.SearchTrackUseCaseImpl
@@ -66,7 +66,7 @@ val domainModule = module {
         SearchTrackUseCaseImpl(get(), get()) }
 
     single<FavTracksInteractor> {
-        HistoryInteractorImpl(get()) }
+        FavTracksInteractorImpl(get()) }
 
     single<FavTracksRepository> {
         FavTracksRepositoryImpl(get(),get())
