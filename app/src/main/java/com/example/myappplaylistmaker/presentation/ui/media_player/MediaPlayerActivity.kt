@@ -3,15 +3,14 @@ package com.example.myappplaylistmaker.presentation.ui.media_player
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.ActivityTrackBinding
-import com.example.myappplaylistmaker.presentation.utils.NetworkClass
 import com.example.myappplaylistmaker.domain.entity.Track
+import com.example.myappplaylistmaker.presentation.utils.NetworkClass
 import com.example.myappplaylistmaker.presentation.utils.Utils
 import com.example.myappplaylistmaker.presentation.view_models.media_player.MediaPlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -28,12 +27,17 @@ class MediaPlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
         screenReceiver = ScreenReceiver()
 
-
         val track = intent.getSerializableExtra(TRACK_DATA) as? Track
-        Log.d("MediaPlayerActivity", "Track data received: $track")
         track?.let {
             mediaPlayerViewModel.setTrack(it)
+            mediaPlayerViewModel.checkFavorite(it)
             fetchTrackData(it)
+        }
+
+        mediaPlayerViewModel.currentTrack.observe(this) { currentTrack ->
+            if (currentTrack.isFavorite) {
+                binding.buttonLike.setImageResource(R.drawable.button_fav)
+            } else binding.buttonLike.setImageResource(R.drawable.button_like)
         }
 
         mediaPlayerViewModel.state.observe(this) { state ->
@@ -73,7 +77,7 @@ class MediaPlayerActivity : AppCompatActivity() {
 //            TODO()
         }
         binding.buttonLike.setOnClickListener {
-//            TODO()
+            mediaPlayerViewModel.onFavoriteClicked()
         }
 
         binding.buttonPlay.setOnClickListener {
@@ -159,6 +163,7 @@ class MediaPlayerActivity : AppCompatActivity() {
             binding.buttonPlay.setImageResource(R.drawable.button_play)
         }
     }
+
 
     private fun formatTrackTime(trackTimeMillis: Long): String {
         val minutes = (trackTimeMillis / 1000) / 60

@@ -11,6 +11,7 @@ import com.example.myappplaylistmaker.presentation.ui.main.SplashActivity
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
+import org.koin.core.context.GlobalContext.stopKoin
 
 class App : Application() {
 
@@ -19,6 +20,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
+        stopKoin()
         startKoin {
             androidContext(this@App)
             modules(dataModule, domainModule, appModule)
@@ -29,9 +31,5 @@ class App : Application() {
             if (isNightMode) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         )
 
-//        val intent = Intent(this, SplashActivity::class.java).apply {
-//            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//        }
-//        startActivity(intent)
     }
 }

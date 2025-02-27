@@ -7,18 +7,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Track
+import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInteractor) : ViewModel() {
+class MediaPlayerViewModel(
+    private val mediaPlayerInteractor: MediaPlayerInteractor,
+    private val favTracksInteractor: FavTracksInteractor) : ViewModel() {
 
     private var timerJob: Job? = null
+
     private val _state = MutableLiveData<State>()
     val state: LiveData<State> get() = _state
+
+    private val _currentTrack = MutableLiveData<Track>()
+    val currentTrack: LiveData<Track> get() = _currentTrack
+
     private var playerState = PlayerState.DEFAULT
 
     init {
@@ -34,7 +44,33 @@ class MediaPlayerViewModel(private val mediaPlayerInteractor: MediaPlayerInterac
     }
 
     fun setTrack(track: Track) {
+        _currentTrack.value = track
         preparePlayer(track)
+    }
+
+    fun onFavoriteClicked() {
+        val track = _currentTrack.value ?: return
+        viewModelScope.launch(Dispatchers.IO) {
+            val updatedTrack = track.copy(isFavorite = !track.isFavorite)
+                if (updatedTrack.isFavorite) {
+                    favTracksInteractor.addTrackToFavs(updatedTrack)
+            } else {
+                favTracksInteractor.removeTrackFromFavs(updatedTrack)
+            }
+            withContext(Dispatchers.Main) {
+                _currentTrack.value = updatedTrack
+            }
+        }
+    }
+
+    fun checkFavorite(track: Track) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val favTrackId = favTracksInteractor.getFavTrackIds()
+            val updatedTracks = track.copy(isFavorite = track.trackId in favTrackId)
+            withContext(Dispatchers.Main) {
+                _currentTrack.value = updatedTracks
+            }
+        }
     }
 
     fun preparePlayer(track: Track) {
