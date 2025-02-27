@@ -11,28 +11,14 @@ import kotlinx.coroutines.launch
 class FavTracksViewModel(
     private val favTracksInteractor: FavTracksInteractor) : ViewModel() {
 
-    private val _state = MutableLiveData<State>()
-    val state: LiveData<State> get() = this._state
-
+    private val _favTracks = MutableLiveData<List<Track>>()
+    val favTracks: LiveData<List<Track>> get() = this._favTracks
 
     fun getFavTracks() {
         viewModelScope.launch {
-            favTracksInteractor.getFavsTracks().collect { favTracks ->
-                if (favTracks.isEmpty()) {
-                    setState(State.EmptyFavTracks)
-                } else {
-                    setState(State.LoadedFavTracks(favTracks))
-                }
+            favTracksInteractor.getFavsTracks().collect { tracks ->
+                _favTracks.value = tracks
             }
         }
-    }
-
-    fun setState(state: State) {
-        _state.value = state
-    }
-
-    sealed class State {
-        data object EmptyFavTracks : State()
-        data class LoadedFavTracks(val favTracks: List<Track>) : State()
     }
 }

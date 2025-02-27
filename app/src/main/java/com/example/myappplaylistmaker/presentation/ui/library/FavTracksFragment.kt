@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,8 @@ import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerAc
 import com.example.myappplaylistmaker.presentation.ui.search.UnifiedTrackAdapter
 import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavTracksFragment : Fragment() {
@@ -46,6 +49,10 @@ class FavTracksFragment : Fragment() {
 
         binding.favTrackList.layoutManager = LinearLayoutManager(requireContext())
         binding.favTrackList.adapter = unifiedTrackAdapter
+        binding.progressBar.isVisible = true
+        binding.favTrackList.isVisible = false
+        binding.emptyFav.isVisible = false
+        binding.noSongPlaceholder.isVisible = false
 
         observeState()
         favTracksViewModel.getFavTracks()
@@ -64,19 +71,16 @@ class FavTracksFragment : Fragment() {
 
     private fun observeState() {
 
-        favTracksViewModel.state.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is FavTracksViewModel.State.LoadedFavTracks -> {
-                    unifiedTrackAdapter.updateTracks(state.favTracks)
-                    binding.favTrackList.isVisible = true
-                    binding.emptyFav.isVisible = false
-                    binding.noSongPlaceholder.isVisible = false
-                }
-                is FavTracksViewModel.State.EmptyFavTracks -> {
-                    binding.favTrackList.isVisible = false
-                    binding.emptyFav.isVisible = true
-                    binding.noSongPlaceholder.isVisible = true
-                }
+        favTracksViewModel.favTracks.observe(viewLifecycleOwner) { tracks ->
+
+            viewLifecycleOwner.lifecycleScope.launch {
+
+                delay(500L)
+                unifiedTrackAdapter.updateTracks(tracks)
+                binding.favTrackList.isVisible = tracks.isNotEmpty()
+                binding.noSongPlaceholder.isVisible = tracks.isEmpty()
+                binding.emptyFav.isVisible = tracks.isEmpty()
+                binding.progressBar.isGone = true
             }
         }
     }
