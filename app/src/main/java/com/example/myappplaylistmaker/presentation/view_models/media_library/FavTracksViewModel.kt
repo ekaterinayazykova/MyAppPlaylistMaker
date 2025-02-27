@@ -1,6 +1,5 @@
 package com.example.myappplaylistmaker.presentation.view_models.media_library
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +18,6 @@ class FavTracksViewModel(
     fun getFavTracks() {
         viewModelScope.launch {
             favTracksInteractor.getFavsTracks().collect { favTracks ->
-                Log.d("FavTracksViewModel", "collect: $favTracks")
                 if (favTracks.isEmpty()) {
                     setState(State.EmptyFavTracks)
                 } else {

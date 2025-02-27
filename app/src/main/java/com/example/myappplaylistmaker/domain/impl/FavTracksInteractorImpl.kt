@@ -21,6 +21,5 @@ class FavTracksInteractorImpl(private val favTracksRepository: FavTracksReposito
 
     override fun getFavsTracks(): Flow<List<Track>> {
         return favTracksRepository.getFavsTracks()
-            .map { tracks -> tracks.sortedByDescending { it.timestamp}}
     }
 }
