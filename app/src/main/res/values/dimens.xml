@@ -40,4 +40,10 @@
     <dimen name="size_158">158dp</dimen>
     <dimen name="size_104">104dp</dimen>
     <dimen name="size_106">106dp</dimen>
+    <dimen name="size_1">1dp</dimen>
+    <dimen name="size_30">30dp</dimen>
+    <dimen name="size_328">328dp</dimen>
+    <dimen name="size_3">3dp</dimen>
+    <dimen name="size_32">32dp</dimen>
+    <dimen name="size_326">326dp</dimen>
     </resources>

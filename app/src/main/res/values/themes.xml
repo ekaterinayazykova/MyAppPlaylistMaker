@@ -27,7 +27,7 @@
 
     <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" />
 
-    <style name="Theme.MyAppPlaylistMaker.Splash" parent="Theme.SplashScreen">
+    <style name="Theme.MyAppPlaylistMaker.Splash" parent="Base.Theme.MyAppPlaylistMaker">
         <item name="windowSplashScreenAnimatedIcon">@drawable/icon_launcher</item>
         <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimationDuration">700</item>

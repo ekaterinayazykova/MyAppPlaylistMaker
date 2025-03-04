@@ -41,6 +41,16 @@ android {
 
 configurations.all {
     exclude(group = "com.intellij", module = "annotations")
+    resolutionStrategy.eachDependency {
+        if (requested.group == "androidx.room") {
+            useVersion("2.6.1") // или "2.6.1", в зависимости от выбора
+        }
+    }
+}
+
+// Блок kapt остаётся для библиотек, которые его требуют (например, Dagger и Glide)
+kapt {
+    correctErrorTypes = true
 }
 
 dependencies {
@@ -51,6 +61,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.viewpager2)
     implementation(libs.jetbrains.annotations)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.peko)
+    implementation(libs.kotlinx.metadata.jvm)
 
     // Интеграции
     implementation(libs.glide)
@@ -64,6 +78,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment)
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.fragment)
+    implementation(libs.androidx.fragment.ktx)
 
     // Room
     implementation(libs.room.runtime) {
@@ -84,6 +99,7 @@ dependencies {
     androidTestImplementation(libs.androidx.test.ext.junit) // AndroidJUnit4
     androidTestImplementation(libs.androidx.test.core) // Основной фреймворк тестирования
     androidTestImplementation(libs.espresso.core)
+    testImplementation(libs.junit)
 
     // Корутины
     implementation(libs.kotlinx.coroutines.android)

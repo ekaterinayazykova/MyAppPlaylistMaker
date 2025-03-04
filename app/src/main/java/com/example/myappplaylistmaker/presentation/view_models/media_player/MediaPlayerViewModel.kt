@@ -19,7 +19,8 @@ import java.util.Locale
 
 class MediaPlayerViewModel(
     private val mediaPlayerInteractor: MediaPlayerInteractor,
-    private val favTracksInteractor: FavTracksInteractor) : ViewModel() {
+    private val favTracksInteractor: FavTracksInteractor
+) : ViewModel() {
 
     private var timerJob: Job? = null
 
@@ -52,8 +53,8 @@ class MediaPlayerViewModel(
         val track = _currentTrack.value ?: return
         viewModelScope.launch(Dispatchers.IO) {
             val updatedTrack = track.copy(isFavorite = !track.isFavorite)
-                if (updatedTrack.isFavorite) {
-                    favTracksInteractor.addTrackToFavs(updatedTrack)
+            if (updatedTrack.isFavorite) {
+                favTracksInteractor.addTrackToFavs(updatedTrack)
             } else {
                 favTracksInteractor.removeTrackFromFavs(updatedTrack)
             }
@@ -86,7 +87,7 @@ class MediaPlayerViewModel(
         }
     }
 
-    fun startPlayer()  {
+    fun startPlayer() {
         if (playerState == PlayerState.PREPARED || playerState == PlayerState.PAUSED) {
             mediaPlayerInteractor.play()
             playerState = PlayerState.PLAYING
@@ -140,12 +141,15 @@ class MediaPlayerViewModel(
     }
 
     private fun getCurrentPlayerPosition(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayerInteractor.getCurrentPosition()) ?: "00:00"
+        return SimpleDateFormat(
+            "mm:ss",
+            Locale.getDefault()
+        ).format(mediaPlayerInteractor.getCurrentPosition()) ?: "00:00"
     }
 
-    sealed class State (val progress: String) {
-        data object LOADING: State("00:00")
-        data object PREPARED: State("00:00")
+    sealed class State(val progress: String) {
+        data object LOADING : State("00:00")
+        data object PREPARED : State("00:00")
         data class PLAYING(val currentTime: String) : State(progress = currentTime)
         data class PAUSED(val currentTime: String) : State(progress = currentTime)
     }
