@@ -15,11 +15,19 @@
         android:id="@+id/mediaLibraryFragment"
         android:name="com.example.myappplaylistmaker.presentation.ui.library.MediaLibraryFragment"
         android:label="fragment_library"
-        tools:layout="@layout/fragment_library" />
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_mediaLibraryFragment_to_createPlaylistFragment2"
+            app:destination="@id/createPlaylistFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/settingsFragment"
         android:name="com.example.myappplaylistmaker.presentation.ui.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/createPlaylistFragment"
+        android:name="com.example.myappplaylistmaker.presentation.ui.library.CreatePlaylistFragment"
+        android:label="CreatePlaylistFragment" />
 </navigation>
