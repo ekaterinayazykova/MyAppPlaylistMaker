@@ -46,4 +46,5 @@
     <dimen name="size_3">3dp</dimen>
     <dimen name="size_32">32dp</dimen>
     <dimen name="size_326">326dp</dimen>
-    </resources>
+    <dimen name="size_345">345dp</dimen>
+</resources>

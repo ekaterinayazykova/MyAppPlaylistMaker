@@ -38,5 +38,10 @@
     <string name="playlist_name" translatable="false">Название*</string>
     <string name="playlist_description" translatable="false">Описание</string>
     <string name="create" translatable="false">Создать</string>
+    <string name="saveConfirmTitle" translatable="false">Завершить создание плейлиста?</string>
+    <string name="saveConfirmMessage" translatable="false">Все несохраненные данные будут потеряны</string>
+    <string name="finish" translatable="false">Завершить</string>
+    <string name="cancel" translatable="false">Отмена</string>
+    <string name="myAlbum" translatable="false">myalbum</string>
 
 </resources>

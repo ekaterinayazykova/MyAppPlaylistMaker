@@ -25,7 +25,9 @@
 
     </style>
 
-    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" />
+    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" >
+        <item name="snackbarStyle">@style/Widget.App.CustomSnackbar</item>
+    </style>
 
     <style name="Theme.MyAppPlaylistMaker.Splash" parent="Base.Theme.MyAppPlaylistMaker">
         <item name="windowSplashScreenAnimatedIcon">@drawable/icon_launcher</item>

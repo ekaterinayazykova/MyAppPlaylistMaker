@@ -23,7 +23,9 @@
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
 
-    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" />
+    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" >
+        <item name="snackbarStyle">@style/Widget.App.CustomSnackbar</item>
+    </style>
 
     <style name="Theme.MyAppPlaylistMaker.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/background_dark</item>

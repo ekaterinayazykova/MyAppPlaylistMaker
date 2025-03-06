@@ -10,4 +10,6 @@
         android:dashGap="@dimen/size_30"/>
 
     <corners android:radius="@dimen/size_8" />
+    <solid android:color="@android:color/transparent" />
 </shape>
+
