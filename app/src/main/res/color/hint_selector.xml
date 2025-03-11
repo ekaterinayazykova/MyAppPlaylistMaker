@@ -3,10 +3,10 @@
     <item
         android:alpha="1"
         android:color="?attr/colorOutline"
-        android:state_focused="true"
+        android:state_enabled="true"
         />
     <item
         android:alpha="1"
         android:color="?attr/colorAccent"
-        android:state_focused="false"/>
+        />
 </selector>

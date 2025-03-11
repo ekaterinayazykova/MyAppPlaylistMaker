@@ -13,11 +13,13 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity.INPUT_METHOD_SERVICE
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentSearchBinding
 import com.example.myappplaylistmaker.domain.entity.Track
-import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
+//import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
 import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -215,7 +217,7 @@ class SearchFragment : Fragment() {
         }
 
         debouncedClick = debounce(
-            SEARCH_DEBOUNCE_DELAY,
+            CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             true
         ) { isDebounceEnabled = true
@@ -223,9 +225,13 @@ class SearchFragment : Fragment() {
     }
 
     private fun openTrack(track: Track) {
-        val trackIntent = Intent(requireActivity(), MediaPlayerActivity::class.java)
-        trackIntent.putExtra(MediaPlayerActivity.TRACK_DATA, track)
-        startActivity(trackIntent)
+        val bundle = Bundle().apply {
+            putSerializable("TRACK_DATA", track)
+        }
+        findNavController().navigate(
+            R.id.action_searchFragment_to_mediaPlayerFragment,
+            bundle
+        )
     }
 
     private fun observeState() {
@@ -312,12 +318,13 @@ class SearchFragment : Fragment() {
                     binding.noInternetPlaceholder.visibility = View.GONE
                 }
             }
-        }
+            }
     }
 
     companion object {
         private const val SEARCH_QUERY_KEY = "search_query"
         private const val IS_CLEAR_BUTTON_VISIBLE_KEY = "isClearButtonVisible"
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 500L
     }
 }

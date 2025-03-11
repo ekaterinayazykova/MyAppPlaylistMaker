@@ -19,6 +19,7 @@
         <item name="hintTextColor">@color/switch_thumb_light</item>
         <item name="helperTextTextColor">@color/white</item>
         <item name="colorOutline">@color/main</item>
+        <item name="colorControlHighlight">@color/gray_light</item>
         <item name="android:windowLightStatusBar">true</item>
 
 

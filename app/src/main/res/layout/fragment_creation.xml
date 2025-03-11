@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:background="?attr/colorPrimaryVariant"
-    tools:context="com.example.myappplaylistmaker.presentation.ui.library.CreatePlaylistFragment">
+    tools:context="com.example.myappplaylistmaker.presentation.ui.library.playlists.CreatePlaylistFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_container"
@@ -86,7 +86,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="text"
-                    style="@style/EditTextInput"/>
+                    style="@style/MyEditTextCursorStyle"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,7 +107,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="text"
-                    style="@style/EditTextInput"/>
+                    style="@style/MyEditTextCursorStyle"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

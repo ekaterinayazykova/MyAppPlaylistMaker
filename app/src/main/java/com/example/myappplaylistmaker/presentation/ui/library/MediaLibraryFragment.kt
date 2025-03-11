@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentLibraryBinding
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
-import com.example.myappplaylistmaker.presentation.view_models.media_library.PlaylistViewModel
+import com.example.myappplaylistmaker.presentation.view_models.create_playlist.CreatePlaylistViewModel
 import com.google.android.material.tabs.TabLayoutMediator
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -16,7 +16,7 @@ class MediaLibraryFragment : Fragment() {
 
     private var _binding: FragmentLibraryBinding? = null
     private val binding get() = _binding!!
-    private val playlistViewModel by viewModel<PlaylistViewModel>()
+    private val createPlaylistViewModel by viewModel<CreatePlaylistViewModel>()
     private val favTracksViewModel by viewModel<FavTracksViewModel>()
     private lateinit var tabLayoutMediator: TabLayoutMediator
 

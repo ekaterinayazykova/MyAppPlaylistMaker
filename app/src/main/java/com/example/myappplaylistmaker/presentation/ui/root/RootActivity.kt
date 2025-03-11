@@ -36,7 +36,11 @@ class RootActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.createPlaylistFragment -> {
                     binding.bottomNavigationView.isVisible = false
-                } else -> {
+                }
+                R.id.mediaPlayerFragment -> {
+                    binding.bottomNavigationView.isVisible = false
+                }
+                else -> {
                     binding.bottomNavigationView.isVisible = true
                 }
             }

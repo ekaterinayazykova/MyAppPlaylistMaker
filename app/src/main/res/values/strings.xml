@@ -43,5 +43,6 @@
     <string name="finish" translatable="false">Завершить</string>
     <string name="cancel" translatable="false">Отмена</string>
     <string name="myAlbum" translatable="false">myalbum</string>
+    <string name="addToPlaylist" translatable="false">Добавить в плейлист</string>
 
 </resources>

@@ -6,6 +6,7 @@
     android:layout_marginBottom="@dimen/size_8"
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
+    android:descendantFocusability="blocksDescendants"
     android:focusable="true"
     android:clickable="true"
     android:showDividers="middle"

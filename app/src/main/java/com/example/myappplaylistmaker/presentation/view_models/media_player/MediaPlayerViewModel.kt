@@ -6,9 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.domain.entity.PlayerState
+import com.example.myappplaylistmaker.domain.entity.Playlist
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
+import com.example.myappplaylistmaker.domain.interactor.PlaylistInteractor
+import com.example.myappplaylistmaker.domain.interactor.TracksToPlaylistInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -19,7 +22,9 @@ import java.util.Locale
 
 class MediaPlayerViewModel(
     private val mediaPlayerInteractor: MediaPlayerInteractor,
-    private val favTracksInteractor: FavTracksInteractor
+    private val favTracksInteractor: FavTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor,
+    private val tracksToPlaylistInteractor: TracksToPlaylistInteractor
 ) : ViewModel() {
 
     private var timerJob: Job? = null
@@ -29,6 +34,9 @@ class MediaPlayerViewModel(
 
     private val _currentTrack = MutableLiveData<Track>()
     val currentTrack: LiveData<Track> get() = _currentTrack
+
+    private val _playlistState = MutableLiveData<List<Playlist>>()
+    val playlistState: LiveData<List<Playlist>> get() = this._playlistState
 
     private var playerState = PlayerState.DEFAULT
 
@@ -45,6 +53,8 @@ class MediaPlayerViewModel(
     }
 
     fun setTrack(track: Track) {
+        Log.d("MediaPlayerVM", "setTrack() => LOADING")
+//        _state.value = State.LOADING
         _currentTrack.value = track
         preparePlayer(track)
     }
@@ -77,8 +87,10 @@ class MediaPlayerViewModel(
     fun preparePlayer(track: Track) {
         val songUrl: String = track.previewUrl ?: ""
         if (songUrl.isNotEmpty() && playerState != PlayerState.PREPARED) {
+            Log.d("MediaPlayerVM", "preparePlayer() => LOADING before async")
             _state.postValue(State.LOADING)
             mediaPlayerInteractor.execute(track) {
+                Log.d("MediaPlayerVM", "onPrepared => PREPARED")
                 playerState = PlayerState.PREPARED
                 _state.postValue(State.PREPARED)
             }
@@ -145,6 +157,24 @@ class MediaPlayerViewModel(
             "mm:ss",
             Locale.getDefault()
         ).format(mediaPlayerInteractor.getCurrentPosition()) ?: "00:00"
+    }
+
+    fun getPlaylist() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylist()
+                .collect { playlists ->
+                    _playlistState.value = playlists
+                }
+        }
+    }
+
+    fun addTrackToPlaylist(track: Track, playlistId: Int, ) {
+        viewModelScope.launch {
+            tracksToPlaylistInteractor.addTrackToPlaylist(
+                track = track,
+                playlistId = playlistId
+            )
+        }
     }
 
     sealed class State(val progress: String) {
