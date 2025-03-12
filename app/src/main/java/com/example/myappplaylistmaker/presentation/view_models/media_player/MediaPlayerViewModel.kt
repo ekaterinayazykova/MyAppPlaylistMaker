@@ -1,10 +1,15 @@
 package com.example.myappplaylistmaker.presentation.view_models.media_player
 
 import android.util.Log
+import android.util.TypedValue
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Playlist
 import com.example.myappplaylistmaker.domain.entity.Track
@@ -12,6 +17,7 @@ import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 import com.example.myappplaylistmaker.domain.interactor.PlaylistInteractor
 import com.example.myappplaylistmaker.domain.interactor.TracksToPlaylistInteractor
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,6 +43,9 @@ class MediaPlayerViewModel(
 
     private val _playlistState = MutableLiveData<List<Playlist>>()
     val playlistState: LiveData<List<Playlist>> get() = this._playlistState
+
+    private val _trackInPlaylist = MutableLiveData<Pair<Boolean,String>>()
+    val trackInPlaylist: LiveData<Pair<Boolean, String>> get() = this._trackInPlaylist
 
     private var playerState = PlayerState.DEFAULT
 
@@ -80,6 +89,17 @@ class MediaPlayerViewModel(
             val updatedTracks = track.copy(isFavorite = track.trackId in favTrackId)
             withContext(Dispatchers.Main) {
                 _currentTrack.value = updatedTracks
+            }
+        }
+    }
+
+    fun checkIsTrackInPlaylist(trackId: String, playlistId: Int, playlistName: String) {
+        viewModelScope.launch {
+            val exists = tracksToPlaylistInteractor.isTrackInPlaylist(playlistId, trackId)
+            if (exists) {
+                _trackInPlaylist.value = true to playlistName
+            } else {
+                _trackInPlaylist.value = false to playlistName
             }
         }
     }

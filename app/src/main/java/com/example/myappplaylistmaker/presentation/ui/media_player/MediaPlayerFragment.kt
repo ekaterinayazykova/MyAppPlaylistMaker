@@ -4,10 +4,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +26,7 @@ import com.example.myappplaylistmaker.presentation.utils.NetworkClass
 import com.example.myappplaylistmaker.presentation.utils.Utils
 import com.example.myappplaylistmaker.presentation.view_models.media_player.MediaPlayerViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -64,7 +68,7 @@ class MediaPlayerFragment : Fragment() {
         setupOnPlaylistClick()
 
         binding.bottomSheetNewPlaylist.rvPlaylists.layoutManager = LinearLayoutManager(requireContext())
-
+        binding.bottomSheetNewPlaylist.rvPlaylists.adapter = bottomSheetAdapter
 
         val track = arguments?.getSerializable(TRACK_DATA) as? Track
         track?.let {
@@ -100,6 +104,15 @@ class MediaPlayerFragment : Fragment() {
                 binding.buttonLike.setImageResource(R.drawable.button_fav)
             } else {
                 binding.buttonLike.setImageResource(R.drawable.button_like)
+            }
+        }
+
+        mediaPlayerViewModel.trackInPlaylist.observe(viewLifecycleOwner) { pair ->
+            val (isInPlaylist, name) = pair
+            if (isInPlaylist) {
+                showSnackBar(getString(R.string.trackNotAdded, name))
+            } else {
+                showSnackBar(getString(R.string.trackAdded, name))
             }
         }
 
@@ -252,9 +265,9 @@ class MediaPlayerFragment : Fragment() {
 
     private fun setupOnPlaylistClick() {
         bottomSheetAdapter = BottomSheetAdapter(mutableListOf()) { playlist ->
-            binding.bottomSheetNewPlaylist.rvPlaylists.adapter = bottomSheetAdapter
             val track = mediaPlayerViewModel.currentTrack.value
             if (track != null) {
+                mediaPlayerViewModel.checkIsTrackInPlaylist(track.trackId,playlist.playlistId, playlist.playlistName)
                 mediaPlayerViewModel.addTrackToPlaylist(
                     track = track,
                     playlistId = playlist.playlistId
@@ -268,6 +281,18 @@ class MediaPlayerFragment : Fragment() {
         val seconds = (trackTimeMillis / 1000) % 60
         return String.format("%02d:%02d", minutes, seconds)
     }
+
+    private fun showSnackBar(message: String) {
+        val snackbar =
+            Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+        val textView =
+            snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
+        val typeface = ResourcesCompat.getFont(requireContext(), R.font.ys_display_regular)
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+        textView.setTypeface(typeface)
+        snackbar.show()
+    }
+
     companion object {
         const val TRACK_DATA = "TRACK_DATA"
     }

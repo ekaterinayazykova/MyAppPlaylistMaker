@@ -6,5 +6,6 @@ interface TracksToPlaylistInteractor {
 
     suspend fun addTrackToPlaylist(track: Track, playlistId: Int)
     suspend fun removeTrackFromPlaylist(track: Track, playlistId: Int)
+    suspend fun isTrackInPlaylist(playlistId: Int, trackId: String): Boolean
 
 }

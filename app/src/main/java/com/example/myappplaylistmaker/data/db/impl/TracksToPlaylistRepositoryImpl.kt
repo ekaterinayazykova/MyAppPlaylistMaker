@@ -28,4 +28,8 @@ class TracksToPlaylistRepositoryImpl(
         )
         appDatabase.playlistTrackCrossRefDao().deleteCrossRef(crossRef)
     }
+
+    override suspend fun isTrackInPlaylist(playlistId: Int, trackId: String): Boolean {
+        return appDatabase.playlistTrackCrossRefDao().isTrackInPlaylist(playlistId, trackId)
+    }
 }

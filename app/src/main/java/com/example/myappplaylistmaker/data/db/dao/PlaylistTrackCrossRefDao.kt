@@ -27,4 +27,13 @@ interface PlaylistTrackCrossRefDao {
     """)
     fun getTracksForPlaylist(playlistId: Int): Flow<List<TrackEntity>>
 
+    @Query("""
+    SELECT EXISTS(
+        SELECT 1
+        FROM playlist_track_cross_ref
+        WHERE playlistId = :playlistId AND trackId = :trackId
+    )
+""")
+    suspend fun isTrackInPlaylist(playlistId: Int, trackId: String): Boolean
+
 }

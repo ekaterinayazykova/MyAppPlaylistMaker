@@ -1,12 +1,9 @@
 package com.example.myappplaylistmaker.presentation.ui.library.fav_tracks
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -17,7 +14,6 @@ import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentFavtrackBinding
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.ui.search.UnifiedTrackAdapter
-import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
