@@ -62,11 +62,14 @@
         android:visibility="visible"
         android:id="@+id/playlists_recycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="@dimen/size_16"
         android:paddingStart="@dimen/size_16"
         android:paddingEnd="@dimen/size_16"
-        app:layout_constraintTop_toBottomOf="@id/new_playlist"/>
+        android:paddingBottom="56dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/new_playlist"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"

@@ -76,6 +76,7 @@
                 android:paddingStart="@dimen/size_16"
                 android:paddingEnd="@dimen/size_16"
                 app:boxStrokeColor="@color/edit_text_selector"
+                app:boxCollapsedPaddingTop="0dp"
                 android:hint="@string/playlist_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -84,8 +85,10 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edit_name"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:inputType="text"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
                     style="@style/MyEditTextCursorStyle"/>
 
             </com.google.android.material.textfield.TextInputLayout>

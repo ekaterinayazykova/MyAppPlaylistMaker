@@ -36,4 +36,7 @@ interface PlaylistTrackCrossRefDao {
 """)
     suspend fun isTrackInPlaylist(playlistId: Int, trackId: String): Boolean
 
+    @Query("SELECT * FROM playlist_track_cross_ref")
+    suspend fun getAllCrossRefs(): List<PlaylistTrackCrossRef>
+
 }

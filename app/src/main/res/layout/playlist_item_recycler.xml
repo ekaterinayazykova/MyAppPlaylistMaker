@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="160dp"
         app:cardCornerRadius="@dimen/size_8"
+        app:cardElevation="@dimen/size_0"
         android:backgroundTint="?attr/colorPrimaryVariant"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -174,7 +174,7 @@ class CreatePlaylistFragment() : Fragment() {
         val playlistName = binding.editName.text.toString().trim()
         if (playlistName.isNotEmpty()) {
             val snackbar =
-                Snackbar.make(binding.root, "Плейлист $playlistName создан", Snackbar.LENGTH_LONG)
+                Snackbar.make(binding.root, getString(R.string.playlistCreated, playlistName), Snackbar.LENGTH_LONG)
             val textView =
                 snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text)
             val typeface = ResourcesCompat.getFont(requireContext(), R.font.ys_display_regular)

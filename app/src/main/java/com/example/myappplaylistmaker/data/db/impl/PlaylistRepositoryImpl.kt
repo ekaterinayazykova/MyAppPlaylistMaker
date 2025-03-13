@@ -33,16 +33,6 @@ class PlaylistRepositoryImpl(
             }
     }
 
-//    override fun getPlaylistsWithTracksCount(): Flow<List<Playlist>> {
-//        return appDatabase.playlistDao().getPlaylistsWithTracksCount()
-//            .map { listOfPlaylistWithTracks ->
-//                listOfPlaylistWithTracks.map { playlistWithTracks ->
-//                    playlistDbConverter.mapToPlaylist(playlistWithTracks.playlist)
-//                        .copy(amountOfTracks = playlistWithTracks.tracks.size)
-//                }
-//            }
-//    }
-
     private fun convertFromPlaylistEntity(flowEntities: Flow<List<PlaylistEntity>>): Flow<List<Playlist>> {
         return flowEntities.map { listOfEntities ->
             listOfEntities.map { entity -> playlistDbConverter.mapToPlaylist(entity) }

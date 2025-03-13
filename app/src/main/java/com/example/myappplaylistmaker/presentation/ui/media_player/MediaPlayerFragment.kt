@@ -112,6 +112,7 @@ class MediaPlayerFragment : Fragment() {
             if (isInPlaylist) {
                 showSnackBar(getString(R.string.trackNotAdded, name))
             } else {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 showSnackBar(getString(R.string.trackAdded, name))
             }
         }
@@ -127,6 +128,7 @@ class MediaPlayerFragment : Fragment() {
                     binding.buttonPlay.visibility = View.VISIBLE
                     binding.buttonPlayProgressBar.visibility = View.GONE
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
+                    binding.trackDuration.text = state.progress
                 }
                 is MediaPlayerViewModel.State.PLAYING -> {
                     binding.buttonPlay.visibility = View.VISIBLE
@@ -139,6 +141,12 @@ class MediaPlayerFragment : Fragment() {
                     binding.buttonPlayProgressBar.visibility = View.GONE
                     binding.buttonPlay.setImageResource(R.drawable.button_play)
                     binding.trackDuration.text = state.currentTime
+                }
+                is MediaPlayerViewModel.State.STOPPED -> {
+                    binding.buttonPlay.visibility = View.VISIBLE
+                    binding.buttonPlayProgressBar.visibility = View.GONE
+                    binding.buttonPlay.setImageResource(R.drawable.button_play)
+                    binding.trackDuration.text = state.progress
                 }
             }
         }
@@ -233,9 +241,8 @@ class MediaPlayerFragment : Fragment() {
             if (NetworkClass.isNetworkAvailable(requireContext())) {
                 Glide.with(requireContext())
                     .load(modifiedArtworkUrl)
-                    .fitCenter()
                     .placeholder(R.drawable.icon_placeholder)
-                    .centerCrop()
+                    .fitCenter()
                     .transform(RoundedCorners(Utils.dpToPx(8f, requireContext())))
                     .into(binding.trackCover)
             } else {

@@ -14,6 +14,7 @@ import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentFavtrackBinding
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.ui.search.UnifiedTrackAdapter
+import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,7 +43,7 @@ class FavTracksFragment : Fragment() {
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
             openTrack(track)
-//            onDebouncedClick()
+            onDebouncedClick()
         }
 
         binding.favTrackList.layoutManager = LinearLayoutManager(requireContext())
@@ -87,14 +88,14 @@ class FavTracksFragment : Fragment() {
         }
     }
 
-//    private fun onDebouncedClick() {
-//        debouncedClick = debounce(
-//            CLICK_DEBOUNCE_DELAY,
-//            viewLifecycleOwner.lifecycleScope,
-//            true
-//        ) { isDebounceEnabled = true
-//        }
-//    }
+    private fun onDebouncedClick() {
+        debouncedClick = debounce(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            true
+        ) { isDebounceEnabled = true
+        }
+    }
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 500L

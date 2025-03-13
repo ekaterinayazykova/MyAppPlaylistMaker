@@ -17,7 +17,7 @@
         android:layout_height="@dimen/size_44" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/size_8"
         android:layout_marginTop="@dimen/size_6"
@@ -28,9 +28,10 @@
 
         <TextView
             android:id="@+id/playlist_name"
-            style="@style/SongTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/BottonSheetSongTitle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             tools:text="Название"/>
 
         <LinearLayout
@@ -45,7 +46,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-
                 tools:text="10 треков"/>
 
         </LinearLayout>

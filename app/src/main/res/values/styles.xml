@@ -55,12 +55,31 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/settings_text_size</item>
         <item name="android:textColor">?attr/itemTextColor</item>
-        <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
         <item name="android:inputType">text</item>
         <item name="android:cursorVisible">true</item>
         <item name="android:focusable">true</item>
+
+    </style>
+
+    <style name="SongTitleRecycler" >
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/settings_text_size</item>
+        <item name="android:textColor">?attr/itemTextColor</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+
+    </style>
+
+    <style name="BottonSheetSongTitle" >
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/settings_text_size</item>
+        <item name="android:textColor">?attr/itemTextColor</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
 
     </style>
 
@@ -176,6 +195,8 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
     </style>
 
     <style name="BottomNavigationTextInactive" parent="TextAppearance.AppCompat.Caption">
@@ -194,7 +215,8 @@
 
     <style name="AddPlaylistInputEditTextStyle" parent="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">54dp</item>
+        <item name="android:layout_height">@dimen/size_54</item>
+        <item name="boxCollapsedPaddingTop">0dp</item>
         <item name="endIconDrawable">@drawable/icon_clear</item>
         <item name="endIconMode">clear_text</item>
         <item name="endIconTint">@color/main</item>

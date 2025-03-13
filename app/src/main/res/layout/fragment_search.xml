@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:background="?attr/colorPrimaryVariant"
-    tools:context="com.example.myappplaylistmaker.presentation.ui.search.SearchFragment">
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,7 +6,8 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:background="?attr/colorPrimaryVariant"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:context="com.example.myappplaylistmaker.presentation.ui.search.SearchFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -113,25 +105,40 @@
         style="@style/Placeholder_last_search"
         android:text="@string/last_search" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:visibility="visible"
-        android:id="@+id/track_list"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/size_12"
-        android:paddingVertical="@dimen/size_8"
-        android:layout_marginTop="@dimen/size_24" />
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/clean_history_button"
-        android:visibility="visible"
-        style="@style/ButtonUpdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/size_24"
-        android:text="@string/clean_history"
-        android:textAllCaps="false" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:visibility="visible"
+            android:id="@+id/track_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:paddingHorizontal="@dimen/size_12"
+            android:paddingVertical="@dimen/size_8"
+            android:layout_marginTop="@dimen/size_24" />
+
+        <Button
+            android:id="@+id/clean_history_button"
+            android:visibility="visible"
+            style="@style/ButtonUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/size_24"
+            android:layout_marginBottom="@dimen/size_56"
+            android:text="@string/clean_history"
+            android:textAllCaps="false" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
 
     <LinearLayout
         android:id="@+id/no_song_placeholder"
@@ -215,4 +222,3 @@
 
 </LinearLayout>
 
-</ScrollView>

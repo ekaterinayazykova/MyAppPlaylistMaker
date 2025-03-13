@@ -1,15 +1,10 @@
 package com.example.myappplaylistmaker.presentation.view_models.media_player
 
 import android.util.Log
-import android.util.TypedValue
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.domain.entity.PlayerState
 import com.example.myappplaylistmaker.domain.entity.Playlist
 import com.example.myappplaylistmaker.domain.entity.Track
@@ -17,7 +12,6 @@ import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
 import com.example.myappplaylistmaker.domain.interactor.PlaylistInteractor
 import com.example.myappplaylistmaker.domain.interactor.TracksToPlaylistInteractor
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -58,12 +52,12 @@ class MediaPlayerViewModel(
     private fun onTrackComplete() {
         timerJob?.cancel()
         playerState = PlayerState.PREPARED
-        _state.postValue(State.PAUSED("00:00"))
+        _state.postValue(State.STOPPED)
     }
 
     fun setTrack(track: Track) {
-        Log.d("MediaPlayerVM", "setTrack() => LOADING")
-//        _state.value = State.LOADING
+        Log.d("DEBUG", "setTrack called")
+        _state.value = State.LOADING
         _currentTrack.value = track
         preparePlayer(track)
     }
@@ -107,10 +101,8 @@ class MediaPlayerViewModel(
     fun preparePlayer(track: Track) {
         val songUrl: String = track.previewUrl ?: ""
         if (songUrl.isNotEmpty() && playerState != PlayerState.PREPARED) {
-            Log.d("MediaPlayerVM", "preparePlayer() => LOADING before async")
             _state.postValue(State.LOADING)
             mediaPlayerInteractor.execute(track) {
-                Log.d("MediaPlayerVM", "onPrepared => PREPARED")
                 playerState = PlayerState.PREPARED
                 _state.postValue(State.PREPARED)
             }
@@ -123,7 +115,7 @@ class MediaPlayerViewModel(
         if (playerState == PlayerState.PREPARED || playerState == PlayerState.PAUSED) {
             mediaPlayerInteractor.play()
             playerState = PlayerState.PLAYING
-            _state.postValue(State.PLAYING("00:00"))
+            _state.postValue(State.PLAYING(getCurrentPlayerPosition()))
             startTimer()
         }
     }
@@ -202,6 +194,7 @@ class MediaPlayerViewModel(
         data object PREPARED : State("00:00")
         data class PLAYING(val currentTime: String) : State(progress = currentTime)
         data class PAUSED(val currentTime: String) : State(progress = currentTime)
+        data object STOPPED : State("00:00")
     }
 
     override fun onCleared() {

@@ -15,13 +15,6 @@
         android:background="?attr/colorPrimaryVariant"
         android:fitsSystemWindows="true">
 
-        <FrameLayout
-            android:id="@+id/media_player_fragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/colorPrimaryVariant"
-            android:visibility="gone" />
-
         <ImageView
             android:id="@+id/arrow"
             style="@style/TitlesButton"
@@ -63,9 +56,10 @@
         <TextView
             android:id="@+id/track_name"
             style="@style/Song_title_trackScreen"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_24"
+            android:layout_marginEnd="@dimen/size_24"
             android:layout_marginTop="@dimen/size_24"
             android:layout_marginRight="@dimen/size_24"
             app:layout_constraintStart_toStartOf="parent"
@@ -75,13 +69,12 @@
         <TextView
             android:id="@+id/artist_name"
             style="@style/Artist_title_trackScreen"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/size_24"
             android:layout_marginTop="@dimen/size_12"
             android:layout_marginEnd="@dimen/size_24"
             app:layout_constraintStart_toStartOf="parent"
-
             app:layout_constraintTop_toBottomOf="@id/track_name" />
 
         <ImageView
@@ -91,33 +84,41 @@
             android:layout_marginStart="@dimen/size_24"
             android:layout_marginTop="@dimen/size_80"
             android:src="@drawable/button_add"
-            app:layout_constraintEnd_toStartOf="@id/button_play"
+            app:layout_constraintEnd_toStartOf="@id/playContainer"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_name" />
 
-        <ImageView
-            android:id="@+id/button_play"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/size_54"
-            android:src="@drawable/button_play"
-            android:visibility="visible"
-            app:layout_constraintEnd_toStartOf="@id/button_like"
-            app:layout_constraintStart_toEndOf="@id/button_add"
-            app:layout_constraintTop_toBottomOf="@id/track_name" />
 
-        <ProgressBar
-            android:id="@+id/button_play_progress_bar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+        <FrameLayout
+            android:id="@+id/playContainer"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="@dimen/size_54"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="@+id/button_play"
+            app:layout_constraintStart_toEndOf="@+id/button_add"
             app:layout_constraintEnd_toStartOf="@id/button_like"
-            app:layout_constraintStart_toEndOf="@id/button_add"
-            app:layout_constraintTop_toBottomOf="@id/track_name" />
+            app:layout_constraintTop_toBottomOf="@+id/track_name">
+
+            <ImageView
+                android:id="@+id/button_play"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/button_play"
+                android:visibility="visible"
+                app:layout_constraintEnd_toStartOf="@id/button_like"
+                app:layout_constraintStart_toEndOf="@id/button_add"
+                app:layout_constraintTop_toBottomOf="@id/track_name" />
+
+            <ProgressBar
+                android:id="@+id/button_play_progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                app:layout_constraintEnd_toStartOf="@id/button_like"
+                app:layout_constraintStart_toEndOf="@id/button_add"
+                app:layout_constraintTop_toBottomOf="@id/track_name" />
+
+        </FrameLayout>
 
         <ImageView
             android:id="@+id/button_like"
@@ -127,7 +128,7 @@
             android:layout_marginEnd="@dimen/size_24"
             android:src="@drawable/button_like"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/button_play"
+            app:layout_constraintStart_toEndOf="@id/playContainer"
             app:layout_constraintTop_toBottomOf="@id/track_name" />
 
         <TextView
@@ -136,10 +137,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/size_4"
-            android:text="0:30"
+            android:text="00:00"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_play" />
+            app:layout_constraintTop_toBottomOf="@id/playContainer" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier_2"
@@ -219,7 +220,6 @@
             app:layout_constraintBottom_toTopOf="@id/track_album_info"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/barrier_2"
-
             />
 
         <TextView
@@ -273,7 +273,6 @@
             app:layout_constraintBottom_toTopOf="@id/space_2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/track_genre_info"
-
             />
 
         <Space
