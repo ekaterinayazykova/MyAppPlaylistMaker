@@ -1,10 +1,11 @@
 package com.example.myappplaylistmaker.presentation.ui.library
 
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.myappplaylistmaker.presentation.ui.library.fav_tracks.FavTracksFragment
+import com.example.myappplaylistmaker.presentation.ui.library.playlists.PlaylistFragment
 
 class ViewPagerAdapter(fragmentManager: FragmentManager,
                        lifecycle: Lifecycle) : FragmentStateAdapter(fragmentManager, lifecycle)  {

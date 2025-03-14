@@ -2,6 +2,7 @@ package com.example.myappplaylistmaker.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.myappplaylistmaker.data.converter.PlaylistDbConverter
 import com.example.myappplaylistmaker.data.converter.TrackDbConverter
 import com.example.myappplaylistmaker.data.db.AppDatabase
 import com.example.myappplaylistmaker.data.network.ItunesApi
@@ -57,6 +58,8 @@ val dataModule = module {
     single { get<AppDatabase>().trackDao() }
 
     factory { TrackDbConverter() }
+
+    factory { PlaylistDbConverter() }
 
     factory {Gson() }
 

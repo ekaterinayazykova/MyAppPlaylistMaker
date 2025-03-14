@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="@dimen/size_312"
+        android:height="@dimen/size_312"
+        android:gravity="center">
+        <shape android:shape="rectangle">
+            <stroke
+                android:width="@dimen/size_1"
+                android:color="@color/icon_light"
+                android:dashWidth="@dimen/size_32"
+                android:dashGap="@dimen/size_32" />
+            <corners android:radius="@dimen/size_8" />
+        </shape>
+    </item>
+    <item
+        android:width="100dp"
+        android:height="100dp"
+        android:drawable="@drawable/add_photo"
+        android:gravity="center">
+    </item>
+</layer-list>

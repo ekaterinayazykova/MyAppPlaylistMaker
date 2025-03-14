@@ -4,7 +4,6 @@ import com.example.myappplaylistmaker.domain.db.FavTracksRepository
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class FavTracksInteractorImpl(private val favTracksRepository: FavTracksRepository): FavTracksInteractor {
     override suspend fun addTrackToFavs(track: Track) {

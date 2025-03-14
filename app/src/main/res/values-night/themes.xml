@@ -18,12 +18,15 @@
         <item name="hintTextColor">@color/setting_title</item>
         <item name="helperTextTextColor">@color/setting_title</item>
         <item name="colorOutline">@color/main</item>
+        <item name="colorControlHighlight">@color/white</item>
         <item name="android:windowLightStatusBar">false</item>
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
 
-    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" />
+    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" >
+        <item name="snackbarStyle">@style/Widget.App.CustomSnackbar</item>
+    </style>
 
     <style name="Theme.MyAppPlaylistMaker.Splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/background_dark</item>

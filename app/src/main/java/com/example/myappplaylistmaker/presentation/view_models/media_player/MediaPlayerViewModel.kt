@@ -6,9 +6,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.domain.entity.PlayerState
+import com.example.myappplaylistmaker.domain.entity.Playlist
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
 import com.example.myappplaylistmaker.domain.interactor.MediaPlayerInteractor
+import com.example.myappplaylistmaker.domain.interactor.PlaylistInteractor
+import com.example.myappplaylistmaker.domain.interactor.TracksToPlaylistInteractor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -19,7 +22,10 @@ import java.util.Locale
 
 class MediaPlayerViewModel(
     private val mediaPlayerInteractor: MediaPlayerInteractor,
-    private val favTracksInteractor: FavTracksInteractor) : ViewModel() {
+    private val favTracksInteractor: FavTracksInteractor,
+    private val playlistInteractor: PlaylistInteractor,
+    private val tracksToPlaylistInteractor: TracksToPlaylistInteractor
+) : ViewModel() {
 
     private var timerJob: Job? = null
 
@@ -28,6 +34,12 @@ class MediaPlayerViewModel(
 
     private val _currentTrack = MutableLiveData<Track>()
     val currentTrack: LiveData<Track> get() = _currentTrack
+
+    private val _playlistState = MutableLiveData<List<Playlist>>()
+    val playlistState: LiveData<List<Playlist>> get() = this._playlistState
+
+    private val _trackInPlaylist = MutableLiveData<Pair<Boolean,String>>()
+    val trackInPlaylist: LiveData<Pair<Boolean, String>> get() = this._trackInPlaylist
 
     private var playerState = PlayerState.DEFAULT
 
@@ -40,10 +52,12 @@ class MediaPlayerViewModel(
     private fun onTrackComplete() {
         timerJob?.cancel()
         playerState = PlayerState.PREPARED
-        _state.postValue(State.PAUSED("00:00"))
+        _state.postValue(State.STOPPED)
     }
 
     fun setTrack(track: Track) {
+        Log.d("DEBUG", "setTrack called")
+        _state.value = State.LOADING
         _currentTrack.value = track
         preparePlayer(track)
     }
@@ -52,8 +66,8 @@ class MediaPlayerViewModel(
         val track = _currentTrack.value ?: return
         viewModelScope.launch(Dispatchers.IO) {
             val updatedTrack = track.copy(isFavorite = !track.isFavorite)
-                if (updatedTrack.isFavorite) {
-                    favTracksInteractor.addTrackToFavs(updatedTrack)
+            if (updatedTrack.isFavorite) {
+                favTracksInteractor.addTrackToFavs(updatedTrack)
             } else {
                 favTracksInteractor.removeTrackFromFavs(updatedTrack)
             }
@@ -73,6 +87,17 @@ class MediaPlayerViewModel(
         }
     }
 
+    fun checkIsTrackInPlaylist(trackId: String, playlistId: Int, playlistName: String) {
+        viewModelScope.launch {
+            val exists = tracksToPlaylistInteractor.isTrackInPlaylist(playlistId, trackId)
+            if (exists) {
+                _trackInPlaylist.value = true to playlistName
+            } else {
+                _trackInPlaylist.value = false to playlistName
+            }
+        }
+    }
+
     fun preparePlayer(track: Track) {
         val songUrl: String = track.previewUrl ?: ""
         if (songUrl.isNotEmpty() && playerState != PlayerState.PREPARED) {
@@ -86,11 +111,11 @@ class MediaPlayerViewModel(
         }
     }
 
-    fun startPlayer()  {
+    fun startPlayer() {
         if (playerState == PlayerState.PREPARED || playerState == PlayerState.PAUSED) {
             mediaPlayerInteractor.play()
             playerState = PlayerState.PLAYING
-            _state.postValue(State.PLAYING("00:00"))
+            _state.postValue(State.PLAYING(getCurrentPlayerPosition()))
             startTimer()
         }
     }
@@ -140,14 +165,36 @@ class MediaPlayerViewModel(
     }
 
     private fun getCurrentPlayerPosition(): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayerInteractor.getCurrentPosition()) ?: "00:00"
+        return SimpleDateFormat(
+            "mm:ss",
+            Locale.getDefault()
+        ).format(mediaPlayerInteractor.getCurrentPosition()) ?: "00:00"
     }
 
-    sealed class State (val progress: String) {
-        data object LOADING: State("00:00")
-        data object PREPARED: State("00:00")
+    fun getPlaylist() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylist()
+                .collect { playlists ->
+                    _playlistState.value = playlists
+                }
+        }
+    }
+
+    fun addTrackToPlaylist(track: Track, playlistId: Int, ) {
+        viewModelScope.launch {
+            tracksToPlaylistInteractor.addTrackToPlaylist(
+                track = track,
+                playlistId = playlistId
+            )
+        }
+    }
+
+    sealed class State(val progress: String) {
+        data object LOADING : State("00:00")
+        data object PREPARED : State("00:00")
         data class PLAYING(val currentTime: String) : State(progress = currentTime)
         data class PAUSED(val currentTime: String) : State(progress = currentTime)
+        data object STOPPED : State("00:00")
     }
 
     override fun onCleared() {

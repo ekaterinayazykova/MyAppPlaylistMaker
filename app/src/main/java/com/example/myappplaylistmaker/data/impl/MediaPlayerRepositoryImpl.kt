@@ -1,7 +1,6 @@
 package com.example.myappplaylistmaker.data.impl
 
 import android.media.MediaPlayer
-import android.util.Log
 import com.example.myappplaylistmaker.domain.repository.MediaPlayerRepository
 
 class MediaPlayerRepositoryImpl (private var mediaPlayer: MediaPlayer?) : MediaPlayerRepository {

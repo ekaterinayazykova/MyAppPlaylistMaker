@@ -67,6 +67,8 @@ class UnifiedTrackAdapter(
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener{
+            Log.d("UnifiedTrackAdapter", "Clicked track at position=$position")
+
             onTrackClick(tracks[position])
         }
     }

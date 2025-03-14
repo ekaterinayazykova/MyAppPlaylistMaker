@@ -1,19 +1,18 @@
-package com.example.myappplaylistmaker.presentation.ui.library
+package com.example.myappplaylistmaker.presentation.ui.library.fav_tracks
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentFavtrackBinding
 import com.example.myappplaylistmaker.domain.entity.Track
-import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
 import com.example.myappplaylistmaker.presentation.ui.search.UnifiedTrackAdapter
 import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
@@ -44,7 +43,7 @@ class FavTracksFragment : Fragment() {
 
         unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
             openTrack(track)
-            debouncedClick()
+            onDebouncedClick()
         }
 
         binding.favTrackList.layoutManager = LinearLayoutManager(requireContext())
@@ -64,9 +63,13 @@ class FavTracksFragment : Fragment() {
     }
 
     private fun openTrack(track: Track) {
-        val trackIntent = Intent(requireActivity(), MediaPlayerActivity::class.java)
-        trackIntent.putExtra(MediaPlayerActivity.TRACK_DATA, track)
-        ContextCompat.startActivity(requireContext(), trackIntent, null)
+        val bundle = Bundle().apply {
+            putSerializable("TRACK_DATA", track)
+        }
+        findNavController().navigate(
+            R.id.action_mediaLibraryFragment_to_mediaPlayerFragment2,
+            bundle
+        )
     }
 
     private fun observeState() {
@@ -85,9 +88,9 @@ class FavTracksFragment : Fragment() {
         }
     }
 
-    private fun debouncedClick() {
+    private fun onDebouncedClick() {
         debouncedClick = debounce(
-            SEARCH_DEBOUNCE_DELAY,
+            CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             true
         ) { isDebounceEnabled = true
@@ -95,6 +98,6 @@ class FavTracksFragment : Fragment() {
     }
 
     companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 500L
     }
 }

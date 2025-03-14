@@ -19,15 +19,18 @@
         <item name="hintTextColor">@color/switch_thumb_light</item>
         <item name="helperTextTextColor">@color/white</item>
         <item name="colorOutline">@color/main</item>
+        <item name="colorControlHighlight">@color/gray_light</item>
         <item name="android:windowLightStatusBar">true</item>
 
 
 
     </style>
 
-    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" />
+    <style name="Theme.MyAppPlaylistMaker" parent="Base.Theme.MyAppPlaylistMaker" >
+        <item name="snackbarStyle">@style/Widget.App.CustomSnackbar</item>
+    </style>
 
-    <style name="Theme.MyAppPlaylistMaker.Splash" parent="Theme.SplashScreen">
+    <style name="Theme.MyAppPlaylistMaker.Splash" parent="Base.Theme.MyAppPlaylistMaker">
         <item name="windowSplashScreenAnimatedIcon">@drawable/icon_launcher</item>
         <item name="windowSplashScreenBackground">@color/white</item>
         <item name="windowSplashScreenAnimationDuration">700</item>
