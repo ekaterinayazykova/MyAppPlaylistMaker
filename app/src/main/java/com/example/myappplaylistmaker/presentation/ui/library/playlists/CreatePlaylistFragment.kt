@@ -33,7 +33,7 @@ import java.io.FileOutputStream
 open class CreatePlaylistFragment() : Fragment() {
 
     private var _binding: FragmentCreationBinding? = null
-    private val binding get() = _binding ?: throw IllegalArgumentException("FragmentCreationBinding is null!")
+    val binding get() = _binding ?: throw IllegalArgumentException("FragmentCreationBinding is null!")
     protected open val viewModel by viewModel<CreatePlaylistViewModel>()
     private var nameInput: String = ""
     private var descriptionInput: String = ""
