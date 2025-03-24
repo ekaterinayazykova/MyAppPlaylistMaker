@@ -119,7 +119,7 @@
             android:id="@+id/track_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
+            android:nestedScrollingEnabled="true"
             android:paddingHorizontal="@dimen/size_12"
             android:paddingVertical="@dimen/size_8"
             android:layout_marginTop="@dimen/size_24" />

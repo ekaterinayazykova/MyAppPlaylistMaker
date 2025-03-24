@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentPlaylistBinding
 import com.example.myappplaylistmaker.domain.entity.Playlist
-import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.media_library.PlaylistViewModel
 import kotlinx.coroutines.delay
@@ -26,9 +25,8 @@ class PlaylistFragment : Fragment() {
     private val binding get() = _binding!!
     private val playlistViewModel by viewModel<PlaylistViewModel>()
     private lateinit var playlistAdapter: PlaylistAdapter
-    private lateinit var debouncedClick: (Track) -> Unit
+    private lateinit var debouncedClick: (Playlist) -> Unit
     private var isDebounceEnabled = true
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,7 +91,13 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun openPlaylist(playlist: Playlist) {
-
+        val bundle = Bundle().apply {
+            putInt("PLAYLIST_ID", playlist.playlistId)
+        }
+        findNavController().navigate(
+            R.id.action_mediaLibraryFragment_to_playlistDescriptionFragment,
+            bundle
+        )
     }
 
     companion object {

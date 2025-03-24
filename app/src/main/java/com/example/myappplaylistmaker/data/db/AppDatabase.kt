@@ -9,7 +9,7 @@ import com.example.myappplaylistmaker.data.db.entity.PlaylistEntity
 import com.example.myappplaylistmaker.data.db.entity.PlaylistTrackCrossRef
 import com.example.myappplaylistmaker.data.db.entity.TrackEntity
 
-@Database(version = 11, entities = [TrackEntity::class, PlaylistEntity::class, PlaylistTrackCrossRef::class])
+@Database(version = 15, entities = [TrackEntity::class, PlaylistEntity::class, PlaylistTrackCrossRef::class])
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun trackDao(): TrackDao

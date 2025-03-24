@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.presentation.view_models.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -9,6 +10,7 @@ import com.example.myappplaylistmaker.data.utils.StringProvider
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.domain.interactor.SearchHistoryManagerInteractor
 import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
@@ -54,6 +56,7 @@ class SearchViewModel(
     }
 
     fun getDataFromServer(query: String) {
+        Log.d("SearchViewModel", "Вход в getDataFromServer с запросом: '$query'")
         if (query.isEmpty() || query.isBlank()) return
 
         if (query == lastQuery) return
@@ -61,21 +64,33 @@ class SearchViewModel(
         _searchState.postValue(State.Loading)
 
         viewModelScope.launch {
-            searchTrackUseCase.searchTracks(query).collect { pair ->
-                processResult(pair.first, pair.second)
-            }
+            Log.d("SearchViewModel", "Запрос '$query' совпадает с lastQuery, запрос не отправляется")
+
+            searchTrackUseCase.searchTracks(query)
+                .catch { e ->
+                    Log.e("SearchViewModel", "Ошибка при поиске: ${e.message}", e)
+                    _searchState.postValue(State.Error)
+                }
+                .collect { pair ->
+                    Log.d("SearchViewModel", "Результаты запроса: ${pair.first}, ${pair.second}")
+                    processResult(pair.first, pair.second)
+                }
         }
     }
 
     private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
         when {
             errorMessage != null -> {
+                Log.d("SearchViewModel", "Ошибка запроса: $errorMessage")
                 _searchState.postValue(State.Error)
             }
             foundTracks.isNullOrEmpty() -> {
+                Log.d("SearchViewModel", "Пустой результат запроса")
                 _searchState.postValue(State.EmptyMainSearch)
             }
             else -> {
+                Log.d("SearchViewModel", "Успешный запрос, найдено ${foundTracks.size} треков")
+
 //                cachedResults = foundTracks
                 _searchState.postValue(State.SuccessSearch(foundTracks))
             }

@@ -7,6 +7,7 @@ import com.example.myappplaylistmaker.data.db.impl.TracksToPlaylistRepositoryImp
 import com.example.myappplaylistmaker.data.impl.MediaPlayerRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.SearchHistoryManagerImpl
 import com.example.myappplaylistmaker.data.impl.SettingsOptionsRepositoryImpl
+import com.example.myappplaylistmaker.data.impl.SharePlaylistRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.ThemeManagerRepositoryImpl
 import com.example.myappplaylistmaker.data.impl.TrackRepositoryImpl
 import com.example.myappplaylistmaker.domain.db.FavTracksRepository
@@ -18,6 +19,7 @@ import com.example.myappplaylistmaker.domain.impl.PlaylistInteractorImpl
 import com.example.myappplaylistmaker.domain.impl.SearchHistoryManagerInteractorImpl
 import com.example.myappplaylistmaker.domain.impl.SearchTrackUseCaseImpl
 import com.example.myappplaylistmaker.domain.impl.SettingsOptionsInteractorImpl
+import com.example.myappplaylistmaker.domain.impl.SharePlaylistUseCaseImpl
 import com.example.myappplaylistmaker.domain.impl.ThemeManagerInteractorImpl
 import com.example.myappplaylistmaker.domain.impl.TracksToPlaylistInteractorImpl
 import com.example.myappplaylistmaker.domain.interactor.FavTracksInteractor
@@ -30,9 +32,11 @@ import com.example.myappplaylistmaker.domain.interactor.TracksToPlaylistInteract
 import com.example.myappplaylistmaker.domain.repository.MediaPlayerRepository
 import com.example.myappplaylistmaker.domain.repository.SearchHistoryManagerRepository
 import com.example.myappplaylistmaker.domain.repository.SettingsOptionsRepository
+import com.example.myappplaylistmaker.domain.repository.SharePlaylistRepository
 import com.example.myappplaylistmaker.domain.repository.ThemeManagerRepository
 import com.example.myappplaylistmaker.domain.repository.TrackRepository
 import com.example.myappplaylistmaker.domain.use_case.SearchTrackUseCase
+import com.example.myappplaylistmaker.domain.use_case.SharePlaylistUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -89,7 +93,7 @@ val domainModule = module {
     }
 
     single<PlaylistRepository> {
-        PlaylistRepositoryImpl(get(), get())
+        PlaylistRepositoryImpl(get(), get(), get())
     }
     single<PlaylistInteractor> {
         PlaylistInteractorImpl(get())
@@ -101,5 +105,13 @@ val domainModule = module {
 
     single<TracksToPlaylistInteractor> {
         TracksToPlaylistInteractorImpl(get())
+    }
+
+    single<SharePlaylistRepository> {
+        SharePlaylistRepositoryImpl(get())
+    }
+
+    single<SharePlaylistUseCase> {
+        SharePlaylistUseCaseImpl(get())
     }
 }

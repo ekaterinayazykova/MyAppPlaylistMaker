@@ -10,6 +10,6 @@ data class PlaylistEntity(
     val playlistName: String,
     val playlistDescription: String? = null,
     val imagePath: String = "playlist_placeholder",
-    val amountOfTracks: Int? = null,
+    var amountOfTracks: Int = 0,
     val timestamp: Long? = System.currentTimeMillis()
 )

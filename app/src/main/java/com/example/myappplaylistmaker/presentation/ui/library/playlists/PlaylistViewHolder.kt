@@ -7,7 +7,8 @@ import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.PlaylistItemRecyclerBinding
 import com.example.myappplaylistmaker.domain.entity.Playlist
 
-class PlaylistViewHolder(private val binding: PlaylistItemRecyclerBinding):
+class PlaylistViewHolder(private val binding: PlaylistItemRecyclerBinding,
+    private val onPlaylistClick: (Playlist) -> Unit ):
     RecyclerView.ViewHolder(binding.root) {
 
     fun bind(model: Playlist) {
@@ -27,6 +28,10 @@ class PlaylistViewHolder(private val binding: PlaylistItemRecyclerBinding):
             .placeholder(R.drawable.album_placeholder)
             .error(R.drawable.album_placeholder)
             .into(binding.playlistCover)
+
+        itemView.setOnClickListener {
+            onPlaylistClick(model)
+        }
     }
 
     fun getTrackWord(count: Int): String {

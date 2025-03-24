@@ -10,8 +10,8 @@ class TracksToPlaylistInteractorImpl(private val tracksToPlaylistRepository: Tra
         tracksToPlaylistRepository.addTrackToPlaylist(track, playlistId)
     }
 
-    override suspend fun removeTrackFromPlaylist(track: Track, playlistId: Int) {
-        tracksToPlaylistRepository.removeTrackFromPlaylist(track, playlistId)
+    override suspend fun removeTrackFromPlaylist(trackId: String, playlistId: Int) {
+        tracksToPlaylistRepository.removeTrackFromPlaylist(trackId, playlistId)
     }
 
     override suspend fun isTrackInPlaylist(playlistId: Int, trackId: String): Boolean {

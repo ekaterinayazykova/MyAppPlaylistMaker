@@ -1,6 +1,5 @@
 package com.example.myappplaylistmaker.presentation.ui.search
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentSearchBinding
 import com.example.myappplaylistmaker.domain.entity.Track
-//import com.example.myappplaylistmaker.presentation.ui.media_player.MediaPlayerActivity
 import com.example.myappplaylistmaker.presentation.utils.debounce
 import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -62,18 +60,20 @@ class SearchFragment : Fragment() {
             searchViewModel.getDataFromPref()
         }
 
-        unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
-            if (isDebounceEnabled) {
-                isDebounceEnabled = false
-                openTrack(track)
-                debouncedClick(track)
-            }
-            searchViewModel.saveToHistory(track)
+        unifiedTrackAdapter = UnifiedTrackAdapter (
+            tracks = (mutableListOf()),
+            onTrackClick = { track ->
+                if (isDebounceEnabled) {
+                    isDebounceEnabled = false
+                    openTrack(track)
+                    debouncedClick(track)
+                }
+                searchViewModel.saveToHistory(track)
 
-            if (searchQuery.isEmpty()) {
-                searchViewModel.getDataFromPref()
-            }
-        }
+                if (searchQuery.isEmpty()) {
+                    searchViewModel.getDataFromPref()
+                }
+            })
 
         binding.trackList.layoutManager = LinearLayoutManager(requireContext())
         binding.trackList.adapter = unifiedTrackAdapter

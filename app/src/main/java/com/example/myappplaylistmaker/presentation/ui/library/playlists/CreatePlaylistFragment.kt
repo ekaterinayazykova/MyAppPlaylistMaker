@@ -30,11 +30,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
-class CreatePlaylistFragment() : Fragment() {
+open class CreatePlaylistFragment() : Fragment() {
 
     private var _binding: FragmentCreationBinding? = null
-    private val binding get() = _binding!!
-    private val createPlaylistViewModel by viewModel<CreatePlaylistViewModel>()
+    private val binding get() = _binding ?: throw IllegalArgumentException("FragmentCreationBinding is null!")
+    protected open val viewModel by viewModel<CreatePlaylistViewModel>()
     private var nameInput: String = ""
     private var descriptionInput: String = ""
     private var uploadedCover: Uri? = null
@@ -188,7 +188,7 @@ class CreatePlaylistFragment() : Fragment() {
         val name = binding.editName.text.toString().trim()
         val descriptor = binding.editDescription.text.toString().trim()
         val playlistCover = uploadedCover?.let { saveImageToPrivateStorage(it) } ?: ""
-        createPlaylistViewModel.addPlaylist(name, descriptor, playlistCover)
+        viewModel.addPlaylist(name, descriptor, playlistCover)
         parentFragmentManager.popBackStack()
     }
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/info_place_holder"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/placeholderImage"
+        android:layout_width="@dimen/size_120"
+        android:layout_height="@dimen/size_120"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="20dp"
+        android:src="@drawable/no_song" />
+
+    <TextView
+        android:id="@+id/placeholder_message"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:paddingStart="@dimen/size_24"
+        android:paddingEnd="@dimen/size_24"
+        android:text="@string/empty_playlist"
+        style="@style/Placeholder_last_search"
+        android:textAlignment="center"
+        android:textStyle="bold" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

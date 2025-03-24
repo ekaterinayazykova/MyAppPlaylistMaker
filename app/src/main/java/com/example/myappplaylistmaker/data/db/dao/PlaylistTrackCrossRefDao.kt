@@ -11,11 +11,15 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlaylistTrackCrossRefDao {
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCrossRef(crossRef: PlaylistTrackCrossRef)
 
     @Delete
     suspend fun deleteCrossRef(crossRef: PlaylistTrackCrossRef)
+
+    @Query("SELECT COUNT(*) FROM playlist_track_cross_ref WHERE trackId = :trackId")
+    suspend fun getTrackUsageCount(trackId: String): Int
 
     @Query("""
         SELECT t.*
@@ -38,5 +42,8 @@ interface PlaylistTrackCrossRefDao {
 
     @Query("SELECT * FROM playlist_track_cross_ref")
     suspend fun getAllCrossRefs(): List<PlaylistTrackCrossRef>
+
+    @Query("DELETE FROM playlist_track_cross_ref WHERE playlistId = :playlistId")
+    suspend fun deleteAllCrossRefsForPlaylist(playlistId: Int)
 
 }
