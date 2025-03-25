@@ -11,7 +11,6 @@ interface PlaylistRepository {
     fun getPlaylist(): Flow<List<Playlist>>
     fun getPlaylistWithTracks(): Flow<List<DomainPlaylistWithTracks>>
     fun getPlaylistById(playlistId: Int): Flow<Playlist>
-    fun updatePlaylistInfo(playlistId: Int)
     suspend fun updatePlaylist(playlist: Playlist)
 
 }

@@ -26,12 +26,10 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
     }
 
     override fun getPlaylistById(playlistId: Int): Flow<Playlist> {
-        Log.d("TAG", "Getter called")
         return playlistRepository.getPlaylistById(playlistId)
     }
 
     override suspend fun updatePlaylist(playlist: Playlist) {
-        Log.d("TAG", "Updating playlist in DB")
         playlistRepository.updatePlaylist(playlist)
     }
 }

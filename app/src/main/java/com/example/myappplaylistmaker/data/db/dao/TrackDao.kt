@@ -41,5 +41,4 @@ interface TrackDao {
 
     @Query("DELETE FROM track_table WHERE trackId = :trackId")
     suspend fun deleteTrackById(trackId: String)
-
 }

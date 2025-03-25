@@ -45,12 +45,11 @@ configurations.all {
     exclude(group = "com.intellij", module = "annotations")
     resolutionStrategy.eachDependency {
         if (requested.group == "androidx.room") {
-            useVersion("2.6.1") // или "2.6.1", в зависимости от выбора
+            useVersion("2.6.1")
         }
     }
 }
 
-// Блок kapt остаётся для библиотек, которые его требуют (например, Dagger и Glide)
 kapt {
     correctErrorTypes = true
 }

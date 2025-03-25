@@ -28,10 +28,8 @@ class EditPlaylistViewModel(private val playlistInteractor: PlaylistInteractor):
                 playlistId = id,
                 playlistName = name,
                 playlistDescription = description,
-                imagePath = if (imagePath.isEmpty()) {
-                    playlistData.value?.imagePath ?: ""
-                } else {
-                    imagePath
+                imagePath = imagePath.ifEmpty {
+                    playlistData.value?.imagePath.orEmpty()
                 }
             )
             playlistInteractor.updatePlaylist(updatedPlaylist)

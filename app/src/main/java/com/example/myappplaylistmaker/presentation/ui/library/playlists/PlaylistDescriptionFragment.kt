@@ -31,6 +31,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class PlaylistDescriptionFragment: Fragment() {
 
@@ -257,7 +258,7 @@ class PlaylistDescriptionFragment: Fragment() {
             })
         }
         bottomSheetArray = BottomSheetBehavior.from(binding.bottomSheetPlaylistArray.root).apply {
-            peekHeight = Utils.dpToPx(288f, requireContext())
+            peekHeight = Utils.dpToPx(268f, requireContext())
             state = BottomSheetBehavior.STATE_COLLAPSED
             isHideable = false
             expandedOffset = 0
@@ -269,7 +270,7 @@ class PlaylistDescriptionFragment: Fragment() {
 
     private fun getPlaylistDuration(playlistWithTracks: DomainPlaylistWithTracks): Int {
         val durationSum = playlistWithTracks.tracks.sumOf { it.trackTimeMillis }
-        val durationSumMinutes = SimpleDateFormat("m", Locale.getDefault()).format(durationSum)
+        val durationSumMinutes = TimeUnit.MILLISECONDS.toMinutes(durationSum)
         return durationSumMinutes.toInt()
     }
 

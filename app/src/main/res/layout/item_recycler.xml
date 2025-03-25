@@ -17,6 +17,7 @@
         android:id="@+id/track_cover"
         android:layout_width="@dimen/size_44"
         android:layout_height="@dimen/size_44"
+        android:scaleType="centerCrop"
         android:contentDescription="@string/track_cover" />
 
     <LinearLayout

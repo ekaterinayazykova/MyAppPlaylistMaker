@@ -14,7 +14,6 @@ class TracksToPlaylistRepositoryImpl(
     override suspend fun addTrackToPlaylist(track: Track, playlistId: Int) {
         val before = appDatabase.playlistTrackCrossRefDao().getAllCrossRefs()
         Log.d("DEBUG_DB", "Before insert: $before")
-
         val trackEntity = trackDbConverter.mapToEntity(track)
         appDatabase.trackDao().insertTrackToFavs(trackEntity)
         val crossRef = PlaylistTrackCrossRef(
@@ -23,7 +22,6 @@ class TracksToPlaylistRepositoryImpl(
             addedAt = System.currentTimeMillis()
         )
         appDatabase.playlistTrackCrossRefDao().insertCrossRef(crossRef)
-
         val after = appDatabase.playlistTrackCrossRefDao().getAllCrossRefs()
         Log.d("DEBUG_DB", "After insert: $after")
         appDatabase.playlistDao().updatePlaylist(playlistId)
