@@ -11,4 +11,5 @@ interface PlaylistInteractor {
     fun getPlaylist(): Flow<List<Playlist>>
     fun getPlaylistWithTracks(): Flow<List<DomainPlaylistWithTracks>>
     fun getPlaylistById(playlistId: Int): Flow<Playlist>
+    suspend fun updatePlaylist(playlist: Playlist)
 }

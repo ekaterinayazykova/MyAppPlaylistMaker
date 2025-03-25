@@ -47,7 +47,7 @@ val appModule = module {
     viewModel<PlaylistDescriptionViewModel>(){
         PlaylistDescriptionViewModel(playlistInteractor = get(),
                                     tracksToPlaylistInteractor = get(),
-                                    sharePlaylistUseCase = get())
+                                    settingsOptionsInteractor = get())
     }
 
     viewModel<EditPlaylistViewModel>(){

@@ -1,20 +1,21 @@
 package com.example.myappplaylistmaker.presentation.view_models.media_library
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myappplaylistmaker.domain.entity.DomainPlaylistWithTracks
 import com.example.myappplaylistmaker.domain.interactor.PlaylistInteractor
+import com.example.myappplaylistmaker.domain.interactor.SettingsOptionsInteractor
 import com.example.myappplaylistmaker.domain.interactor.TracksToPlaylistInteractor
-import com.example.myappplaylistmaker.domain.use_case.SharePlaylistUseCase
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class PlaylistDescriptionViewModel(
     private val playlistInteractor: PlaylistInteractor,
     private val tracksToPlaylistInteractor: TracksToPlaylistInteractor,
-    private val sharePlaylistUseCase: SharePlaylistUseCase
+    private val settingsOptionsInteractor: SettingsOptionsInteractor
 ) : ViewModel() {
 
     private val _contentState = MutableLiveData<PlaylistContent>()
@@ -51,8 +52,8 @@ class PlaylistDescriptionViewModel(
         }
     }
 
-    fun sharePlaylist(shareMessage: String) {
-        sharePlaylistUseCase.sharePlaylist(shareMessage)
+    fun sharePlaylist(shareMessage: String): Intent {
+        return settingsOptionsInteractor.createShareIntent(shareMessage)
     }
 
     sealed class PlaylistContent {

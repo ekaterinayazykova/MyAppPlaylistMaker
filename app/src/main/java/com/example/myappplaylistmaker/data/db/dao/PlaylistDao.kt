@@ -37,4 +37,7 @@ interface PlaylistDao {
             "playlistDescription = :playlistDescription, " +
             "imagePath = :imagePath WHERE playlistId = :playlistId")
     fun updatePlaylistInfo(playlistId: Int, playlistName: String, playlistDescription: String, imagePath:String )
+
+    @Update
+    suspend fun updatePlaylist(playlist: PlaylistEntity): Int
 }

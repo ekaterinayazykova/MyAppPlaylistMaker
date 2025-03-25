@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.domain.impl
 
+import android.util.Log
 import com.example.myappplaylistmaker.domain.db.PlaylistRepository
 import com.example.myappplaylistmaker.domain.entity.DomainPlaylistWithTracks
 import com.example.myappplaylistmaker.domain.entity.Playlist
@@ -25,6 +26,12 @@ class PlaylistInteractorImpl(private val playlistRepository: PlaylistRepository)
     }
 
     override fun getPlaylistById(playlistId: Int): Flow<Playlist> {
+        Log.d("TAG", "Getter called")
         return playlistRepository.getPlaylistById(playlistId)
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        Log.d("TAG", "Updating playlist in DB")
+        playlistRepository.updatePlaylist(playlist)
     }
 }

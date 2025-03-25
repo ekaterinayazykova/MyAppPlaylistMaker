@@ -1,7 +1,7 @@
 package com.example.myappplaylistmaker.presentation.ui.library.playlists
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +21,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.myappplaylistmaker.R
 import com.example.myappplaylistmaker.databinding.FragmentPlaylistDescriptionBinding
 import com.example.myappplaylistmaker.domain.entity.DomainPlaylistWithTracks
-import com.example.myappplaylistmaker.domain.entity.Playlist
 import com.example.myappplaylistmaker.domain.entity.Track
 import com.example.myappplaylistmaker.presentation.ui.search.UnifiedTrackAdapter
 import com.example.myappplaylistmaker.presentation.utils.Utils
@@ -42,7 +41,7 @@ class PlaylistDescriptionFragment: Fragment() {
     private lateinit var bottomSheetArray: BottomSheetBehavior<ConstraintLayout>
     private lateinit var bottomSheetMenu: BottomSheetBehavior<ConstraintLayout>
     private lateinit var unifiedTrackAdapter: UnifiedTrackAdapter
-    private var playlistId: Int = 0
+    private val playlistId: Int by lazy {arguments?.getInt("PLAYLIST_ID") ?: throw IllegalArgumentException("id is null")}
     private var playlistWithTracks: DomainPlaylistWithTracks? = null
 
     override fun onCreateView(
@@ -57,7 +56,7 @@ class PlaylistDescriptionFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        extractPlaylistById()
+        playlistDescriptionViewModel.getPlaylistById(playlistId)
         setupAdapter()
         observeState()
         setupBottomSheet()
@@ -116,6 +115,7 @@ class PlaylistDescriptionFragment: Fragment() {
         }
 
         binding.bottomSheetPlaylistMenu.sharePlaylist.setOnClickListener{
+            bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
             playlistWithTracks?.let { playlist ->
                 sharePlaylist(playlist)
             }
@@ -126,6 +126,7 @@ class PlaylistDescriptionFragment: Fragment() {
         }
 
         binding.bottomSheetPlaylistMenu.deletePlaylist.setOnClickListener {
+            bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
             playlistWithTracks?.let { playlist ->
                 confirmDialog(
                     message = getString(R.string.deletePlaylistConfirm, playlist.playlist.playlistName),
@@ -136,13 +137,6 @@ class PlaylistDescriptionFragment: Fragment() {
                     }
                 )
             }
-        }
-    }
-
-    private fun extractPlaylistById() {
-        arguments?.getInt("PLAYLIST_ID")?.let { id ->
-            this.playlistId = id
-            playlistDescriptionViewModel.getPlaylistById(id)
         }
     }
 
@@ -179,7 +173,7 @@ class PlaylistDescriptionFragment: Fragment() {
 
     private fun sharePlaylist(playlistWithTracks: DomainPlaylistWithTracks) {
         if (playlistWithTracks.tracks.size >= 1) {
-            playlistDescriptionViewModel.sharePlaylist(
+            val shareIntent = playlistDescriptionViewModel.sharePlaylist(
                 shareMessage = buildString {
                     append("${playlistWithTracks.playlist.playlistName}\n")
                     append("${playlistWithTracks.playlist.playlistDescription}\n")
@@ -190,6 +184,8 @@ class PlaylistDescriptionFragment: Fragment() {
                     }
                 }
             )
+            val chooser = Intent.createChooser(shareIntent, "")
+            startActivity(chooser)
         } else {
             showSnackBar(message = getString(R.string.no_tracks_to_share))
         }

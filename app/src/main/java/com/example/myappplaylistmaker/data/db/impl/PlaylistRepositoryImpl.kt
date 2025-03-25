@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.data.db.impl
 
+import android.util.Log
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.myappplaylistmaker.data.converter.PlaylistDbConverter
@@ -20,6 +21,7 @@ class PlaylistRepositoryImpl(
     private val playlistDbConverter: PlaylistDbConverter,
     private val trackDbConverter: TrackDbConverter
 ) : PlaylistRepository {
+
     override suspend fun addPlaylist(playlist: Playlist) {
         val playlistEntity = playlistDbConverter.mapToEntity(playlist)
         appDatabase.playlistDao().insertPlaylist(playlistEntity)
@@ -60,15 +62,26 @@ class PlaylistRepositoryImpl(
             }
     }
 
-    override fun getPlaylistById(playlistId: Int): Flow<Playlist>{
+    override fun getPlaylistById(playlistId: Int): Flow<Playlist> {
+        Log.d("TAG", "getPlaylistById called with playlistId: $playlistId") // Логируем вызов метода с ID плейлиста
+
         return appDatabase.playlistDao().getPlaylistById(playlistId)
             .map { playlistEntity ->
-                playlistDbConverter.mapToPlaylist(playlistEntity)
+                Log.d("TAG", "Fetched playlistEntity from DB: $playlistEntity") // Логируем полученные данные из базы
+                val playlist = playlistDbConverter.mapToPlaylist(playlistEntity) // Преобразуем в объект Playlist
+                Log.d("TAG", "Converted playlistEntity to Playlist: $playlist") // Логируем результат преобразования
+                playlist
             }
     }
 
     override fun updatePlaylistInfo(playlistId: Int){
 
+    }
+
+    override suspend fun updatePlaylist(playlist: Playlist) {
+        val playlistEntity = playlistDbConverter.mapToEntity(playlist)
+        val updatedRows = appDatabase.playlistDao().updatePlaylist(playlistEntity)
+        Log.d("TAG", "Number of rows updated: $updatedRows")
     }
 
     private fun convertFromPlaylistEntity(flowEntities: Flow<List<PlaylistEntity>>): Flow<List<Playlist>> {

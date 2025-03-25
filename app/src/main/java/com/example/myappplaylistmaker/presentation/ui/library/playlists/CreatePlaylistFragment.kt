@@ -37,7 +37,7 @@ open class CreatePlaylistFragment() : Fragment() {
     protected open val viewModel by viewModel<CreatePlaylistViewModel>()
     private var nameInput: String = ""
     private var descriptionInput: String = ""
-    private var uploadedCover: Uri? = null
+    var uploadedCover: Uri? = null
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -65,10 +65,8 @@ open class CreatePlaylistFragment() : Fragment() {
         updateButtonState()
         editName()
         editDescription()
+        buttonBack()
 
-        binding.arrow.setOnClickListener {
-            confirmDialog()
-        }
 
         binding.addPhoto.setOnClickListener {
             pickMedia.launch(
@@ -105,6 +103,12 @@ open class CreatePlaylistFragment() : Fragment() {
     override fun onPause() {
         super.onPause()
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
+
+    open fun buttonBack() {
+        binding.arrow.setOnClickListener {
+            confirmDialog()
+        }
     }
 
     private fun editName() {
@@ -151,7 +155,7 @@ open class CreatePlaylistFragment() : Fragment() {
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri): String {
+    fun saveImageToPrivateStorage(uri: Uri): String {
         val filePath = File(
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
             getString(R.string.myAlbum)
@@ -184,11 +188,10 @@ open class CreatePlaylistFragment() : Fragment() {
         }
     }
 
-    private fun savePlaylist() {
+    open fun savePlaylist() {
         val name = binding.editName.text.toString().trim()
         val descriptor = binding.editDescription.text.toString().trim()
         val playlistCover = uploadedCover?.let { saveImageToPrivateStorage(it) } ?: ""
         viewModel.addPlaylist(name, descriptor, playlistCover)
-        parentFragmentManager.popBackStack()
     }
 }

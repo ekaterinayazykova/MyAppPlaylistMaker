@@ -1,14 +1,14 @@
 package com.example.myappplaylistmaker.presentation.ui.library.playlists
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.View
-import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.myappplaylistmaker.R
-import com.example.myappplaylistmaker.databinding.FragmentCreationBinding
 import com.example.myappplaylistmaker.presentation.view_models.edit_playlist.EditPlaylistViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -16,31 +16,64 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class EditPlaylistFragment: CreatePlaylistFragment() {
 
     override val viewModel by viewModel<EditPlaylistViewModel>()
-    private var playlistId: Int = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-            extractPlaylistById()
-            observeState()
+        extractPlaylistById()
+        observeState()
+        buttonBack()
+        setupBinding()
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    parentFragmentManager.popBackStack()
+                }
+            }
+        )
+    }
+
+    override fun buttonBack(){
+        binding.arrow.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+    }
+
+    override fun savePlaylist() {
+        val id = requireArguments().getInt("PLAYLIST_ID")
+        val name = binding.editName.text.toString().trim()
+        val descriptor = binding.editDescription.text.toString().trim()
+        val playlistCover = uploadedCover?.let { saveImageToPrivateStorage(it) } ?: ""
+        viewModel.updatePlaylistInfo(id, name, descriptor, playlistCover)
     }
 
     private fun extractPlaylistById() {
         arguments?.getInt("PLAYLIST_ID")?.let { id ->
-            this.playlistId = id
-            viewModel.setPlaylistId(id)
+            viewModel.loadPlaylistById(id)
+        }
+    }
+
+    private fun setupBinding() {
+        binding.textBack.setText(R.string.button_back)
+        binding.buttonCreate.setText(R.string.save_playlist)
+
+        binding.buttonCreate.setOnClickListener {
+            savePlaylist()
+            findNavController().navigateUp()
         }
     }
 
     private fun observeState() {
-        viewModel.playlistData.observe(viewLifecycleOwner) { playlistData ->
-            lifecycleScope.launch {
-                playlistData.collect { playlist ->
-                    binding.editName.setText(playlist.playlistName)
-                    binding.editDescription.setText(playlist.playlistDescription)
+        lifecycleScope.launch {
+            viewModel.playlistData.collect { playlist ->
+                playlist?.let {
+                    binding.editName.setText(it.playlistName)
+                    binding.editDescription.setText(it.playlistDescription)
                     Glide.with(requireContext())
-                        .load(if (playlist.imagePath.isNotEmpty()) playlist.imagePath else R.drawable.album_placeholder)
+                        .load(if (!it.imagePath.isNullOrEmpty()) it.imagePath else R.drawable.album_placeholder)
                         .apply(
-                            if (playlist.imagePath.isNotEmpty()) {
+                            if (!it.imagePath.isNullOrEmpty()) {
                                 RequestOptions().centerCrop()
                             } else {
                                 RequestOptions().centerInside()

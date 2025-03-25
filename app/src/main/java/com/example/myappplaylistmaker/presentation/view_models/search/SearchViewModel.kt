@@ -25,9 +25,6 @@ class SearchViewModel(
         private const val SEARCH_RESULTS_KEY = "search_results"
     }
 
-//    private val _historyTrack: MutableLiveData<List<Track>?> = MutableLiveData()
-//    val historyTrack: LiveData<List<Track>?> get() = this._historyTrack
-
     private val _searchState = MutableLiveData<State>()
     val searchState: LiveData<State> get() = this._searchState
 
@@ -36,12 +33,6 @@ class SearchViewModel(
         set(value) {
             savedStateHandle[LAST_QUERY_KEY] = value
         }
-
-//    private var cachedResults: List<Track>?
-//        get() = savedStateHandle.get(SEARCH_RESULTS_KEY)
-//        set(value) {
-//            savedStateHandle[SEARCH_RESULTS_KEY] = value
-//        }
 
     fun getDataFromPref() {
         viewModelScope.launch {

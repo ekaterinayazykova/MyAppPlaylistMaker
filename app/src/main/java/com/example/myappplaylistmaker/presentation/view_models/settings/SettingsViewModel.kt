@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.presentation.view_models.settings
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,8 +24,8 @@ class SettingsViewModel (
         this._themeState.value = setNightMode
     }
 
-    fun shareApp(){
-        settingsOptionsUseCase.shareApp()
+    fun createShareIntent(shareMessage: String): Intent {
+        return settingsOptionsUseCase.createShareIntent(shareMessage)
     }
 
     fun writeSupport(){
