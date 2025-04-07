@@ -1,5 +1,6 @@
 package com.example.myappplaylistmaker.data.db.impl
 
+import android.util.Log
 import com.example.myappplaylistmaker.data.converter.TrackDbConverter
 import com.example.myappplaylistmaker.data.db.AppDatabase
 import com.example.myappplaylistmaker.data.db.entity.TrackEntity
@@ -14,12 +15,14 @@ class FavTracksRepositoryImpl (
 ) : FavTracksRepository {
     override suspend fun addTrackToFavs(track: Track) {
         val trackEntity = trackDbConverter.mapToEntity(track)
-        appDatabase.trackDao().insertTrack(trackEntity)
+        Log.d("TAG", "Added to data base")
+        appDatabase.trackDao().insertTrackToFavs(trackEntity)
     }
 
     override suspend fun removeTrackFromFavs(track: Track) {
         val trackEntity = trackDbConverter.mapToEntity(track)
-        appDatabase.trackDao().deleteTrack(trackEntity)
+        trackEntity.isFavorite = false
+        appDatabase.trackDao().updateTrack(trackEntity)
     }
 
     override fun getFavsTracks(): Flow<List<Track>> {

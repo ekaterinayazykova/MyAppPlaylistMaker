@@ -26,5 +26,4 @@ class PlaylistDbConverter {
             timestamp = playlist.timestamp
         )
     }
-
 }

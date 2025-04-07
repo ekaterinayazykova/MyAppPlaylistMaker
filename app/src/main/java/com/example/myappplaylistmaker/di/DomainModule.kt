@@ -89,7 +89,7 @@ val domainModule = module {
     }
 
     single<PlaylistRepository> {
-        PlaylistRepositoryImpl(get(), get())
+        PlaylistRepositoryImpl(get(), get(), get())
     }
     single<PlaylistInteractor> {
         PlaylistInteractorImpl(get())
@@ -102,4 +102,5 @@ val domainModule = module {
     single<TracksToPlaylistInteractor> {
         TracksToPlaylistInteractorImpl(get())
     }
+    
 }

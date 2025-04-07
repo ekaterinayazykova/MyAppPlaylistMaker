@@ -2,6 +2,8 @@ package com.example.myappplaylistmaker.di
 
 import com.example.myappplaylistmaker.presentation.view_models.media_library.FavTracksViewModel
 import com.example.myappplaylistmaker.presentation.view_models.create_playlist.CreatePlaylistViewModel
+import com.example.myappplaylistmaker.presentation.view_models.edit_playlist.EditPlaylistViewModel
+import com.example.myappplaylistmaker.presentation.view_models.media_library.PlaylistDescriptionViewModel
 import com.example.myappplaylistmaker.presentation.view_models.media_library.PlaylistViewModel
 import com.example.myappplaylistmaker.presentation.view_models.media_player.MediaPlayerViewModel
 import com.example.myappplaylistmaker.presentation.view_models.search.SearchViewModel
@@ -40,5 +42,15 @@ val appModule = module {
 
     viewModel<PlaylistViewModel>(){
         PlaylistViewModel(playlistInteractor = get())
+    }
+
+    viewModel<PlaylistDescriptionViewModel>(){
+        PlaylistDescriptionViewModel(playlistInteractor = get(),
+                                    tracksToPlaylistInteractor = get(),
+                                    settingsOptionsInteractor = get())
+    }
+
+    viewModel<EditPlaylistViewModel>(){
+        EditPlaylistViewModel(playlistInteractor = get())
     }
 }

@@ -13,7 +13,7 @@ class PlaylistAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = PlaylistItemRecyclerBinding.inflate(inflater, parent, false)
-        return PlaylistViewHolder(binding)
+        return PlaylistViewHolder(binding, onPlaylistClick)
     }
 
     override fun getItemCount(): Int {

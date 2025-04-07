@@ -16,7 +16,8 @@ import com.example.myappplaylistmaker.presentation.utils.Utils
 
 class UnifiedTrackAdapter(
     private var tracks: List<Track> = emptyList(),
-    private val onTrackClick: (Track) -> Unit
+    private val onTrackClick: (Track) -> Unit,
+    private val onLongTrackClick: (Track) -> Unit = { }
     ) : RecyclerView.Adapter<UnifiedTrackAdapter.TrackViewHolder>() {
 
     inner class TrackViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -53,6 +54,11 @@ class UnifiedTrackAdapter(
             itemView.setOnClickListener {
                 onTrackClick.invoke(model)
             }
+
+            itemView.setOnLongClickListener {
+                onLongTrackClick.invoke(model)
+                true
+            }
         }
     }
 
@@ -75,7 +81,6 @@ class UnifiedTrackAdapter(
 
     fun updateTracks(newTracks: List<Track>) {
         tracks = newTracks
-        Log.d("VM", "Адаптер обновлен с треками: $tracks")
         notifyDataSetChanged()
     }
 }

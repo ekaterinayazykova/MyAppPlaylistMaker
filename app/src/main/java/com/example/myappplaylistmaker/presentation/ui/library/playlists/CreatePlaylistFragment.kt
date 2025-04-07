@@ -30,14 +30,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
-class CreatePlaylistFragment() : Fragment() {
+open class CreatePlaylistFragment() : Fragment() {
 
     private var _binding: FragmentCreationBinding? = null
-    private val binding get() = _binding!!
-    private val createPlaylistViewModel by viewModel<CreatePlaylistViewModel>()
+    val binding get() = _binding ?: throw IllegalArgumentException("FragmentCreationBinding is null!")
+    protected open val viewModel by viewModel<CreatePlaylistViewModel>()
     private var nameInput: String = ""
     private var descriptionInput: String = ""
-    private var uploadedCover: Uri? = null
+    var uploadedCover: Uri? = null
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -65,10 +65,8 @@ class CreatePlaylistFragment() : Fragment() {
         updateButtonState()
         editName()
         editDescription()
+        buttonBack()
 
-        binding.arrow.setOnClickListener {
-            confirmDialog()
-        }
 
         binding.addPhoto.setOnClickListener {
             pickMedia.launch(
@@ -105,6 +103,12 @@ class CreatePlaylistFragment() : Fragment() {
     override fun onPause() {
         super.onPause()
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+    }
+
+    open fun buttonBack() {
+        binding.arrow.setOnClickListener {
+            confirmDialog()
+        }
     }
 
     private fun editName() {
@@ -151,7 +155,7 @@ class CreatePlaylistFragment() : Fragment() {
         }
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri): String {
+    fun saveImageToPrivateStorage(uri: Uri): String {
         val filePath = File(
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
             getString(R.string.myAlbum)
@@ -184,11 +188,10 @@ class CreatePlaylistFragment() : Fragment() {
         }
     }
 
-    private fun savePlaylist() {
+    open fun savePlaylist() {
         val name = binding.editName.text.toString().trim()
         val descriptor = binding.editDescription.text.toString().trim()
         val playlistCover = uploadedCover?.let { saveImageToPrivateStorage(it) } ?: ""
-        createPlaylistViewModel.addPlaylist(name, descriptor, playlistCover)
-        parentFragmentManager.popBackStack()
+        viewModel.addPlaylist(name, descriptor, playlistCover)
     }
 }

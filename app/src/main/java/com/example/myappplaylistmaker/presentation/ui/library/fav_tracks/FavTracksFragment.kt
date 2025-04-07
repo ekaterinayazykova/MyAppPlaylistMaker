@@ -41,10 +41,14 @@ class FavTracksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        unifiedTrackAdapter = UnifiedTrackAdapter(mutableListOf()) { track ->
-            openTrack(track)
-            onDebouncedClick()
-        }
+        unifiedTrackAdapter = UnifiedTrackAdapter (
+            tracks = mutableListOf(),
+            onTrackClick = { track ->
+                openTrack(track)
+                onDebouncedClick()
+            }
+        )
+
 
         binding.favTrackList.layoutManager = LinearLayoutManager(requireContext())
         binding.favTrackList.adapter = unifiedTrackAdapter

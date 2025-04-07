@@ -90,6 +90,7 @@ class MediaPlayerFragment : Fragment() {
         }
 
         binding.buttonLike.setOnClickListener {
+            Log.d("TAG", "Button like clicked")
             mediaPlayerViewModel.onFavoriteClicked()
         }
 

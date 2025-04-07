@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
+//    id ("kotlin-android")
+    id ("kotlin-parcelize")
 }
 
 android {
@@ -43,12 +45,11 @@ configurations.all {
     exclude(group = "com.intellij", module = "annotations")
     resolutionStrategy.eachDependency {
         if (requested.group == "androidx.room") {
-            useVersion("2.6.1") // или "2.6.1", в зависимости от выбора
+            useVersion("2.6.1")
         }
     }
 }
 
-// Блок kapt остаётся для библиотек, которые его требуют (например, Dagger и Glide)
 kapt {
     correctErrorTypes = true
 }
@@ -79,6 +80,9 @@ dependencies {
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.fragment.ktx)
+
+    // Live data
+    implementation(libs.lifecycle.livedata.ktx)
 
     // Room
     implementation(libs.room.runtime) {
